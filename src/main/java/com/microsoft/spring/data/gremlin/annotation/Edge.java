@@ -11,16 +11,16 @@ import org.springframework.data.annotation.Persistent;
 import java.lang.annotation.*;
 
 /**
- * Specifies the class as vertex in graph, with one optional label(String).
+ * Specifies the class as edge in graph, with one optional label(String).
  */
 @Persistent
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Vertex {
+public @interface Edge {
     /**
-     * The label(gremlin reserved) of given Vertex, can add Vertex by label.
+     * The label(gremlin reserved) of given Edge, can add Edge by label.
      * @return class name if not specify.
      */
-    String label() default Constants.DEFAULT_VERTEX_LABEL;
+    String label() default Constants.DEFAULT_EDGE_LABEL;
 }
