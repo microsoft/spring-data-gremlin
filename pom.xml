@@ -18,22 +18,39 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <spring.springframework.version>5.0.1.RELEASE</spring.springframework.version>
-        <spring.boot.starter.test.version>2.0.0.RELEASE</spring.boot.starter.test.version>
-        <spring.data.version>2.0.0.RELEASE</spring.data.version>
+        <spring.boot.version>2.0.0.RELEASE</spring.boot.version>
 
         <org.apache.tinkerpop.gremlin.driver.version>3.2.4</org.apache.tinkerpop.gremlin.driver.version>
         <org.projectlombok.version>1.16.18</org.projectlombok.version>
-
         <mockito.core.version>2.8.9</mockito.core.version>
+
         <skip.integration.tests>true</skip.integration.tests>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.springframework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <!-- Spring framework -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>${spring.springframework.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -42,11 +59,16 @@
             </exclusions>
         </dependency>
 
+        <!-- Spring Tx -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+        </dependency>
+
         <!-- Spring Data Commons -->
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-commons</artifactId>
-            <version>${spring.data.version}</version>
         </dependency>
 
         <!-- Apache Tinkerpop Gremlin Driver -->
@@ -60,7 +82,6 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>${spring.springframework.version}</version>
         </dependency>
 
         <!-- Mockito -->
@@ -75,7 +96,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring.boot.starter.test.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -86,6 +106,17 @@
             <version>${org.projectlombok.version}</version>
         </dependency>
 
+        <!-- Spring Boot Configuration Processor -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+        </dependency>
+
+        <!-- Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
