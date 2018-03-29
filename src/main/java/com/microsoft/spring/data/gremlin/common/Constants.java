@@ -13,4 +13,5 @@ public class Constants {
     public static final String DEFAULT_VERTEX_LABEL = "";
     public static final String DEFAULT_EDGE_LABEL = "";
     public static final String DEFAULT_COLLECTION_NAME = "";
+    public static final String DEFAULT_ENDPOINT_PORT = "443";
 }
