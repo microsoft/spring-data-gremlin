@@ -6,13 +6,12 @@
 package com.microsoft.spring.data.gremlin.conversion;
 
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.NotImplementedException;
 
 @NoArgsConstructor
-public class GremlinEdgeScriptLiteral implements GremlinScript<String> {
+public class GremlinScriptGraphLiteralFactory implements GremlinScriptFactory {
 
     @Override
-    public String generateScript(GremlinSource gremlinSource) {
-        throw new NotImplementedException("generate literal Edge script is not implemented");
+    public GremlinScriptGraphLiteral createGremlinScript() {
+        return new GremlinScriptGraphLiteral();
     }
 }

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @NoArgsConstructor
-public class GremlinVertexScriptLiteral extends GremlinScriptPropertiesLiteral implements GremlinScript<String> {
+public class GremlinScriptVertexLiteral extends GremlinScriptPropertiesLiteral implements GremlinScript<String> {
 
     @Override
     public String generateScript(GremlinSource source) {
