@@ -8,10 +8,10 @@ package com.microsoft.spring.data.gremlin.conversion;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class GremlinVertexScriptLiteralFactory implements GremlinScriptFactory {
+public class GremlinScriptEdgeLiteralFactory implements GremlinScriptFactory {
 
     @Override
-    public GremlinVertexScriptLiteral createGremlinScript() {
-        return new GremlinVertexScriptLiteral();
+    public GremlinScriptEdgeLiteral createGremlinScript() {
+        return new GremlinScriptEdgeLiteral();
     }
 }
