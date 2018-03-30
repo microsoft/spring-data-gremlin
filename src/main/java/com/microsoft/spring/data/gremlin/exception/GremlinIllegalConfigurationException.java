@@ -7,13 +7,13 @@ package com.microsoft.spring.data.gremlin.exception;
 
 import org.springframework.lang.Nullable;
 
-public class IllegalGremlinConfigurationException extends IllegalArgumentException {
+public class GremlinIllegalConfigurationException extends IllegalArgumentException {
 
-    public IllegalGremlinConfigurationException(String msg) {
+    public GremlinIllegalConfigurationException(String msg) {
         super(msg);
     }
 
-    public IllegalGremlinConfigurationException(@Nullable String msg, @Nullable Throwable cause) {
+    public GremlinIllegalConfigurationException(@Nullable String msg, @Nullable Throwable cause) {
         super(msg, cause);
     }
 }
