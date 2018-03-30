@@ -12,5 +12,5 @@ public interface GremlinSourceWriter {
     /**
      * Write the domain class information to GremlinSource
      */
-    void writeEnityToGremlinSource(Class domain, GremlinSource source);
+    void write(Object domain, MappingGremlinConverter converter, GremlinSource source);
 }
