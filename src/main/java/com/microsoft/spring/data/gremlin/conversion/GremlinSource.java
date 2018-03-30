@@ -27,7 +27,7 @@ public interface GremlinSource {
     /**
      * Set the property map of domain
      */
-    void setProperty(String key, String value);
+    void setProperty(String key, Object value);
 
     /**
      * Get the id of domain
