@@ -5,7 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
-import com.microsoft.spring.data.gremlin.exception.IllegalGremlinConfigurationException;
+import com.microsoft.spring.data.gremlin.exception.GremlinIllegalConfigurationException;
 import org.apache.tinkerpop.gremlin.driver.Client;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.ser.Serializers;
@@ -36,7 +36,7 @@ public class GremlinFactory {
         this.gremlinCluster = null;
     }
 
-    private Cluster createGremlinCluster() throws IllegalGremlinConfigurationException {
+    private Cluster createGremlinCluster() throws GremlinIllegalConfigurationException {
         final int port;
         Cluster cluster;
 
@@ -45,7 +45,7 @@ public class GremlinFactory {
             cluster = Cluster.build(this.endpoint).serializer(Serializers.DEFAULT_RESULT_SERIALIZER)
                     .credentials(this.username, this.password).enableSsl(true).port(port).create();
         } catch (IllegalArgumentException e) {
-            throw new IllegalGremlinConfigurationException("Invalid configuration of Gremlin", e);
+            throw new GremlinIllegalConfigurationException("Invalid configuration of Gremlin", e);
         }
 
         return cluster;
