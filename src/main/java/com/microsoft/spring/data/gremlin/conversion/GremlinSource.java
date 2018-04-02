@@ -54,4 +54,9 @@ public interface GremlinSource {
      * do the real write from domain to GremlinSource
      */
     void doGremlinSourceWrite(Object domain, MappingGremlinConverter converter);
+
+    /**
+     * return the GremlinScript
+     */
+    GremlinScript<String> getGremlinScriptLiteral();
 }

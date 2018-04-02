@@ -10,7 +10,6 @@ import com.microsoft.spring.data.gremlin.conversion.*;
 import com.microsoft.spring.data.gremlin.exception.GremlinInsertionException;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import org.apache.tinkerpop.gremlin.driver.Client;
-import org.apache.tinkerpop.gremlin.driver.exception.ResponseException;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -42,15 +41,18 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T insert(T object) {
         final Client client = this.gremlinFactory.getGremlinClient();
         final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
         final GremlinSource source = information.getGremlinSource();
-        final GremlinScriptFactory scriptFactory = information.getGremlinScriptFactory();
+        final GremlinScript<String> script = source.getGremlinScriptLiteral();
+
+        source.doGremlinSourceWrite(object, this.mappingConverter);
 
         try {
-            client.submit(scriptFactory.createGremlinScript().generateScript(source)).all().join();
-        } catch (ResponseException e) {
+            client.submit(script.generateScript(source)).all().join();
+        } catch (RuntimeException e) {
             final String typeName = object.getClass().getName();
             throw new GremlinInsertionException(String.format("unable to insert type %s from gremlin", typeName), e);
         }

@@ -5,7 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.conversion;
 
-public class GremlinSourceVertex extends BasicGremlinSource<String> {
+public class GremlinSourceVertex extends BasicGremlinSource {
 
     public GremlinSourceVertex() {
         super();
