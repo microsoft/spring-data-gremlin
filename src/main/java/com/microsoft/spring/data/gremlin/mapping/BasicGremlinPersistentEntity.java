@@ -14,12 +14,12 @@ import org.springframework.data.mapping.model.BasicPersistentEntity;
 import org.springframework.data.util.TypeInformation;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
-public class BasicGremlinPersistentEnity<T> extends BasicPersistentEntity<T, GremlinPersistentProperty>
+public class BasicGremlinPersistentEntity<T> extends BasicPersistentEntity<T, GremlinPersistentProperty>
         implements GremlinPersistentEntity<T>, ApplicationContextAware {
 
     private final StandardEvaluationContext context;
 
-    public BasicGremlinPersistentEnity(TypeInformation<T> information) {
+    public BasicGremlinPersistentEntity(TypeInformation<T> information) {
         super(information);
 
         this.context = new StandardEvaluationContext();
