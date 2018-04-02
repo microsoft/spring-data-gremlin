@@ -39,12 +39,12 @@ public class BasicGremlinSource<T> implements GremlinSource {
         this.setWriter(writer);
     }
 
-    public T generateGremlinScript() {
+    public T doGremlinScriptGenerate() {
         return this.script.generateScript(this);
     }
 
-    public void doGremlinSourceWrite(Object domain) {
-        this.writer.writeEnityToGremlinSource(domain.getClass(), this);
+    public void doGremlinSourceWrite(@NonNull Object domain, @NonNull MappingGremlinConverter converter) {
+        this.writer.write(domain.getClass(), converter, this);
     }
 
     private boolean hasProperty(String key) {
@@ -60,3 +60,4 @@ public class BasicGremlinSource<T> implements GremlinSource {
         }
     }
 }
+
