@@ -16,6 +16,12 @@ public class Constants {
     public static final String DEFAULT_EDGE_LABEL = "";
     public static final String DEFAULT_COLLECTION_NAME = "";
     public static final String DEFAULT_ENDPOINT_PORT = "443";
+    public static final String DEFAULT_REPOSITORY_IMPLEMENT_POSTFIX = "Impl";
+    public static final String DEFAULT_NAMED_QUERIES_LOCATION = "";
+
+    public static final String GREMLIN_MODULE_NAME = "Gremlin";
+    public static final String GREMLIN_MODULE_PREFIX = "gremlin";
+    public static final String GREMLIN_MAPPING_CONTEXT = "gremlinMappingContext";
 
     public static final String GREMLIN_PRIMITIVE_GRAPH = "g";
     public static final String GREMLIN_PRIMITIVE_INVOKE = ".";
