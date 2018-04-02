@@ -7,16 +7,15 @@ package com.microsoft.spring.data.gremlin.conversion;
 
 import com.microsoft.spring.data.gremlin.common.Constants;
 import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.util.Assert;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 import java.util.Map;
 
 public abstract class GremlinScriptPropertiesLiteral {
 
-    protected void generateGremlinScriptProperties(List<String> scriptList, final Map<String, Object> properties) {
-        Assert.notNull(scriptList, "scriptList should not be null");
-        Assert.notNull(properties, "properties should not be null");
+    protected void generateGremlinScriptProperties(@NonNull List<String> scriptList,
+                                                   @NonNull final Map<String, Object> properties) {
 
         for (final Map.Entry<String, Object> entry : properties.entrySet()) {
             final String name = entry.getKey();

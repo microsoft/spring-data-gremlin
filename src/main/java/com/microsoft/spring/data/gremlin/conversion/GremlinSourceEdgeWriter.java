@@ -25,8 +25,6 @@ public class GremlinSourceEdgeWriter extends BasicGremlinSourceWriter implements
 
     @SuppressWarnings("unchecked")
     private String getPersistentEntityId(@NonNull Class<?> domainClass) {
-        Assert.notNull(domainClass, "domain class should not be null");
-
         final GremlinEntityInformation entityInformation = new GremlinEntityInformation(domainClass);
 
         return entityInformation.getIdField().toString();
