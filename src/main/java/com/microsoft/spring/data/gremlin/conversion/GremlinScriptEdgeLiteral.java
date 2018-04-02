@@ -6,9 +6,10 @@
 package com.microsoft.spring.data.gremlin.conversion;
 
 import com.microsoft.spring.data.gremlin.common.Constants;
+import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeException;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.springframework.util.Assert;
+import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,10 @@ public class GremlinScriptEdgeLiteral extends GremlinScriptPropertiesLiteral imp
 
     @Override
     public String generateScript(@NonNull GremlinSource source) {
+        if (source instanceof GremlinSourceEdge) {
+            throw new UnexpectedGremlinSourceTypeException("should be the instance of GremlinSourceEdge");
+        }
+
         final List<String> scriptList = new ArrayList<>();
         final String label = source.getLabel();
         final String id = source.getId();
@@ -27,7 +32,6 @@ public class GremlinScriptEdgeLiteral extends GremlinScriptPropertiesLiteral imp
         Assert.notNull(label, "label should not be null");
         Assert.notNull(id, "id should not be null");
         Assert.notNull(properties, "properties should not be null");
-        Assert.isTrue(source instanceof GremlinSourceEdge, "should be edge extend from GremlinSource");
 
         final GremlinSourceEdge sourceEdge = (GremlinSourceEdge) source;
         final String vertexIdFrom = sourceEdge.getVertexIdFrom();

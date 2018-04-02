@@ -9,7 +9,6 @@ import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeEx
 import lombok.Getter;
 import lombok.Setter;
 
-import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.List;
 

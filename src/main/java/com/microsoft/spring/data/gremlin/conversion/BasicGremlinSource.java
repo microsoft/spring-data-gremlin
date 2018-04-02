@@ -7,8 +7,8 @@ package com.microsoft.spring.data.gremlin.conversion;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
+import org.springframework.lang.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;

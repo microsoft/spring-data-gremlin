@@ -6,20 +6,16 @@
 package com.microsoft.spring.data.gremlin.query;
 
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
-import com.microsoft.spring.data.gremlin.conversion.GremlinScriptFactory;
-import com.microsoft.spring.data.gremlin.conversion.GremlinSource;
+import com.microsoft.spring.data.gremlin.conversion.*;
 import com.microsoft.spring.data.gremlin.exception.GremlinInsertionException;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import org.apache.tinkerpop.gremlin.driver.Client;
-import org.apache.tinkerpop.gremlin.driver.Result;
 import org.apache.tinkerpop.gremlin.driver.exception.ResponseException;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
 
-import java.util.List;
 
 public class GremlinTemplate implements GremlinOperations, ApplicationContextAware {
 
