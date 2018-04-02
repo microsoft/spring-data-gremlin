@@ -13,8 +13,11 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.data.convert.EntityConverter;
+import org.springframework.data.mapping.PersistentPropertyAccessor;
 import org.springframework.data.mapping.context.MappingContext;
+import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
 
 public class MappingGremlinConverter
         implements EntityConverter<GremlinPersistentEntity<?>, GremlinPersistentProperty, Object, GremlinSource>,
@@ -58,6 +61,19 @@ public class MappingGremlinConverter
     @Override
     public void write(@NonNull Object domain, @NonNull GremlinSource source) {
         throw new NotImplementedException("write method of MappingGremlinConverter not implemented yet");
+    }
+
+    public ConvertingPropertyAccessor getPropertyAccessor(@NonNull Object domain) {
+        final GremlinPersistentEntity<?> persistentEntity = this.getPersistentEntity(domain);
+        Assert.notNull(persistentEntity, "persistentEntity should not be null");
+
+        final PersistentPropertyAccessor accessor = persistentEntity.getPropertyAccessor(domain);
+
+        return new ConvertingPropertyAccessor(accessor, this.conversionService);
+    }
+
+    public GremlinPersistentEntity<?> getPersistentEntity(@NonNull Object domain) {
+        return mappingContext.getPersistentEntity(domain.getClass());
     }
 }
 
