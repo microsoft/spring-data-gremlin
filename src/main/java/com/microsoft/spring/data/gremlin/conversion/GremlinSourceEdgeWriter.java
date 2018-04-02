@@ -9,6 +9,7 @@ import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
 import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
 import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
+import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.lang.NonNull;
@@ -18,16 +19,17 @@ import java.lang.reflect.Field;
 
 public class GremlinSourceEdgeWriter extends BasicGremlinSourceWriter implements GremlinSourceWriter {
 
-    public GremlinSourceEdgeWriter(@NonNull Object domain) {
-        super(domain);
+    public GremlinSourceEdgeWriter(@NonNull Class<?> domainClass) {
+        super(domainClass);
     }
 
-    private String getPersistentEntityId(Object domain) {
-        Assert.notNull(domain, "domain class should not be null");
+    @SuppressWarnings("unchecked")
+    private String getPersistentEntityId(@NonNull Class<?> domainClass) {
+        Assert.notNull(domainClass, "domain class should not be null");
 
-        final GremlinEntityInformation entityInformation = new GremlinEntityInformation(domain);
+        final GremlinEntityInformation entityInformation = new GremlinEntityInformation(domainClass);
 
-        return entityInfo.getIdField().toString();
+        return entityInformation.getIdField().toString();
     }
 
     @Override
@@ -51,10 +53,10 @@ public class GremlinSourceEdgeWriter extends BasicGremlinSourceWriter implements
             if (field.getName().equals(Constants.PROPERTY_ID)) {
                 continue;
             } else if (field.getAnnotatedType().getType() == EdgeFrom.class) {
-                sourceEdge.setVertexIdFrom(this.getPersistentEntityId(object));
+                sourceEdge.setVertexIdFrom(this.getPersistentEntityId(object.getClass()));
                 continue;
             } else if (field.getAnnotatedType().getType() == EdgeTo.class) {
-                sourceEdge.setVertexIdTo(this.getPersistentEntityId(object));
+                sourceEdge.setVertexIdTo(this.getPersistentEntityId(object.getClass()));
                 continue;
             }
 
@@ -62,3 +64,4 @@ public class GremlinSourceEdgeWriter extends BasicGremlinSourceWriter implements
         }
     }
 }
+
