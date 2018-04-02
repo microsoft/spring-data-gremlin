@@ -49,4 +49,9 @@ public interface GremlinSource {
      * @return will never be null
      */
     Map<String, Object> getProperties();
+
+    /**
+     * do the real write from domain to GremlinSource
+     */
+    void doGremlinSourceWrite(Object domain, MappingGremlinConverter converter);
 }
