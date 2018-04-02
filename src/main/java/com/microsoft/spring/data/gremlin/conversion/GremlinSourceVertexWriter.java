@@ -16,8 +16,8 @@ import java.lang.reflect.Field;
 
 public class GremlinSourceVertexWriter extends BasicGremlinSourceWriter implements GremlinSourceWriter {
 
-    public GremlinSourceVertexWriter(@NonNull Object domain) {
-        super(domain);
+    public GremlinSourceVertexWriter(@NonNull Class<?> domainClass) {
+        super(domainClass);
     }
 
     @Override
@@ -43,3 +43,4 @@ public class GremlinSourceVertexWriter extends BasicGremlinSourceWriter implemen
         }
     }
 }
+
