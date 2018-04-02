@@ -8,7 +8,7 @@ package com.microsoft.spring.data.gremlin.conversion;
 import lombok.Getter;
 import lombok.Setter;
 
-public class GremlinSourceEdge extends BasicGremlinSource<String> {
+public class GremlinSourceEdge extends BasicGremlinSource {
 
     @Getter
     @Setter
