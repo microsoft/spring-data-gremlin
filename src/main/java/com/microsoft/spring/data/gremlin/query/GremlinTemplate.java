@@ -32,6 +32,10 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         this.context = context;
     }
 
+    public ApplicationContext getApplicationContext() {
+        return this.context;
+    }
+
     @Override
     public void deleteAll() {
         final Client client = this.gremlinFactory.getGremlinClient();

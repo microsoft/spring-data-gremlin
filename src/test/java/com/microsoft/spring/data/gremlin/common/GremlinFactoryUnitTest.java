@@ -14,7 +14,7 @@ public class GremlinFactoryUnitTest {
 
     @Test(expected = GremlinIllegalConfigurationException.class)
     public void testGremlinFactoryException() {
-        GremlinFactory factory = new GremlinFactory(TestConstants.FAKE_ENDPOINT, null,
+        final GremlinFactory factory = new GremlinFactory(TestConstants.FAKE_ENDPOINT, null,
                 TestConstants.FAKE_USERNAME, TestConstants.FAKE_PASSWORD);
 
         factory.getGremlinClient();

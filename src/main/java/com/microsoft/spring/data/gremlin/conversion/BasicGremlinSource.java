@@ -31,10 +31,13 @@ public class BasicGremlinSource implements GremlinSource {
         this.properties = new HashMap<>();
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
     public void setGremlinScriptStrategy(@NonNull GremlinScript script) {
         this.setScriptLiteral(script);
     }
 
+    @Override
     public void setGremlinSourceWriter(@NonNull GremlinSourceWriter writer) {
         this.setWriter(writer);
     }

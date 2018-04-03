@@ -59,4 +59,14 @@ public interface GremlinSource {
      * return the GremlinScript
      */
     GremlinScript<String> getGremlinScriptLiteral();
+
+    /**
+     * Set the script Strategy of GremlinSource
+     */
+    void setGremlinScriptStrategy(GremlinScript script);
+
+    /**
+     * Set the SourceWriter of GremlinSource
+     */
+    void setGremlinSourceWriter(GremlinSourceWriter writer);
 }

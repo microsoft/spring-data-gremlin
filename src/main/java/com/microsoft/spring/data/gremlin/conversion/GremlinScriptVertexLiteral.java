@@ -20,7 +20,7 @@ public class GremlinScriptVertexLiteral extends GremlinScriptPropertiesLiteral i
 
     @Override
     public String generateScript(@NonNull GremlinSource source) {
-        if (source instanceof GremlinSourceVertex) {
+        if (!(source instanceof GremlinSourceVertex)) {
             throw new UnexpectedGremlinSourceTypeException("should be the instance of GremlinSourceVertex");
         }
 

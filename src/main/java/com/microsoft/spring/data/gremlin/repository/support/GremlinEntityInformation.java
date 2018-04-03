@@ -153,15 +153,6 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
         return label;
     }
 
-    private GremlinSource getGremlinSourceSpecific(@NonNull GremlinScript script, @NonNull GremlinSourceWriter writer) {
-        GremlinSourceVertex source = new GremlinSourceVertex();
-
-        source.setGremlinScriptStrategy(script);
-        source.setGremlinSourceWriter(writer);
-
-        return source;
-    }
-
     private GremlinSource getGremlinSource(@NonNull Class<T> domainClass) {
         final GremlinSource source;
         final GremlinScript script;
@@ -169,25 +160,28 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
 
         switch (this.entityType) {
             case VERTEX:
+                source = new GremlinSourceVertex();
                 script = new GremlinScriptVertexLiteral();
                 writer = new GremlinSourceVertexWriter(domainClass);
-                source = this.getGremlinSourceSpecific(script, writer);
                 break;
             case EDGE:
+                source = new GremlinSourceEdge();
                 script = new GremlinScriptEdgeLiteral();
                 writer = new GremlinSourceEdgeWriter(domainClass);
-                source = this.getGremlinSourceSpecific(script, writer);
                 break;
             case GRAPH:
+                source = new GremlinSourceGraph();
                 script = new GremlinScriptGraphLiteral();
                 writer = new GremlinSourceGraphWriter(domainClass);
-                source = this.getGremlinSourceSpecific(script, writer);
                 break;
             case UNKNOWN:
                 // fallthrough
             default:
                 throw new IllegalArgumentException("Unexpected gremlin entity type");
         }
+
+        source.setGremlinScriptStrategy(script);
+        source.setGremlinSourceWriter(writer);
 
         return source;
     }
