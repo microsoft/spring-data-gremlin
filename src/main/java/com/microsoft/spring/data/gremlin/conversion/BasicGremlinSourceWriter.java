@@ -12,11 +12,12 @@ public class BasicGremlinSourceWriter {
 
     private GremlinEntityInformation entityInformation;
 
+    @SuppressWarnings("unchecked")
     public BasicGremlinSourceWriter(@NonNull Class<?> domainClass) {
         this.entityInformation = new GremlinEntityInformation(domainClass);
     }
 
-    protected String getPersistentEntityId() {
+    String getPersistentEntityId() {
         return this.entityInformation.getIdField().toString();
     }
 
@@ -24,7 +25,7 @@ public class BasicGremlinSourceWriter {
         return this.entityInformation.getIdField().toString();
     }
 
-    protected void setGremlinSourceReserved(@NonNull GremlinSource source) {
+    void setGremlinSourceReserved(@NonNull GremlinSource source) {
 
         source.setId(this.getPersistentEntityId());
         source.setLabel(this.getPersistentEntityLabel());

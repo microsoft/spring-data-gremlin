@@ -6,6 +6,7 @@
 package com.microsoft.spring.data.gremlin.repository.config;
 
 import com.microsoft.spring.data.gremlin.common.Constants;
+import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import com.microsoft.spring.data.gremlin.repository.GremlinRepository;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;

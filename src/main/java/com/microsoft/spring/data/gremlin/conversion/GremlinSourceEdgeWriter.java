@@ -38,7 +38,7 @@ public class GremlinSourceEdgeWriter extends BasicGremlinSourceWriter implements
 
         super.setGremlinSourceReserved(source);
 
-        GremlinSourceEdge sourceEdge = (GremlinSourceEdge) source;
+        final GremlinSourceEdge sourceEdge = (GremlinSourceEdge) source;
         final GremlinPersistentEntity<?> persistentEntity = converter.getPersistentEntity(domain.getClass());
         final ConvertingPropertyAccessor accessor = converter.getPropertyAccessor(domain);
 

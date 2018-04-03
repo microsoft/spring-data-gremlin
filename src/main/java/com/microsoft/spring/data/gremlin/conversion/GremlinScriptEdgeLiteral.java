@@ -20,7 +20,7 @@ public class GremlinScriptEdgeLiteral extends GremlinScriptPropertiesLiteral imp
 
     @Override
     public String generateScript(@NonNull GremlinSource source) {
-        if (source instanceof GremlinSourceEdge) {
+        if (!(source instanceof GremlinSourceEdge)) {
             throw new UnexpectedGremlinSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 

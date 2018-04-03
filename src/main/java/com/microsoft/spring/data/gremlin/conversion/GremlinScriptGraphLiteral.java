@@ -7,8 +7,8 @@ package com.microsoft.spring.data.gremlin.conversion;
 
 import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeException;
-import org.springframework.lang.NonNull;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +17,12 @@ import java.util.List;
 public class GremlinScriptGraphLiteral implements GremlinScript<String> {
 
     private String trimScriptHead(@NonNull String script) {
-        return script.replaceFirst(Constants.GREMLIN_SCRIPT_HEAD, "") ;
+        return script.replaceFirst(Constants.GREMLIN_SCRIPT_HEAD, "");
     }
 
     @Override
     public String generateScript(@NonNull GremlinSource source) {
-        if (source instanceof GremlinSourceGraph) {
+        if (!(source instanceof GremlinSourceGraph)) {
             throw new UnexpectedGremlinSourceTypeException("should be the instance of GremlinSourceGraph");
         }
 
@@ -32,12 +32,12 @@ public class GremlinScriptGraphLiteral implements GremlinScript<String> {
         scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
 
         for (final GremlinSource vertex : sourceGraph.getVertexSet()) {
-            String vertexScript = new GremlinScriptVertexLiteral().generateScript(vertex);
+            final String vertexScript = new GremlinScriptVertexLiteral().generateScript(vertex);
             scriptList.add(this.trimScriptHead(vertexScript));
         }
 
         for (final GremlinSource edge: sourceGraph.getEdgeSet()) {
-            String edgeScript = new GremlinScriptEdgeLiteral().generateScript(edge);
+            final String edgeScript = new GremlinScriptEdgeLiteral().generateScript(edge);
             scriptList.add(this.trimScriptHead(edgeScript));
         }
 
