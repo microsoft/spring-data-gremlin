@@ -40,28 +40,18 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
         return this.entityType;
     }
 
-    public Field getIdField() {
-        return this.id;
-    }
-
     public GremlinSource getGremlinSource() {
         return this.gremlinSource;
     }
 
-    public boolean isEdgeEntity() {
-        return this.entityType == GremlinEntityType.EDGE;
-    }
-
-    public boolean isVertexEntity() {
-        return this.entityType == GremlinEntityType.VERTEX;
-    }
-
-    public boolean isGraphEntity() {
-        return this.entityType == GremlinEntityType.GRAPH;
-    }
-
+    @NonNull
     public String getEntityLabel() {
         return this.entityLabel;
+    }
+
+    @NonNull
+    public Field getIdField() {
+        return this.id;
     }
 
     @Override
@@ -162,17 +152,17 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
             case VERTEX:
                 source = new GremlinSourceVertex();
                 script = new GremlinScriptVertexLiteral();
-                writer = new GremlinSourceVertexWriter(domainClass);
+                writer = new GremlinSourceVertexWriter(this.getIdField(), this.getEntityLabel());
                 break;
             case EDGE:
                 source = new GremlinSourceEdge();
                 script = new GremlinScriptEdgeLiteral();
-                writer = new GremlinSourceEdgeWriter(domainClass);
+                writer = new GremlinSourceEdgeWriter(this.getIdField(), this.getEntityLabel());
                 break;
             case GRAPH:
                 source = new GremlinSourceGraph();
                 script = new GremlinScriptGraphLiteral();
-                writer = new GremlinSourceGraphWriter(domainClass);
+                writer = new GremlinSourceGraphWriter(this.getIdField(), this.getEntityLabel());
                 break;
             case UNKNOWN:
                 // fallthrough

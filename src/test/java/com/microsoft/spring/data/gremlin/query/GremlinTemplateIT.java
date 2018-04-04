@@ -15,7 +15,6 @@ import com.microsoft.spring.data.gremlin.common.domain.Relationship;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import org.apache.commons.lang3.NotImplementedException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,11 +87,6 @@ public class GremlinTemplateIT {
         this.network.edgeAdd(this.relationship2);
 
         this.template.insert(this.network);
-    }
-
-    @After
-    public void cleanup() {
-        this.template.deleteAll();
     }
 
     @Test

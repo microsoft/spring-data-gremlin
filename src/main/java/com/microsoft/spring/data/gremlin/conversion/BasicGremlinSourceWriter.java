@@ -5,30 +5,32 @@
  */
 package com.microsoft.spring.data.gremlin.conversion;
 
-import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.lang.NonNull;
+
+import java.lang.reflect.Field;
+
 
 public class BasicGremlinSourceWriter {
 
-    private GremlinEntityInformation entityInformation;
+    @Setter
+    @Getter
+    private Field entityId;
 
-    @SuppressWarnings("unchecked")
-    public BasicGremlinSourceWriter(@NonNull Class<?> domainClass) {
-        this.entityInformation = new GremlinEntityInformation(domainClass);
+    @Setter
+    @Getter
+    private String entityLabel;
+
+    public BasicGremlinSourceWriter(@NonNull Field id, @NonNull String label) {
+        this.setEntityId(id);
+        this.setEntityLabel(label);
     }
 
-    String getPersistentEntityId() {
-        return this.entityInformation.getIdField().toString();
-    }
+    String getEntityIdValue(@NonNull Object domain, @NonNull MappingGremlinConverter converter) {
+        final Object id = converter.getFieldValue(domain, this.getEntityId());
 
-    private String getPersistentEntityLabel() {
-        return this.entityInformation.getIdField().toString();
-    }
-
-    void setGremlinSourceReserved(@NonNull GremlinSource source) {
-
-        source.setId(this.getPersistentEntityId());
-        source.setLabel(this.getPersistentEntityLabel());
+        return id.toString();
     }
 }
 

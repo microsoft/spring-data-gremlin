@@ -52,7 +52,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final GremlinSource source = information.getGremlinSource();
         final GremlinScript<String> script = source.getGremlinScriptLiteral();
 
-        source.doGremlinSourceWrite(object, this.mappingConverter);
+        this.mappingConverter.write(object, source);
 
         try {
             client.submit(script.generateScript(source)).all().join();

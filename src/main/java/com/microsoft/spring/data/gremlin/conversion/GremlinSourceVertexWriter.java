@@ -6,6 +6,7 @@
 package com.microsoft.spring.data.gremlin.conversion;
 
 import com.microsoft.spring.data.gremlin.common.Constants;
+import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
@@ -16,19 +17,20 @@ import java.lang.reflect.Field;
 
 public class GremlinSourceVertexWriter extends BasicGremlinSourceWriter implements GremlinSourceWriter {
 
-    public GremlinSourceVertexWriter(@NonNull Class<?> domainClass) {
-        super(domainClass);
+    public GremlinSourceVertexWriter(@NonNull Field idField, @NonNull String label) {
+        super(idField, label);
     }
 
     @Override
     public void write(Object domain, MappingGremlinConverter converter, GremlinSource source) {
-        if (domain == null || converter == null || source == null || source instanceof GremlinSourceVertex) {
-            throw new IllegalArgumentException("Invalid argument of write method");
+        if (!(source instanceof GremlinSourceVertex)) {
+            throw new UnexpectedGremlinSourceTypeException("should be the instance of GremlinSourceVertex");
         }
 
-        super.setGremlinSourceReserved(source);
+        source.setId(super.getEntityIdValue(domain, converter));
+        source.setLabel(super.getEntityLabel());
 
-        final GremlinPersistentEntity<?> persistentEntity = converter.getPersistentEntity(domain.getClass());
+        final GremlinPersistentEntity<?> persistentEntity = converter.getPersistentEntity(domain);
         final ConvertingPropertyAccessor accessor = converter.getPropertyAccessor(domain);
 
         for (final Field field : domain.getClass().getDeclaredFields()) {
