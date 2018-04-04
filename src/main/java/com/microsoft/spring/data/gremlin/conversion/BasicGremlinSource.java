@@ -8,7 +8,9 @@ package com.microsoft.spring.data.gremlin.conversion;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.tinkerpop.gremlin.driver.Result;
 import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +27,10 @@ public class BasicGremlinSource implements GremlinSource {
     private GremlinScript<String> scriptLiteral;
 
     @Setter(AccessLevel.PRIVATE)
-    private GremlinSourceWriter writer;
+    private GremlinSourceWriter sourceWriter;
+
+    @Setter(AccessLevel.PRIVATE)
+    private GremlinResultReader resultReader;
 
     public BasicGremlinSource() {
         this.properties = new HashMap<>();
@@ -39,7 +44,12 @@ public class BasicGremlinSource implements GremlinSource {
 
     @Override
     public void setGremlinSourceWriter(@NonNull GremlinSourceWriter writer) {
-        this.setWriter(writer);
+        this.setSourceWriter(writer);
+    }
+
+    @Override
+    public void setGremlinResultReader(@NonNull GremlinResultReader reader) {
+        this.setResultReader(reader);
     }
 
     @Override
@@ -49,7 +59,16 @@ public class BasicGremlinSource implements GremlinSource {
 
     @Override
     public void doGremlinSourceWrite(@NonNull Object domain, @NonNull MappingGremlinConverter converter) {
-        this.writer.write(domain, converter, this);
+        Assert.notNull(this.sourceWriter, "the sourceWriter must be set before do writing");
+
+        this.sourceWriter.write(domain.getClass(), converter, this);
+    }
+
+    @Override
+    public void doGremlinResultRead(@NonNull Result result) {
+        Assert.notNull(this.resultReader, "the resultReader must be set before do reading");
+
+        this.resultReader.read(result, this);
     }
 
     private boolean hasProperty(String key) {
