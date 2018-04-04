@@ -5,9 +5,17 @@
  */
 package com.microsoft.spring.data.gremlin.conversion;
 
+import org.springframework.lang.NonNull;
+
 public class GremlinSourceVertex extends BasicGremlinSource {
 
     public GremlinSourceVertex() {
         super();
+    }
+
+    public GremlinSourceVertex(@NonNull String id, @NonNull GremlinResultReader reader) {
+        super();
+        super.setId(id);
+        super.setGremlinResultReader(reader);
     }
 }
