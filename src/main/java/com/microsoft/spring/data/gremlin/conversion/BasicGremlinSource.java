@@ -49,7 +49,7 @@ public class BasicGremlinSource implements GremlinSource {
 
     @Override
     public void doGremlinSourceWrite(@NonNull Object domain, @NonNull MappingGremlinConverter converter) {
-        this.writer.write(domain.getClass(), converter, this);
+        this.writer.write(domain, converter, this);
     }
 
     private boolean hasProperty(String key) {
