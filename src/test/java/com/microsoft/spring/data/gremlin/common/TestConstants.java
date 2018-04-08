@@ -52,4 +52,11 @@ public class TestConstants {
     public static final String EDGE_RELATIONSHIP_2_ID = "555555";
     public static final String EDGE_RELATIONSHIP_2_NAME = "create";
     public static final String EDGE_RELATIONSHIP_2_LOCATION = "shanghai";
+
+    public static final String LIBC_ID = "1028";
+    public static final String LIBC_NAME = "libc";
+    public static final String LIBM_ID = "7243";
+    public static final String LIBM_NAME = "libm";
+    public static final String DEPENDENCY_ID = "27432";
+    public static final String DEPENDENCY_NAME = "dynamic link";
 }
