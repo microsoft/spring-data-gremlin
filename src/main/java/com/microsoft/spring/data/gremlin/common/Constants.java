@@ -11,6 +11,14 @@ public class Constants {
     }
 
     public static final String PROPERTY_ID = "id";
+    public static final String PROPERTY_LABEL = "label";
+    public static final String PROPERTY_TYPE = "type";
+    public static final String PROPERTY_PROPERTIES = "properties";
+    public static final String PROPERTY_INV = "inV";
+    public static final String PROPERTY_OUTV = "outV";
+
+    public static final String RESULT_TYPE_VERTEX = "vertex";
+    public static final String RESULT_TYPE_EDGE = "edge";
 
     public static final String DEFAULT_VERTEX_LABEL = "";
     public static final String DEFAULT_EDGE_LABEL = "";
@@ -27,6 +35,7 @@ public class Constants {
     public static final String GREMLIN_PRIMITIVE_INVOKE = ".";
     public static final String GREMLIN_PRIMITIVE_DROP = "drop()";
 
+    public static final String GREMLIN_PRIMITIVE_EDGE = "E('%s')";
     public static final String GREMLIN_PRIMITIVE_EDGE_ALL = "E()";
     public static final String GREMLIN_PRIMITIVE_ADD_EDGE = "addE('%s')";
 
