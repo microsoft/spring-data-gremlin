@@ -16,7 +16,7 @@ public class BasicGremlinResultReader {
 
     void readResultProperties(@NonNull Map<String, Object> properties, @NonNull GremlinSource source) {
 
-        Assert.isTrue(source.getProperties().isEmpty(), "should be empty Gremlinsource");
+        Assert.isTrue(source.getProperties().isEmpty(), "should be empty GremlinSource");
 
         for (final Map.Entry<String, Object> entry : properties.entrySet()) {
             final String name = entry.getKey();

@@ -13,4 +13,6 @@ public interface GremlinOperations {
     void deleteAll();
 
     <T> T insert(T object);
+
+    <T> T findVertexById(Object id, Class<T> domainClass);
 }

@@ -5,7 +5,9 @@
  */
 package com.microsoft.spring.data.gremlin.exception;
 
-public class GremlinEntityInformationException extends IllegalStateException {
+import org.springframework.dao.TypeMismatchDataAccessException;
+
+public class GremlinEntityInformationException extends TypeMismatchDataAccessException {
 
     public GremlinEntityInformationException(String msg) {
         super(msg);
