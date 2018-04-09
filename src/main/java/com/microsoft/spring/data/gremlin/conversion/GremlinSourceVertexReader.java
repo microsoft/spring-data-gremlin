@@ -29,11 +29,10 @@ public class GremlinSourceVertexReader implements GremlinSourceReader {
         }
 
         final T domain = GremlinUtils.createInstance(type);
-
         final ConvertingPropertyAccessor accessor = converter.getPropertyAccessor(domain);
         final GremlinPersistentEntity persistentEntity = converter.getPersistentEntity(type);
 
-        for (final Field field: type.getDeclaredFields()) {
+        for (final Field field : type.getDeclaredFields()) {
             final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
             Assert.notNull(property, "persistence property should not be null");
 
