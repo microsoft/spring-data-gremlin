@@ -5,9 +5,10 @@
  */
 package com.microsoft.spring.data.gremlin.exception;
 
+import org.springframework.dao.TypeMismatchDataAccessException;
 import org.springframework.lang.Nullable;
 
-public class UnexpectedGremlinSourceTypeException extends IllegalStateException {
+public class UnexpectedGremlinSourceTypeException extends TypeMismatchDataAccessException {
 
     public UnexpectedGremlinSourceTypeException(String msg) {
         super(msg);
