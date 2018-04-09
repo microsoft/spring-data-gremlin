@@ -33,7 +33,7 @@ public class GremlinSourceEdgeWriter extends BasicGremlinSourceWriter implements
         source.setLabel(super.getEntityLabel());
 
         final GremlinSourceEdge sourceEdge = (GremlinSourceEdge) source;
-        final GremlinPersistentEntity<?> persistentEntity = converter.getPersistentEntity(domain);
+        final GremlinPersistentEntity<?> persistentEntity = converter.getPersistentEntity(domain.getClass());
         final ConvertingPropertyAccessor accessor = converter.getPropertyAccessor(domain);
 
         for (final Field field : domain.getClass().getDeclaredFields()) {
