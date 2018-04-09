@@ -30,7 +30,7 @@ public class GremlinSourceVertexWriter extends BasicGremlinSourceWriter implemen
         source.setId(super.getEntityIdValue(domain, converter));
         source.setLabel(super.getEntityLabel());
 
-        final GremlinPersistentEntity<?> persistentEntity = converter.getPersistentEntity(domain);
+        final GremlinPersistentEntity<?> persistentEntity = converter.getPersistentEntity(domain.getClass());
         final ConvertingPropertyAccessor accessor = converter.getPropertyAccessor(domain);
 
         for (final Field field : domain.getClass().getDeclaredFields()) {

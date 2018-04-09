@@ -61,7 +61,7 @@ public class BasicGremlinSource implements GremlinSource {
     public void doGremlinSourceWrite(@NonNull Object domain, @NonNull MappingGremlinConverter converter) {
         Assert.notNull(this.sourceWriter, "the sourceWriter must be set before do writing");
 
-        this.sourceWriter.write(domain.getClass(), converter, this);
+        this.sourceWriter.write(domain, converter, this);
     }
 
     @Override
