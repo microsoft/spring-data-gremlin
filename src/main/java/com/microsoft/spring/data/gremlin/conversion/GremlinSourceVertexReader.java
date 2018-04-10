@@ -41,7 +41,9 @@ public class GremlinSourceVertexReader implements GremlinSourceReader {
                 continue;
             }
 
-            accessor.setProperty(property, source.getProperties().get(field.getName()));
+            final Object value = source.getProperties().get(field.getName());
+
+            accessor.setProperty(property, value);
         }
 
         return domain;

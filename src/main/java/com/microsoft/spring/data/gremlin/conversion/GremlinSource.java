@@ -58,6 +58,16 @@ public interface GremlinSource {
     void doGremlinSourceWrite(Object domain, MappingGremlinConverter converter);
 
     /**
+     * do the real reading from Result to GremlinSource
+     */
+    void doGremlinResultRead(Result result);
+
+    /**
+     * do the real reading from GremlinSource to domain
+     */
+    <T extends Object> T doGremlinSourceRead(Class<T> type, MappingGremlinConverter converter);
+
+    /**
      * return the GremlinScript
      */
     GremlinScript<String> getGremlinScriptLiteral();
@@ -78,7 +88,7 @@ public interface GremlinSource {
     void setGremlinResultReader(GremlinResultReader reader);
 
     /**
-     * do the real reading from Result to GremlinSource
+     * Set the SourceReader for reading data from GremlinSource to domain
      */
-    void doGremlinResultRead(Result result);
+    void setGremlinSourceReader(GremlinSourceReader reader);
 }

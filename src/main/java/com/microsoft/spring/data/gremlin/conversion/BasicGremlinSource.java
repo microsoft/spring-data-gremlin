@@ -30,6 +30,9 @@ public class BasicGremlinSource implements GremlinSource {
     private GremlinSourceWriter sourceWriter;
 
     @Setter(AccessLevel.PRIVATE)
+    private GremlinSourceReader sourceReader;
+
+    @Setter(AccessLevel.PRIVATE)
     private GremlinResultReader resultReader;
 
     public BasicGremlinSource() {
@@ -48,6 +51,11 @@ public class BasicGremlinSource implements GremlinSource {
     }
 
     @Override
+    public void setGremlinSourceReader(@NonNull GremlinSourceReader reader) {
+        this.setSourceReader(reader);
+    }
+
+    @Override
     public void setGremlinResultReader(@NonNull GremlinResultReader reader) {
         this.setResultReader(reader);
     }
@@ -62,6 +70,12 @@ public class BasicGremlinSource implements GremlinSource {
         Assert.notNull(this.sourceWriter, "the sourceWriter must be set before do writing");
 
         this.sourceWriter.write(domain, converter, this);
+    }
+
+    @Override
+    public <T extends Object> T doGremlinSourceRead(@NonNull Class<T> type,
+                                                    @NonNull MappingGremlinConverter converter) {
+        return this.sourceReader.read(type, converter, this);
     }
 
     @Override
