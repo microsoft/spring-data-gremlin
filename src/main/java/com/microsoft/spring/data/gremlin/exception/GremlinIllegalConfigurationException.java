@@ -6,7 +6,6 @@
 package com.microsoft.spring.data.gremlin.exception;
 
 import org.springframework.dao.InvalidDataAccessApiUsageException;
-import org.springframework.lang.Nullable;
 
 public class GremlinIllegalConfigurationException extends InvalidDataAccessApiUsageException {
 
@@ -14,7 +13,7 @@ public class GremlinIllegalConfigurationException extends InvalidDataAccessApiUs
         super(msg);
     }
 
-    public GremlinIllegalConfigurationException(@Nullable String msg, @Nullable Throwable cause) {
+    public GremlinIllegalConfigurationException(String msg, Throwable cause) {
         super(msg, cause);
     }
 }
