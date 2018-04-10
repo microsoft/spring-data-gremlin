@@ -7,6 +7,14 @@ package com.microsoft.spring.data.gremlin.query;
 
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.conversion.*;
+import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultVertexReader;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertexReader;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScript;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptEdgeDropLiteral;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptVertexDropLiteral;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptVertexFindByIdLiteral;
 import com.microsoft.spring.data.gremlin.exception.GremlinFindException;
 import com.microsoft.spring.data.gremlin.exception.GremlinInsertionException;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;

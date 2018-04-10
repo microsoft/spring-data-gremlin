@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.conversion;
 
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentProperty;
 import org.springframework.context.ApplicationContext;
