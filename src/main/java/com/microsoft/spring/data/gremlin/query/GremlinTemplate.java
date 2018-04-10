@@ -74,7 +74,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     public <T> T findVertexById(@NonNull Object id, @NonNull Class<T> domainClass) {
         final Client client = this.gremlinFactory.getGremlinClient();
         final String idValue = id.toString();
-        final GremlinSource source = new GremlinSourceVertex(idValue, new GremlinResultVertexReader());
+        final GremlinSource source = new GremlinSourceVertex(idValue);
         final GremlinScript<String> script = new GremlinScriptVertexFindByIdLiteral();
         final List<Result> results;
 
@@ -88,6 +88,9 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         if (results.isEmpty()) {
             return null;
         }
+
+        source.setGremlinResultReader(new GremlinResultVertexReader());
+        source.setGremlinSourceReader(new GremlinSourceVertexReader());
 
         source.doGremlinResultRead(results.get(0));
         Assert.isTrue(results.size() == 1, "should be only 1 one vertex with given id");

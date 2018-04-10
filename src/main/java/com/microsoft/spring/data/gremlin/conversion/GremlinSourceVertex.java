@@ -13,9 +13,8 @@ public class GremlinSourceVertex extends BasicGremlinSource {
         super();
     }
 
-    public GremlinSourceVertex(@NonNull String id, @NonNull GremlinResultReader reader) {
+    public GremlinSourceVertex(@NonNull String id) {
         super();
         super.setId(id);
-        super.setGremlinResultReader(reader);
     }
 }

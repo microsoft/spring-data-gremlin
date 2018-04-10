@@ -7,7 +7,6 @@ package com.microsoft.spring.data.gremlin.conversion;
 
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentProperty;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.convert.ConversionService;
@@ -58,7 +57,7 @@ public class MappingGremlinConverter
 
     @Override
     public <R extends Object> R read(Class<R> type, @NonNull GremlinSource source) {
-        throw new NotImplementedException("read method of MappingGremlinConverter not implemented yet");
+        return source.doGremlinSourceRead(type, this);
     }
 
     @Override
