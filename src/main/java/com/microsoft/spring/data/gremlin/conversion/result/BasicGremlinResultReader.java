@@ -3,9 +3,10 @@
  * Licensed under the MIT License. See LICENSE in the project root for
  * license information.
  */
-package com.microsoft.spring.data.gremlin.conversion;
+package com.microsoft.spring.data.gremlin.conversion.result;
 
 import com.microsoft.spring.data.gremlin.common.Constants;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;

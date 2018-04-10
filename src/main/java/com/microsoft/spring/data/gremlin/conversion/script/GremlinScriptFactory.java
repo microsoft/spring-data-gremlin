@@ -3,7 +3,7 @@
  * Licensed under the MIT License. See LICENSE in the project root for
  * license information.
  */
-package com.microsoft.spring.data.gremlin.conversion;
+package com.microsoft.spring.data.gremlin.conversion.script;
 
 /**
  * Provider interface to generate different instance of GremlinScript.

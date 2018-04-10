@@ -10,9 +10,9 @@ import com.microsoft.spring.data.gremlin.common.TestConstants;
 import com.microsoft.spring.data.gremlin.common.domain.Network;
 import com.microsoft.spring.data.gremlin.common.domain.Person;
 import com.microsoft.spring.data.gremlin.common.domain.Relationship;
-import com.microsoft.spring.data.gremlin.conversion.GremlinSourceEdge;
-import com.microsoft.spring.data.gremlin.conversion.GremlinSourceGraph;
-import com.microsoft.spring.data.gremlin.conversion.GremlinSourceVertex;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import org.junit.Assert;
 import org.junit.Test;
 

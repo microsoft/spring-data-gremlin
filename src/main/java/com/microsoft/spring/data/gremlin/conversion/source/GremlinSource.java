@@ -3,8 +3,11 @@
  * Licensed under the MIT License. See LICENSE in the project root for
  * license information.
  */
-package com.microsoft.spring.data.gremlin.conversion;
+package com.microsoft.spring.data.gremlin.conversion.source;
 
+import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultReader;
+import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScript;
 import org.apache.tinkerpop.gremlin.driver.Result;
 
 import java.util.Map;
