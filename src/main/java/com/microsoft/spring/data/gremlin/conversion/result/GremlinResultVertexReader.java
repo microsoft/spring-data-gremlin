@@ -3,9 +3,11 @@
  * Licensed under the MIT License. See LICENSE in the project root for
  * license information.
  */
-package com.microsoft.spring.data.gremlin.conversion;
+package com.microsoft.spring.data.gremlin.conversion.result;
 
 import com.microsoft.spring.data.gremlin.common.Constants;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeException;
 import org.apache.tinkerpop.gremlin.driver.Result;
 import org.springframework.lang.NonNull;
