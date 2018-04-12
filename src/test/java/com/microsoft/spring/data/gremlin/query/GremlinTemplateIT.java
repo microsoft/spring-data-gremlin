@@ -15,6 +15,7 @@ import com.microsoft.spring.data.gremlin.common.domain.Relationship;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +26,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.annotation.Persistent;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource(value = {"classpath:application.properties"})
@@ -100,16 +100,16 @@ public class GremlinTemplateIT {
         Person personVertex = this.template.findVertexById(this.person.getId(), Person.class);
         Project projectVertex = this.template.findVertexById(this.project.getId(), Project.class);
 
-        Assert.notNull(personVertex, "personVertex should not be null");
-        Assert.notNull(projectVertex, "projectVertex should not be null");
+        Assert.assertNotNull(personVertex);
+        Assert.assertNotNull(projectVertex);
 
         this.template.deleteAll();
 
         personVertex = this.template.findVertexById(this.person.getId(), Person.class);
         projectVertex = this.template.findVertexById(this.project.getId(), Project.class);
 
-        Assert.isNull(personVertex, "personVertex should be null");
-        Assert.isNull(projectVertex, "projectVertex should be null");
+        Assert.assertNull(personVertex);
+        Assert.assertNull(projectVertex);
 
         // Todo(pan): should add findVertexAll here.
     }

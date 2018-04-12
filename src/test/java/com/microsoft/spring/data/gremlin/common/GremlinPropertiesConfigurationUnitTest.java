@@ -5,13 +5,13 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource("classpath:application.properties")
@@ -23,11 +23,11 @@ public class GremlinPropertiesConfigurationUnitTest {
 
     @Test
     public void testPropertiesConfiguration() {
-        Assert.notNull(this.configuration, "Properties configuration should not be null");
+        Assert.assertNotNull(this.configuration);
 
-        Assert.notNull(this.configuration.getEndpoint(), "Properties endpoint should not be null");
-        Assert.notNull(this.configuration.getPort(), "Properties port should not be null");
-        Assert.notNull(this.configuration.getUsername(), "Properties username should not be null");
-        Assert.notNull(this.configuration.getPassword(), "Properties password should not be null");
+        Assert.assertNotNull(this.configuration.getEndpoint());
+        Assert.assertNotNull(this.configuration.getPort());
+        Assert.assertNotNull(this.configuration.getUsername());
+        Assert.assertNotNull(this.configuration.getPassword());
     }
 }
