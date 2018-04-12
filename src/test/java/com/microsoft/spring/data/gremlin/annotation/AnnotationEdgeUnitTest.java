@@ -8,8 +8,8 @@ package com.microsoft.spring.data.gremlin.annotation;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
 import com.microsoft.spring.data.gremlin.common.domain.*;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
+import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.util.Assert;
 
 public class AnnotationEdgeUnitTest {
 
@@ -22,9 +22,9 @@ public class AnnotationEdgeUnitTest {
 
         final GremlinEntityInformation info = new GremlinEntityInformation(edge.getClass());
 
-        Assert.notNull(info.getEntityLabel(), "entity label should not be null");
-        Assert.isTrue(info.getEntityLabel().equals(edge.getClass().getSimpleName()), "should be default label");
-        Assert.isTrue(info.isEntityEdge(), "should be edge of gremlin");
+        Assert.assertNotNull(info.getEntityLabel());
+        Assert.assertEquals(info.getEntityLabel(), edge.getClass().getSimpleName());
+        Assert.assertTrue(info.isEntityEdge());
     }
 
     @Test
@@ -38,9 +38,8 @@ public class AnnotationEdgeUnitTest {
 
         final GremlinEntityInformation info = new GremlinEntityInformation(edge.getClass());
 
-        Assert.notNull(info.getEntityLabel(), "entity label should not be null");
-        Assert.isTrue(info.getEntityLabel().equals(TestConstants.EDGE_RELATIONSHIP_LABEL), "should be default label");
-        Assert.isTrue(info.isEntityEdge(), "should be edge of gremlin");
+        Assert.assertNotNull(info.getEntityLabel());
+        Assert.assertEquals(info.getEntityLabel(), TestConstants.EDGE_RELATIONSHIP_LABEL);
+        Assert.assertTrue(info.isEntityEdge());
     }
-
 }

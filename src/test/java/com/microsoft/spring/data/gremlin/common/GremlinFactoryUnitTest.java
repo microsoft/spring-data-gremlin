@@ -7,8 +7,8 @@ package com.microsoft.spring.data.gremlin.common;
 
 import com.microsoft.spring.data.gremlin.exception.GremlinIllegalConfigurationException;
 import org.apache.tinkerpop.gremlin.driver.Client;
+import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.util.Assert;
 
 public class GremlinFactoryUnitTest {
 
@@ -29,7 +29,7 @@ public class GremlinFactoryUnitTest {
                 TestConstants.EMPTY_STRING, TestConstants.EMPTY_STRING);
         client = factory.getGremlinClient();
 
-        Assert.isTrue(client.getCluster().getPort() == TestConstants.DEFAULT_ENDPOINT_PORT, "should be default port");
-        Assert.isTrue(!client.getSettings().getSession().isPresent(), "should have no session without remote server");
+        Assert.assertEquals(client.getCluster().getPort(), TestConstants.DEFAULT_ENDPOINT_PORT);
+        Assert.assertFalse(client.getSettings().getSession().isPresent());
     }
 }
