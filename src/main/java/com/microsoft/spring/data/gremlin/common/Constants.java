@@ -5,7 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
-public class Constants {
+public abstract class Constants {
 
     public static final String PROPERTY_ID = "id";
     public static final String PROPERTY_LABEL = "label";
@@ -59,8 +59,4 @@ public class Constants {
             GREMLIN_PRIMITIVE_VERTEX_ALL,
             GREMLIN_PRIMITIVE_DROP
     );
-
-    private Constants() {
-        // Hide default constructor
-    }
 }
