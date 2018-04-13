@@ -109,7 +109,6 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         return this.mappingConverter.read(domainClass, source);
     }
 
-    @SuppressWarnings("unchecked")
     private <T> void completeEdge(@NonNull T domain, @NonNull GremlinSourceEdge source) {
         Assert.isInstanceOf(GremlinSourceEdge.class, source, "should be instance of GremlinSourceEdge");
 
@@ -131,6 +130,8 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         final PersistentProperty propertyFrom = persistentEntity.getPersistentProperty(fromField.getName());
         final PersistentProperty propertyTo = persistentEntity.getPersistentProperty(toField.getName());
+        Assert.notNull(propertyFrom, "persistence property should not be null");
+        Assert.notNull(propertyTo, "persistence property should not be null");
 
         accessor.setProperty(propertyFrom, vertexFrom);
         accessor.setProperty(propertyTo, vertexTo);

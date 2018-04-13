@@ -15,6 +15,7 @@ import com.microsoft.spring.data.gremlin.common.domain.Relationship;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,7 +26,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.annotation.Persistent;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource(value = {"classpath:application.properties"})
@@ -101,9 +101,9 @@ public class GremlinTemplateIT {
         Project projectVertex = this.template.findVertexById(this.project.getId(), Project.class);
         Relationship relationshipEdge = this.template.findEdgeById(this.relationship.getId(), Relationship.class);
 
-        Assert.notNull(personVertex, "personVertex should not be null");
-        Assert.notNull(projectVertex, "projectVertex should not be null");
-        Assert.notNull(relationshipEdge, "relationshipEdge should not be null");
+        Assert.assertNotNull(personVertex);
+        Assert.assertNotNull(projectVertex);
+        Assert.assertNotNull(relationshipEdge);
 
         this.template.deleteAll();
 
@@ -111,9 +111,9 @@ public class GremlinTemplateIT {
         projectVertex = this.template.findVertexById(this.project.getId(), Project.class);
         relationshipEdge = this.template.findEdgeById(this.relationship.getId(), Relationship.class);
 
-        Assert.isNull(personVertex, "personVertex should be null");
-        Assert.isNull(projectVertex, "projectVertex should be null");
-        Assert.isNull(relationshipEdge, "relationshipEdge should be null");
+        Assert.assertNull(personVertex);
+        Assert.assertNull(projectVertex);
+        Assert.assertNull(relationshipEdge);
 
         // Todo(pan): should add findVertexAll here.
     }
