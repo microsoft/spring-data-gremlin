@@ -110,8 +110,6 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     private <T> void completeEdge(@NonNull T domain, @NonNull GremlinSourceEdge source) {
-        Assert.isInstanceOf(GremlinSourceEdge.class, source, "should be instance of GremlinSourceEdge");
-
         final ConvertingPropertyAccessor accessor = this.mappingConverter.getPropertyAccessor(domain);
         final GremlinPersistentEntity persistentEntity = this.mappingConverter.getPersistentEntity(domain.getClass());
 
