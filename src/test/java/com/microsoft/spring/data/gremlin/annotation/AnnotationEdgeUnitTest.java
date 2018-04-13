@@ -19,7 +19,6 @@ public class AnnotationEdgeUnitTest {
         final Library libc = new Library(TestConstants.LIBC_ID, TestConstants.LIBC_NAME);
         final Library libm = new Library(TestConstants.LIBM_ID, TestConstants.LIBM_NAME);
         final Dependency edge = new Dependency(TestConstants.DEPENDENCY_ID, TestConstants.DEPENDENCY_NAME, libc, libm);
-
         final GremlinEntityInformation info = new GremlinEntityInformation(edge.getClass());
 
         Assert.assertNotNull(info.getEntityLabel());
@@ -35,7 +34,6 @@ public class AnnotationEdgeUnitTest {
                 TestConstants.VERTEX_PROJECT_URI);
         final Relationship edge = new Relationship(TestConstants.EDGE_RELATIONSHIP_ID,
                 TestConstants.EDGE_RELATIONSHIP_NAME, TestConstants.EDGE_RELATIONSHIP_LOCATION, person, project);
-
         final GremlinEntityInformation info = new GremlinEntityInformation(edge.getClass());
 
         Assert.assertNotNull(info.getEntityLabel());
