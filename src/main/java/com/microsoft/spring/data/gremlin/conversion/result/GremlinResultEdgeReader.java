@@ -21,6 +21,17 @@ public class GremlinResultEdgeReader extends BasicGremlinResultReader implements
         super();
     }
 
+    private void readProperties(@NonNull Map<String, Object> properties, @NonNull GremlinSource source) {
+        Assert.isTrue(source.getProperties().isEmpty(), "should be empty GremlinSource");
+
+        for (final Map.Entry<String, Object> entry : properties.entrySet()) {
+            final String name = entry.getKey();
+            final Object value = entry.getValue();
+
+            source.setProperty(name, value);
+        }
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public void read(@NonNull Result result, @NonNull GremlinSource source) {
@@ -43,12 +54,13 @@ public class GremlinResultEdgeReader extends BasicGremlinResultReader implements
 
         sourceEdge.setId(map.get(Constants.PROPERTY_ID).toString());
         sourceEdge.setLabel(map.get(Constants.PROPERTY_LABEL).toString());
-        sourceEdge.setVertexIdFrom(map.get(Constants.PROPERTY_INV).toString());
-        sourceEdge.setVertexIdTo(map.get(Constants.PROPERTY_OUTV).toString());
+        sourceEdge.setVertexIdFrom(map.get(Constants.PROPERTY_OUTV).toString());
+        sourceEdge.setVertexIdTo(map.get(Constants.PROPERTY_INV).toString());
 
         Assert.isInstanceOf(Map.class, map.get(Constants.PROPERTY_PROPERTIES), "should be one instance of Map");
-        final Map<String, Object> properties = (Map<String, Object>) result.getObject();
+        final Map<String, Object> properties = (Map<String, Object>) map.get(Constants.PROPERTY_PROPERTIES);
 
-        super.readResultProperties(properties, source);
+        this.readProperties(properties, source);
     }
 }
+

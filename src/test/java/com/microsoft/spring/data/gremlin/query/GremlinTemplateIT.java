@@ -99,17 +99,21 @@ public class GremlinTemplateIT {
     public void testVertexDeleteAll() {
         Person personVertex = this.template.findVertexById(this.person.getId(), Person.class);
         Project projectVertex = this.template.findVertexById(this.project.getId(), Project.class);
+        Relationship relationshipEdge = this.template.findEdgeById(this.relationship.getId(), Relationship.class);
 
         Assert.notNull(personVertex, "personVertex should not be null");
         Assert.notNull(projectVertex, "projectVertex should not be null");
+        Assert.notNull(relationshipEdge, "relationshipEdge should not be null");
 
         this.template.deleteAll();
 
         personVertex = this.template.findVertexById(this.person.getId(), Person.class);
         projectVertex = this.template.findVertexById(this.project.getId(), Project.class);
+        relationshipEdge = this.template.findEdgeById(this.relationship.getId(), Relationship.class);
 
         Assert.isNull(personVertex, "personVertex should be null");
         Assert.isNull(projectVertex, "projectVertex should be null");
+        Assert.isNull(relationshipEdge, "relationshipEdge should be null");
 
         // Todo(pan): should add findVertexAll here.
     }
