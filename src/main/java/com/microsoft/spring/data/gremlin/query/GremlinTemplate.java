@@ -100,7 +100,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
             return null;
         }
 
-        Assert.isTrue(results.size() == 1, "should be only 1 one vertex with given id");
+        Assert.isTrue(results.size() == 1, "should be only one vertex with given id");
 
         source.setGremlinResultReader(new GremlinResultVertexReader());
         source.setGremlinSourceReader(new GremlinSourceVertexReader());
@@ -156,7 +156,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
             return null;
         }
 
-        Assert.isTrue(results.size() == 1, "should be only 1 one edge with given id");
+        Assert.isTrue(results.size() == 1, "should be only one edge with given id");
 
         source.setGremlinResultReader(new GremlinResultEdgeReader());
         source.setGremlinSourceReader(new GremlinSourceEdgeReader());
