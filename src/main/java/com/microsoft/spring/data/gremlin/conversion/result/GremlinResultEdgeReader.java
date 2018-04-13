@@ -21,17 +21,6 @@ public class GremlinResultEdgeReader extends BasicGremlinResultReader implements
         super();
     }
 
-    private void readProperties(@NonNull Map<String, Object> properties, @NonNull GremlinSource source) {
-        Assert.isTrue(source.getProperties().isEmpty(), "should be empty GremlinSource");
-
-        for (final Map.Entry<String, Object> entry : properties.entrySet()) {
-            final String name = entry.getKey();
-            final Object value = entry.getValue();
-
-            source.setProperty(name, value);
-        }
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public void read(@NonNull Result result, @NonNull GremlinSource source) {
@@ -60,7 +49,7 @@ public class GremlinResultEdgeReader extends BasicGremlinResultReader implements
         Assert.isInstanceOf(Map.class, map.get(Constants.PROPERTY_PROPERTIES), "should be one instance of Map");
         final Map<String, Object> properties = (Map<String, Object>) map.get(Constants.PROPERTY_PROPERTIES);
 
-        this.readProperties(properties, source);
+        properties.forEach((key, value) -> source.setProperty(key, value));
     }
 }
 
