@@ -5,9 +5,13 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 
-public abstract class GremlinUtils {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class GremlinUtils {
+
     public static <T> T createInstance(@NonNull Class<T> type) {
        final T instance;
 
