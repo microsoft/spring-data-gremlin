@@ -17,8 +17,8 @@ import java.lang.reflect.Field;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class GremlinSourceSimpleFactory {
 
-    public GremlinSource createGremlinSource(@NonNull Field idField, @NonNull String label, GremlinEntityType type) {
-
+    public static GremlinSource createGremlinSource(@NonNull Field idField, @NonNull String label,
+                                                    GremlinEntityType type) {
         switch (type) {
             case VERTEX:
                 return new GremlinSourceVertex(idField, label);
