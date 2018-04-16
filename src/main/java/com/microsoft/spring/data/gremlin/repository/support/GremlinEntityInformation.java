@@ -54,6 +54,14 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
         return this.getEntityType() == GremlinEntityType.EDGE;
     }
 
+    public boolean isEntityVertex() {
+        return this.getEntityType() == GremlinEntityType.VERTEX;
+    }
+
+    public boolean isEntityGraph() {
+        return this.getEntityType() == GremlinEntityType.GRAPH;
+    }
+
     @NonNull
     public String getEntityLabel() {
         return this.entityLabel;
