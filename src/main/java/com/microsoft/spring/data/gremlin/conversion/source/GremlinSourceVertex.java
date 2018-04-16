@@ -7,6 +7,8 @@ package com.microsoft.spring.data.gremlin.conversion.source;
 
 import org.springframework.lang.NonNull;
 
+import java.lang.reflect.Field;
+
 public class GremlinSourceVertex extends BasicGremlinSource {
 
     public GremlinSourceVertex() {
@@ -16,5 +18,11 @@ public class GremlinSourceVertex extends BasicGremlinSource {
     public GremlinSourceVertex(@NonNull String id) {
         super();
         super.setId(id);
+    }
+
+    public GremlinSourceVertex(@NonNull Field idField, @NonNull String label) {
+        super();
+        super.setIdField(idField);
+        super.setLabel(label);
     }
 }
