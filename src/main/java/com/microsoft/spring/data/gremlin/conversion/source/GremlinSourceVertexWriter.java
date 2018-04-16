@@ -7,7 +7,7 @@ package com.microsoft.spring.data.gremlin.conversion.source;
 
 import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
-import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
@@ -25,7 +25,7 @@ public class GremlinSourceVertexWriter extends BasicGremlinSourceWriter implemen
     @Override
     public void write(Object domain, MappingGremlinConverter converter, GremlinSource source) {
         if (!(source instanceof GremlinSourceVertex)) {
-            throw new UnexpectedGremlinSourceTypeException("should be the instance of GremlinSourceVertex");
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
         }
 
         source.setId(super.getEntityIdValue(domain, converter));

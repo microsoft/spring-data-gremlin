@@ -6,7 +6,7 @@
 package com.microsoft.spring.data.gremlin.conversion.source;
 
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
-import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinEntityTypeException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
@@ -27,7 +27,7 @@ public final class GremlinSourceSimpleFactory {
             case GRAPH:
                 return new GremlinSourceGraph(idField, label);
             default:
-                throw new UnexpectedGremlinEntityTypeException("Unexpected gremlin entity type");
+                throw new GremlinUnexpectedEntityTypeException("Unexpected gremlin entity type");
         }
     }
 }

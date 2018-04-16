@@ -5,13 +5,13 @@
  */
 package com.microsoft.spring.data.gremlin.exception;
 
-public class InvalidGremlinEntityIdFieldException extends GremlinEntityInformationException {
+public class GremlinUnexpectedEntityTypeException extends GremlinEntityInformationException {
 
-    public InvalidGremlinEntityIdFieldException(String msg) {
+    public GremlinUnexpectedEntityTypeException(String msg) {
         super(msg);
     }
 
-    public InvalidGremlinEntityIdFieldException(String msg, Throwable cause) {
+    public GremlinUnexpectedEntityTypeException(String msg, Throwable cause) {
         super(msg, cause);
     }
 }
