@@ -8,7 +8,9 @@ package com.microsoft.spring.data.gremlin.conversion.source;
 import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeException;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.lang.NonNull;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,4 +40,11 @@ public class GremlinSourceGraph extends BasicGremlinSource {
             throw new UnexpectedGremlinSourceTypeException("source type can only be Vertex or Edge");
         }
     }
+
+    public GremlinSourceGraph(@NonNull Field idField, @NonNull String label) {
+        super();
+        super.setIdField(idField);
+        super.setLabel(label);
+    }
 }
+

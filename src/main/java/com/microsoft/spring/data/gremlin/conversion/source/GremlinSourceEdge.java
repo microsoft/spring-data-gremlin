@@ -7,6 +7,9 @@ package com.microsoft.spring.data.gremlin.conversion.source;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.lang.NonNull;
+
+import java.lang.reflect.Field;
 
 public class GremlinSourceEdge extends BasicGremlinSource {
 
@@ -20,5 +23,11 @@ public class GremlinSourceEdge extends BasicGremlinSource {
 
     public GremlinSourceEdge() {
         super();
+    }
+
+    public GremlinSourceEdge(@NonNull Field idField, @NonNull String label) {
+        super();
+        super.setIdField(idField);
+        super.setLabel(label);
     }
 }
