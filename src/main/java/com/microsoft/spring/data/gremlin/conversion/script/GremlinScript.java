@@ -13,9 +13,25 @@ import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
  */
 public interface GremlinScript<T> {
     /**
-     * Generate the final script before submit query to gremlin server.
+     * Generate the final insert script query to gremlin server.
      *
-     * @return gremlin client accepted String or GraphTraversal.
+     * @return gremlin client accepted query.
      */
-    T generateScript(GremlinSource gremlinSource);
+    T generateInsertScript(GremlinSource source);
+
+
+    /**
+     * Generate the final delete script query to gremlin server.
+     *
+     * @return gremlin client accepted query.
+     */
+    T generateDeleteScript(GremlinSource source);
+
+
+    /**
+     * Generate the final findById script query to gremlin server.
+     *
+     * @return gremlin client accepted query.
+     */
+    T generateFindByIdScript(GremlinSource source);
 }
