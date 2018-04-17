@@ -7,13 +7,13 @@ package com.microsoft.spring.data.gremlin.exception;
 
 import org.springframework.dao.TypeMismatchDataAccessException;
 
-public class UnexpectedGremlinSourceTypeException extends TypeMismatchDataAccessException {
+public class GremlinUnexpectedSourceTypeException extends TypeMismatchDataAccessException {
 
-    public UnexpectedGremlinSourceTypeException(String msg) {
+    public GremlinUnexpectedSourceTypeException(String msg) {
         super(msg);
     }
 
-    public UnexpectedGremlinSourceTypeException(String msg, Throwable cause) {
+    public GremlinUnexpectedSourceTypeException(String msg, Throwable cause) {
         super(msg, cause);
     }
 }
