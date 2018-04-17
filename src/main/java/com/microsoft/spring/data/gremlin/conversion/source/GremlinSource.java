@@ -5,11 +5,12 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
-import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultReader;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
+import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultReader;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScript;
 import org.apache.tinkerpop.gremlin.driver.Result;
 
+import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
@@ -40,6 +41,13 @@ public interface GremlinSource {
      * @return will never be null
      */
     String getId();
+
+    /**
+     * Get the id Field of domain
+     *
+     * @return will never be null
+     */
+    Field getIdField();
 
     /**
      * Get the label of domain

@@ -11,6 +11,7 @@ import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.lang.NonNull;
@@ -19,11 +20,8 @@ import org.springframework.util.Assert;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public class GremlinSourceGraphWriter extends BasicGremlinSourceWriter implements GremlinSourceWriter {
-
-    public GremlinSourceGraphWriter(@NonNull Field idField, @NonNull String label) {
-        super(idField, label);
-    }
+@NoArgsConstructor
+public class GremlinSourceGraphWriter implements GremlinSourceWriter {
 
     @SuppressWarnings("unchecked")
     private void writeGraphSet(@NonNull List<Object> objectList, @NonNull MappingGremlinConverter mappingConverter,
@@ -41,7 +39,8 @@ public class GremlinSourceGraphWriter extends BasicGremlinSourceWriter implement
 
     @Override
     @SuppressWarnings("unchecked")
-    public void write(Object domain, MappingGremlinConverter converter, GremlinSource source) {
+    public void write(@NonNull Object domain, @NonNull MappingGremlinConverter converter,
+                      @NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceGraph)) {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
