@@ -5,6 +5,8 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.data.annotation.Id;
@@ -14,7 +16,8 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.util.List;
 
-public abstract class GremlinUtils {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class GremlinUtils {
 
     public static <T> T createInstance(@NonNull Class<T> type) {
         final T instance;
