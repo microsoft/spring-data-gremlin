@@ -7,7 +7,7 @@ package com.microsoft.spring.data.gremlin.conversion.source;
 
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultReader;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScript;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +29,7 @@ public class BasicGremlinSource implements GremlinSource {
     private Map<String, Object> properties;
 
     @Setter(AccessLevel.PRIVATE)
-    private GremlinScript<String> scriptLiteral;
+    private GremlinScriptLiteral scriptLiteral;
 
     @Setter(AccessLevel.PRIVATE)
     private GremlinSourceWriter sourceWriter;
@@ -46,7 +46,7 @@ public class BasicGremlinSource implements GremlinSource {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setGremlinScriptStrategy(@NonNull GremlinScript script) {
+    public void setGremlinScriptStrategy(@NonNull GremlinScriptLiteral script) {
         this.setScriptLiteral(script);
     }
 
@@ -66,7 +66,7 @@ public class BasicGremlinSource implements GremlinSource {
     }
 
     @Override
-    public GremlinScript<String> getGremlinScriptLiteral() {
+    public GremlinScriptLiteral getGremlinScriptLiteral() {
         return this.scriptLiteral;
     }
 

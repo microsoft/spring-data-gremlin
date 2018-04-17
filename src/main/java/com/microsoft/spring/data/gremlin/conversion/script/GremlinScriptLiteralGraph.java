@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
-public class GremlinScriptGraphLiteral implements GremlinScript<String> {
+public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
 
     private String trimScriptHead(@NonNull String script) {
         return script.replaceFirst(Constants.GREMLIN_SCRIPT_HEAD, "");
@@ -36,12 +36,12 @@ public class GremlinScriptGraphLiteral implements GremlinScript<String> {
         scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
 
         for (final GremlinSource vertex : sourceGraph.getVertexSet()) {
-            final String vertexScript = new GremlinScriptVertexLiteral().generateInsertScript(vertex);
+            final String vertexScript = new GremlinScriptLiteralVertex().generateInsertScript(vertex);
             scriptList.add(this.trimScriptHead(vertexScript));
         }
 
         for (final GremlinSource edge : sourceGraph.getEdgeSet()) {
-            final String edgeScript = new GremlinScriptEdgeLiteral().generateInsertScript(edge);
+            final String edgeScript = new GremlinScriptLiteralEdge().generateInsertScript(edge);
             scriptList.add(this.trimScriptHead(edgeScript));
         }
 
@@ -49,8 +49,8 @@ public class GremlinScriptGraphLiteral implements GremlinScript<String> {
     }
 
     @Override
-    public String generateDeleteScript(@Nullable GremlinSource source) {
-        return Constants.GREMLIN_SCRIPT_VERTEX_DROP;
+    public String generateDeleteAllScript(@Nullable GremlinSource source) {
+        return Constants.GREMLIN_SCRIPT_VERTEX_DROP_ALL;
     }
 
     @Override

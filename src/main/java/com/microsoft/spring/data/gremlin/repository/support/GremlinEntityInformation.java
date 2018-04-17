@@ -10,10 +10,10 @@ import com.microsoft.spring.data.gremlin.annotation.Graph;
 import com.microsoft.spring.data.gremlin.annotation.Vertex;
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScript;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptEdgeLiteral;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptGraphLiteral;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptVertexLiteral;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralEdge;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralVertex;
 import com.microsoft.spring.data.gremlin.conversion.source.*;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
@@ -142,23 +142,23 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
 
     private GremlinSource getGremlinSource(@NonNull Class<T> domainClass) {
         final GremlinSource source;
-        final GremlinScript script;
+        final GremlinScriptLiteral script;
         final GremlinSourceWriter writer;
 
         switch (this.entityType) {
             case VERTEX:
                 source = new GremlinSourceVertex();
-                script = new GremlinScriptVertexLiteral();
+                script = new GremlinScriptLiteralVertex();
                 writer = new GremlinSourceVertexWriter(this.getIdField(), this.getEntityLabel());
                 break;
             case EDGE:
                 source = new GremlinSourceEdge();
-                script = new GremlinScriptEdgeLiteral();
+                script = new GremlinScriptLiteralEdge();
                 writer = new GremlinSourceEdgeWriter(this.getIdField(), this.getEntityLabel());
                 break;
             case GRAPH:
                 source = new GremlinSourceGraph();
-                script = new GremlinScriptGraphLiteral();
+                script = new GremlinScriptLiteralGraph();
                 writer = new GremlinSourceGraphWriter(this.getIdField(), this.getEntityLabel());
                 break;
             case UNKNOWN:
