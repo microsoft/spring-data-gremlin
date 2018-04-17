@@ -10,7 +10,7 @@ import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.common.domain.Network;
 import com.microsoft.spring.data.gremlin.common.domain.Person;
 import com.microsoft.spring.data.gremlin.common.domain.Relationship;
-import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinEntityTypeException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,7 +22,7 @@ public class GremlinSourceSimpleFactoryUnitTest {
         GremlinUtils.createInstance(GremlinSourceSimpleFactory.class);
     }
 
-    @Test(expected = UnexpectedGremlinEntityTypeException.class)
+    @Test(expected = GremlinUnexpectedEntityTypeException.class)
     public void testUnexpectedGremlinEntityType() {
         final GremlinEntityInformation<Person, String> info = new GremlinEntityInformation<>(Person.class);
         GremlinSourceSimpleFactory.createGremlinSource(info.getIdField(), info.getEntityLabel(),

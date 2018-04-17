@@ -8,7 +8,7 @@ package com.microsoft.spring.data.gremlin.conversion.script;
 import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
-import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -24,7 +24,7 @@ public class GremlinScriptVertexLiteral extends GremlinScriptPropertiesLiteral i
     @Override
     public String generateInsertScript(@NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceVertex)) {
-            throw new UnexpectedGremlinSourceTypeException("should be the instance of GremlinSourceVertex");
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
         }
 
         final List<String> scriptList = new ArrayList<>();
@@ -54,7 +54,7 @@ public class GremlinScriptVertexLiteral extends GremlinScriptPropertiesLiteral i
     @Override
     public String generateFindByIdScript(@NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceVertex)) {
-            throw new UnexpectedGremlinSourceTypeException("should be the instance of GremlinSourceVertex");
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
         }
 
         final List<String> scriptList = new ArrayList<>();
