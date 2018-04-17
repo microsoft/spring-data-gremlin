@@ -15,7 +15,7 @@ import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptEdgeLite
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptGraphLiteral;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptVertexLiteral;
 import com.microsoft.spring.data.gremlin.conversion.source.*;
-import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinEntityTypeException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
@@ -103,7 +103,7 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
             return GremlinEntityType.GRAPH;
         }
 
-        throw new UnexpectedGremlinEntityTypeException("cannot not to identify gremlin entity type");
+        throw new GremlinUnexpectedEntityTypeException("cannot not to identify gremlin entity type");
     }
 
     private String getEntityLabel(@NonNull Class<?> domainClass) {
@@ -134,7 +134,7 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
             case UNKNOWN:
                 // fallthrough
             default:
-                throw new UnexpectedGremlinEntityTypeException("Unexpected gremlin entity type");
+                throw new GremlinUnexpectedEntityTypeException("Unexpected gremlin entity type");
         }
 
         return label;

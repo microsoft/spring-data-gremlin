@@ -8,7 +8,7 @@ package com.microsoft.spring.data.gremlin.conversion.source;
 import com.microsoft.spring.data.gremlin.annotation.EdgeSet;
 import com.microsoft.spring.data.gremlin.annotation.VertexSet;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
-import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import org.springframework.data.mapping.PersistentProperty;
@@ -43,7 +43,7 @@ public class GremlinSourceGraphWriter extends BasicGremlinSourceWriter implement
     @SuppressWarnings("unchecked")
     public void write(Object domain, MappingGremlinConverter converter, GremlinSource source) {
         if (!(source instanceof GremlinSourceGraph)) {
-            throw new UnexpectedGremlinSourceTypeException("should be the instance of GremlinSourceEdge");
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 
         final GremlinSourceGraph sourceGraph = (GremlinSourceGraph) source;
