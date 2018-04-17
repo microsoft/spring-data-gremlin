@@ -80,6 +80,8 @@ public class BasicGremlinSource implements GremlinSource {
     @Override
     public <T extends Object> T doGremlinSourceRead(@NonNull Class<T> type,
                                                     @NonNull MappingGremlinConverter converter) {
+        Assert.notNull(this.sourceReader, "the sourceReader must be set before do reading");
+
         return this.sourceReader.read(type, converter, this);
     }
 
