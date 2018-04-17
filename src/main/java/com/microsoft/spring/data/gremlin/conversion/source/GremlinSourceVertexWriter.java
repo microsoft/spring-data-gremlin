@@ -7,8 +7,9 @@ package com.microsoft.spring.data.gremlin.conversion.source;
 
 import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
-import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
+import lombok.NoArgsConstructor;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.lang.NonNull;
@@ -16,20 +17,17 @@ import org.springframework.util.Assert;
 
 import java.lang.reflect.Field;
 
-public class GremlinSourceVertexWriter extends BasicGremlinSourceWriter implements GremlinSourceWriter {
-
-    public GremlinSourceVertexWriter(@NonNull Field idField, @NonNull String label) {
-        super(idField, label);
-    }
+@NoArgsConstructor
+public class GremlinSourceVertexWriter implements GremlinSourceWriter {
 
     @Override
-    public void write(Object domain, MappingGremlinConverter converter, GremlinSource source) {
+    public void write(@NonNull Object domain, @NonNull MappingGremlinConverter converter,
+                      @NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceVertex)) {
-            throw new UnexpectedGremlinSourceTypeException("should be the instance of GremlinSourceVertex");
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
         }
 
-        source.setId(super.getEntityIdValue(domain, converter));
-        source.setLabel(super.getEntityLabel());
+        source.setId(converter.getFieldValue(domain, source.getIdField().getName()).toString());
 
         final GremlinPersistentEntity<?> persistentEntity = converter.getPersistentEntity(domain.getClass());
         final ConvertingPropertyAccessor accessor = converter.getPropertyAccessor(domain);

@@ -5,8 +5,8 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
-import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultReader;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
+import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultReader;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScript;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -15,6 +15,7 @@ import org.apache.tinkerpop.gremlin.driver.Result;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ public class BasicGremlinSource implements GremlinSource {
 
     private String id;
     private String label;
+    private Field idField;
     private Map<String, Object> properties;
 
     @Setter(AccessLevel.PRIVATE)
@@ -78,6 +80,8 @@ public class BasicGremlinSource implements GremlinSource {
     @Override
     public <T extends Object> T doGremlinSourceRead(@NonNull Class<T> type,
                                                     @NonNull MappingGremlinConverter converter) {
+        Assert.notNull(this.sourceReader, "the sourceReader must be set before do reading");
+
         return this.sourceReader.read(type, converter, this);
     }
 

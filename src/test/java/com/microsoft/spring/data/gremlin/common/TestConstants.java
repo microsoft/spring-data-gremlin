@@ -20,6 +20,7 @@ public class TestConstants {
     public static final String VERTEX_PERSON_LABEL = "label-person";
     public static final String VERTEX_PROJECT_LABEL = "label-project";
     public static final String EDGE_RELATIONSHIP_LABEL = "label-relationship";
+    public static final String GRAPH_ROADMAP_COLLECTION_NAME = "roadmap-collection";
 
     public static final String VERTEX_PERSON_ID = "233333";
     public static final String VERTEX_PERSON_NAME = "incarnation-p-lee";

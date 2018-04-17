@@ -13,7 +13,9 @@ import com.microsoft.spring.data.gremlin.common.domain.Person;
 import com.microsoft.spring.data.gremlin.common.domain.Project;
 import com.microsoft.spring.data.gremlin.common.domain.Relationship;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
+import com.microsoft.spring.data.gremlin.exception.GremlinInsertionException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
+import lombok.SneakyThrows;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -63,19 +65,21 @@ public class GremlinTemplateIT {
     private GremlinTemplate template;
 
     @Before
-    public void setup() throws ClassNotFoundException {
+    @SneakyThrows
+    public void setup() {
         final GremlinMappingContext mappingContext = new GremlinMappingContext();
+        final GremlinFactory factory = new GremlinFactory(this.config.getEndpoint(), this.config.getPort(),
+                this.config.getUsername(), this.config.getPassword());
 
         mappingContext.setInitialEntitySet(new EntityScanner(this.context).scan(Persistent.class));
 
         final MappingGremlinConverter converter = new MappingGremlinConverter(mappingContext);
-        final GremlinFactory factory = new GremlinFactory(this.config.getEndpoint(), this.config.getPort(),
-                this.config.getUsername(), this.config.getPassword());
 
         this.template = new GremlinTemplate(factory, converter);
-
         this.template.deleteAll();
+    }
 
+    private void buildTestGraph() {
         this.network.vertexAdd(this.person);
         this.network.vertexAdd(this.person0);
         this.network.vertexAdd(this.person1);
@@ -96,7 +100,10 @@ public class GremlinTemplateIT {
     }
 
     @Test
+    @SneakyThrows
     public void testVertexDeleteAll() {
+        this.buildTestGraph();
+
         Person personVertex = this.template.findVertexById(this.person.getId(), Person.class);
         Project projectVertex = this.template.findVertexById(this.project.getId(), Project.class);
         Relationship relationshipEdge = this.template.findEdgeById(this.relationship.getId(), Relationship.class);
@@ -116,6 +123,40 @@ public class GremlinTemplateIT {
         Assert.assertNull(relationshipEdge);
 
         // Todo(pan): should add findVertexAll here.
+    }
+
+    @Test
+    public void testVertexInsertNormal() {
+        this.template.insert(this.person0);
+
+        final Person foundPerson = this.template.findVertexById(this.person0.getId(), Person.class);
+
+        Assert.assertNotNull(foundPerson);
+        Assert.assertEquals(foundPerson.getId(), this.person0.getId());
+        Assert.assertEquals(foundPerson.getName(), this.person0.getName());
+    }
+
+    @Test(expected = GremlinInsertionException.class)
+    public void testVertexInsertException() {
+        this.template.insert(this.person);
+
+        final Person repeated = new Person(this.person.getId(), this.person.getName());
+        this.template.insert(repeated);
+    }
+
+    @Test
+    public void testFindVertexById() {
+        this.template.findVertexById(this.person1.getId(), Person.class);
+
+        Person foundPerson = this.template.findVertexById(this.person1.getId(), Person.class);
+        Assert.assertNull(foundPerson);
+
+        this.template.insert(this.person1);
+        foundPerson = this.template.findVertexById(this.person1.getId(), Person.class);
+
+        Assert.assertNotNull(foundPerson);
+        Assert.assertEquals(foundPerson.getId(), this.person1.getId());
+        Assert.assertEquals(foundPerson.getName(), this.person1.getName());
     }
 }
 

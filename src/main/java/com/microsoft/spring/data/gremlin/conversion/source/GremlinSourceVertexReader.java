@@ -8,7 +8,7 @@ package com.microsoft.spring.data.gremlin.conversion.source;
 import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
-import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -26,7 +26,7 @@ public class GremlinSourceVertexReader implements GremlinSourceReader {
     public <T extends Object> T read(@NonNull Class<T> type, @NonNull MappingGremlinConverter converter,
                                      @NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceVertex)) {
-            throw new UnexpectedGremlinSourceTypeException("should be instance of GremlinSourceVertex");
+            throw new GremlinUnexpectedSourceTypeException("should be instance of GremlinSourceVertex");
         }
 
         final T domain = GremlinUtils.createInstance(type);

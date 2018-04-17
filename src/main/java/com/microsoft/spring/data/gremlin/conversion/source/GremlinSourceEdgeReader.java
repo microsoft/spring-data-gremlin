@@ -10,7 +10,7 @@ import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
 import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
-import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -28,7 +28,7 @@ public class GremlinSourceEdgeReader implements GremlinSourceReader {
     public <T extends Object> T read(@NonNull Class<T> type, @NonNull MappingGremlinConverter converter,
                                      @NonNull GremlinSource source) {
        if (!(source instanceof GremlinSourceEdge)) {
-           throw new UnexpectedGremlinSourceTypeException("should be instance of GremlinSourceEdge");
+           throw new GremlinUnexpectedSourceTypeException("should be instance of GremlinSourceEdge");
        }
 
        final T domain = GremlinUtils.createInstance(type);
