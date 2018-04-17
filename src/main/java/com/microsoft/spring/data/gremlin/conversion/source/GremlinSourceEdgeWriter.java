@@ -9,7 +9,7 @@ import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
 import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
 import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
-import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
@@ -27,7 +27,7 @@ public class GremlinSourceEdgeWriter extends BasicGremlinSourceWriter implements
     @Override
     public void write(Object domain, MappingGremlinConverter converter, GremlinSource source) {
         if (!(source instanceof GremlinSourceEdge)) {
-            throw new UnexpectedGremlinSourceTypeException("should be the instance of GremlinSourceEdge");
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 
         source.setId(super.getEntityIdValue(domain, converter));

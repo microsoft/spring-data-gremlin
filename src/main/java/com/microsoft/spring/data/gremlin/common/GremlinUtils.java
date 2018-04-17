@@ -5,7 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
-import com.microsoft.spring.data.gremlin.exception.InvalidGremlinEntityIdFieldException;
+import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.NonNull;
@@ -39,13 +39,13 @@ public abstract class GremlinUtils {
         } else if (fields.size() == 1) {
             idField = fields.get(0);
         } else {
-            throw new InvalidGremlinEntityIdFieldException("only one @Id field is allowed");
+            throw new GremlinInvalidEntityIdFieldException("only one @Id field is allowed");
         }
 
         if (idField == null) {
-            throw new InvalidGremlinEntityIdFieldException("no field named id in class");
+            throw new GremlinInvalidEntityIdFieldException("no field named id in class");
         } else if (idField.getType() != String.class) {
-            throw new InvalidGremlinEntityIdFieldException("the type of @Id/id field should be String");
+            throw new GremlinInvalidEntityIdFieldException("the type of @Id/id field should be String");
         }
 
         return idField;

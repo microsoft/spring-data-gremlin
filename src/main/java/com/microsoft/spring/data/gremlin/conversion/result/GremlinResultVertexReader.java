@@ -8,7 +8,7 @@ package com.microsoft.spring.data.gremlin.conversion.result;
 import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
-import com.microsoft.spring.data.gremlin.exception.UnexpectedGremlinSourceTypeException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import org.apache.tinkerpop.gremlin.driver.Result;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
@@ -25,7 +25,7 @@ public class GremlinResultVertexReader extends BasicGremlinResultReader implemen
     @SuppressWarnings("unchecked")
     public void read(@NonNull Result result, @NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceVertex)) {
-            throw new UnexpectedGremlinSourceTypeException("Should be instance of GremlinSourceVertex");
+            throw new GremlinUnexpectedSourceTypeException("Should be instance of GremlinSourceVertex");
         }
 
         Assert.isInstanceOf(Map.class, result.getObject(), "should be one instance of Map");
