@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptVertexLiteral;
 import org.springframework.lang.NonNull;
 
 import java.lang.reflect.Field;
@@ -13,15 +14,17 @@ public class GremlinSourceVertex extends BasicGremlinSource {
 
     public GremlinSourceVertex() {
         super();
+        this.setGremlinScriptStrategy(new GremlinScriptVertexLiteral());
+        this.setGremlinSourceWriter(new GremlinSourceVertexWriter());
     }
 
     public GremlinSourceVertex(@NonNull String id) {
-        super();
+        this();
         super.setId(id);
     }
 
     public GremlinSourceVertex(@NonNull Field idField, @NonNull String label) {
-        super();
+        this();
         super.setIdField(idField);
         super.setLabel(label);
     }
