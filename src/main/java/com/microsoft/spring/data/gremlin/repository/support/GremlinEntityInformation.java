@@ -8,23 +8,19 @@ package com.microsoft.spring.data.gremlin.repository.support;
 import com.microsoft.spring.data.gremlin.annotation.Edge;
 import com.microsoft.spring.data.gremlin.annotation.Graph;
 import com.microsoft.spring.data.gremlin.annotation.Vertex;
-import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
+import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScript;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptEdgeLiteral;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptGraphLiteral;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptVertexLiteral;
 import com.microsoft.spring.data.gremlin.conversion.source.*;
-import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.List;
 
 public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T, ID> {
 
@@ -84,25 +80,8 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
         return (Class<ID>) this.id.getType();
     }
 
-    private Field getIdField(@NonNull Class<?> domainClass) {
-        Field idField;
-        final List<Field> fields = FieldUtils.getFieldsListWithAnnotation(domainClass, Id.class);
-
-        if (fields.isEmpty()) {
-            idField = ReflectionUtils.findField(getJavaType(), Constants.PROPERTY_ID);
-        } else if (fields.size() == 1) {
-            idField = fields.get(0);
-        } else {
-            throw new GremlinInvalidEntityIdFieldException("only one @Id field is allowed");
-        }
-
-        if (idField == null) {
-            throw new GremlinInvalidEntityIdFieldException("no field named id in class");
-        } else if (idField.getType() != String.class) {
-            throw new GremlinInvalidEntityIdFieldException("the type of @Id/id field should be String");
-        }
-
-        return idField;
+    private Field getIdField(@NonNull Class<T> domainClass) {
+        return GremlinUtils.getIdField(domainClass);
     }
 
     private GremlinEntityType getGremlinEntityType(@NonNull Class<?> domainClass) {
