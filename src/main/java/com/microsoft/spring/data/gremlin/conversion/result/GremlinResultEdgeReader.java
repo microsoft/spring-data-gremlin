@@ -43,12 +43,13 @@ public class GremlinResultEdgeReader extends BasicGremlinResultReader implements
 
         sourceEdge.setId(map.get(Constants.PROPERTY_ID).toString());
         sourceEdge.setLabel(map.get(Constants.PROPERTY_LABEL).toString());
-        sourceEdge.setVertexIdFrom(map.get(Constants.PROPERTY_INV).toString());
-        sourceEdge.setVertexIdTo(map.get(Constants.PROPERTY_OUTV).toString());
+        sourceEdge.setVertexIdFrom(map.get(Constants.PROPERTY_OUTV).toString());
+        sourceEdge.setVertexIdTo(map.get(Constants.PROPERTY_INV).toString());
 
         Assert.isInstanceOf(Map.class, map.get(Constants.PROPERTY_PROPERTIES), "should be one instance of Map");
-        final Map<String, Object> properties = (Map<String, Object>) result.getObject();
+        final Map<String, Object> properties = (Map<String, Object>) map.get(Constants.PROPERTY_PROPERTIES);
 
-        super.readResultProperties(properties, source);
+        properties.forEach((key, value) -> source.setProperty(key, value));
     }
 }
+

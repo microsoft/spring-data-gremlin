@@ -5,27 +5,30 @@
  */
 package com.microsoft.spring.data.gremlin.query;
 
+import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
+import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
-import com.microsoft.spring.data.gremlin.conversion.*;
+import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
+import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultEdgeReader;
 import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultVertexReader;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertexReader;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScript;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptEdgeDropLiteral;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptVertexDropLiteral;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptVertexFindByIdLiteral;
+import com.microsoft.spring.data.gremlin.conversion.script.*;
+import com.microsoft.spring.data.gremlin.conversion.source.*;
 import com.microsoft.spring.data.gremlin.exception.GremlinFindException;
 import com.microsoft.spring.data.gremlin.exception.GremlinInsertionException;
+import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.tinkerpop.gremlin.driver.Client;
 import org.apache.tinkerpop.gremlin.driver.Result;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.mapping.PersistentProperty;
+import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.concurrent.CompletionException;
 
@@ -97,12 +100,70 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
             return null;
         }
 
+        Assert.isTrue(results.size() == 1, "should be only one vertex with given id");
+
         source.setGremlinResultReader(new GremlinResultVertexReader());
         source.setGremlinSourceReader(new GremlinSourceVertexReader());
-
         source.doGremlinResultRead(results.get(0));
-        Assert.isTrue(results.size() == 1, "should be only 1 one vertex with given id");
 
         return this.mappingConverter.read(domainClass, source);
     }
+
+    private <T> void completeEdge(@NonNull T domain, @NonNull GremlinSourceEdge source) {
+        final ConvertingPropertyAccessor accessor = this.mappingConverter.getPropertyAccessor(domain);
+        final GremlinPersistentEntity persistentEntity = this.mappingConverter.getPersistentEntity(domain.getClass());
+
+        final List<Field> fromFields = FieldUtils.getFieldsListWithAnnotation(domain.getClass(), EdgeFrom.class);
+        final List<Field> toFields = FieldUtils.getFieldsListWithAnnotation(domain.getClass(), EdgeTo.class);
+
+        if (fromFields.size() != 1 || toFields.size() != 1) {
+            throw new IllegalStateException("should be only one Annotation");
+        }
+
+        final Field fromField = fromFields.get(0);
+        final Field toField = toFields.get(0);
+
+        final Object vertexFrom = this.findVertexById(source.getVertexIdFrom(), fromField.getType());
+        final Object vertexTo = this.findVertexById(source.getVertexIdTo(), toField.getType());
+
+        final PersistentProperty propertyFrom = persistentEntity.getPersistentProperty(fromField.getName());
+        final PersistentProperty propertyTo = persistentEntity.getPersistentProperty(toField.getName());
+        Assert.notNull(propertyFrom, "persistence property should not be null");
+        Assert.notNull(propertyTo, "persistence property should not be null");
+
+        accessor.setProperty(propertyFrom, vertexFrom);
+        accessor.setProperty(propertyTo, vertexTo);
+    }
+
+    @Override
+    public <T> T findEdgeById(@NonNull Object id, @NonNull Class<T> domainClass) {
+        final Client client = this.gremlinFactory.getGremlinClient();
+        final String idValue = id.toString();
+        final GremlinSource source = new GremlinSourceEdge(idValue);
+        final GremlinScript<String> script = new GremlinScriptEdgeFindByIdLiteral();
+        final List<Result> results;
+
+        try {
+            results = client.submit(script.generateScript(source)).all().join();
+        } catch (CompletionException e) {
+            final String typeName = domainClass.getName();
+            throw new GremlinFindException(String.format("unable to complete find %s from gremlin", typeName), e);
+        }
+
+        if (results.isEmpty()) {
+            return null;
+        }
+
+        Assert.isTrue(results.size() == 1, "should be only one edge with given id");
+
+        source.setGremlinResultReader(new GremlinResultEdgeReader());
+        source.setGremlinSourceReader(new GremlinSourceEdgeReader());
+        source.doGremlinResultRead(results.get(0));
+
+        final T domain = this.mappingConverter.read(domainClass, source);
+        this.completeEdge(domain, (GremlinSourceEdge) source);
+
+        return domain;
+    }
 }
+
