@@ -66,15 +66,19 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public ID getId(T entity) {
-        return (ID) ReflectionUtils.getField(this.id, entity);
+        @SuppressWarnings("unchecked")
+        final ID id = (ID) ReflectionUtils.getField(this.id, entity);
+
+        return id;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Class<ID> getIdType() {
-        return (Class<ID>) this.id.getType();
+        @SuppressWarnings("unchecked")
+        final Class<ID> idClass = (Class<ID>) this.id.getType();
+
+        return idClass;
     }
 
     private Field getIdField(@NonNull Class<T> domainClass) {
