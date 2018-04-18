@@ -32,8 +32,6 @@ public class GremlinFactory {
         this.endpoint = endpoint;
         this.username = username;
         this.password = password;
-
-        this.gremlinCluster = null;
     }
 
     private Cluster createGremlinCluster() throws GremlinIllegalConfigurationException {
