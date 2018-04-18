@@ -16,5 +16,7 @@ public interface GremlinOperations {
 
     <T> T findVertexById(Object id, Class<T> domainClass);
 
+    <T> T findById(Object id, Class<T> domainClass);
+
     <T> T findEdgeById(Object id, Class<T> domainClass);
 }
