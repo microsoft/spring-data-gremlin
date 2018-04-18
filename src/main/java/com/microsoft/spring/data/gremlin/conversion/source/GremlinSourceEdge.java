@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralEdge;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.NonNull;
@@ -23,11 +24,18 @@ public class GremlinSourceEdge extends BasicGremlinSource {
 
     public GremlinSourceEdge() {
         super();
+        this.setGremlinScriptStrategy(new GremlinScriptLiteralEdge());
+        this.setGremlinSourceWriter(new GremlinSourceEdgeWriter());
     }
 
     public GremlinSourceEdge(@NonNull Field idField, @NonNull String label) {
-        super();
+        this();
         super.setIdField(idField);
         super.setLabel(label);
+    }
+
+    public GremlinSourceEdge(@NonNull String id) {
+        super();
+        super.setId(id);
     }
 }

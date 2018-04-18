@@ -106,17 +106,21 @@ public class GremlinTemplateIT {
 
         Person personVertex = this.template.findVertexById(this.person.getId(), Person.class);
         Project projectVertex = this.template.findVertexById(this.project.getId(), Project.class);
+        Relationship relationshipEdge = this.template.findEdgeById(this.relationship.getId(), Relationship.class);
 
         Assert.assertNotNull(personVertex);
         Assert.assertNotNull(projectVertex);
+        Assert.assertNotNull(relationshipEdge);
 
         this.template.deleteAll();
 
         personVertex = this.template.findVertexById(this.person.getId(), Person.class);
         projectVertex = this.template.findVertexById(this.project.getId(), Project.class);
+        relationshipEdge = this.template.findEdgeById(this.relationship.getId(), Relationship.class);
 
         Assert.assertNull(personVertex);
         Assert.assertNull(projectVertex);
+        Assert.assertNull(relationshipEdge);
 
         // Todo(pan): should add findVertexAll here.
     }

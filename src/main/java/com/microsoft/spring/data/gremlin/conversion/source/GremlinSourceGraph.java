@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +27,8 @@ public class GremlinSourceGraph extends BasicGremlinSource {
 
     public GremlinSourceGraph() {
         super();
+        this.setGremlinScriptStrategy(new GremlinScriptLiteralGraph());
+        this.setGremlinSourceWriter(new GremlinSourceGraphWriter());
 
         this.vertexSet = new ArrayList<>();
         this.edgeSet = new ArrayList<>();
@@ -42,7 +45,7 @@ public class GremlinSourceGraph extends BasicGremlinSource {
     }
 
     public GremlinSourceGraph(@NonNull Field idField, @NonNull String label) {
-        super();
+        this();
         super.setIdField(idField);
         super.setLabel(label);
     }

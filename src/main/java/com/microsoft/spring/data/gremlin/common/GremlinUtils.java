@@ -34,7 +34,7 @@ public class GremlinUtils {
     }
 
     public static <T> Field getIdField(@NonNull Class<T> domainClass) {
-        Field idField;
+        final Field idField;
         final List<Field> fields = FieldUtils.getFieldsListWithAnnotation(domainClass, Id.class);
 
         if (fields.isEmpty()) {
