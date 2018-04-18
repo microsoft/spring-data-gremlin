@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
+import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultVertexReader;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralVertex;
 import org.springframework.lang.NonNull;
 
@@ -15,6 +16,8 @@ public class GremlinSourceVertex extends BasicGremlinSource {
     public GremlinSourceVertex() {
         super();
         this.setGremlinScriptStrategy(new GremlinScriptLiteralVertex());
+        this.setGremlinResultReader(new GremlinResultVertexReader());
+        this.setGremlinSourceReader(new GremlinSourceVertexReader());
         this.setGremlinSourceWriter(new GremlinSourceVertexWriter());
     }
 

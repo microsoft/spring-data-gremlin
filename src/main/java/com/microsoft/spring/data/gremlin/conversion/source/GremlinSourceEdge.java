@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
+import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultEdgeReader;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralEdge;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,8 @@ public class GremlinSourceEdge extends BasicGremlinSource {
     public GremlinSourceEdge() {
         super();
         this.setGremlinScriptStrategy(new GremlinScriptLiteralEdge());
+        this.setGremlinResultReader(new GremlinResultEdgeReader());
+        this.setGremlinSourceReader(new GremlinSourceEdgeReader());
         this.setGremlinSourceWriter(new GremlinSourceEdgeWriter());
     }
 
