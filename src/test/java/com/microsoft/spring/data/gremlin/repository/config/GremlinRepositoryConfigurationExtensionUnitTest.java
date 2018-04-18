@@ -25,12 +25,7 @@ public class GremlinRepositoryConfigurationExtensionUnitTest {
     private static final String GREMLIN_MODULE_PREFIX = "gremlin";
     private static final String GREMLIN_MAPPING_CONTEXT = "gremlinMappingContext";
 
-    private ResourceLoader loader;
-    private Environment environment;
-    private BeanDefinitionRegistry registry;
-    private RepositoryConfigurationSource config;
     private GremlinRepositoryConfigurationExtension extension;
-    private StandardAnnotationMetadata metadata;
 
     @Before
     public void setup() {
@@ -49,19 +44,18 @@ public class GremlinRepositoryConfigurationExtensionUnitTest {
 
     @Test
     public void testGremlinRepositoryConfigurationExtensionRegisterBeansForRoot() {
-        this.loader = new PathMatchingResourcePatternResolver();
-        this.environment = new StandardEnvironment();
-        this.registry = new DefaultListableBeanFactory();
-        this.metadata = new StandardAnnotationMetadata(GremlinConfig.class, true);
+        final ResourceLoader loader = new PathMatchingResourcePatternResolver();
+        final Environment environment = new StandardEnvironment();
+        final BeanDefinitionRegistry registry = new DefaultListableBeanFactory();
+        final StandardAnnotationMetadata metadata = new StandardAnnotationMetadata(GremlinConfig.class, true);
+        final RepositoryConfigurationSource config = new AnnotationRepositoryConfigurationSource(metadata,
+                EnableGremlinRepository.class, loader, environment, registry);
 
-        this.config = new AnnotationRepositoryConfigurationSource(this.metadata, EnableGremlinRepository.class,
-                this.loader, this.environment, this.registry);
+        Assert.assertFalse(registry.containsBeanDefinition(GREMLIN_MAPPING_CONTEXT));
 
-        Assert.assertFalse(this.registry.containsBeanDefinition(GREMLIN_MAPPING_CONTEXT));
+        this.extension.registerBeansForRoot(registry, config);
 
-        this.extension.registerBeansForRoot(this.registry, this.config);
-
-        Assert.assertTrue(this.registry.containsBeanDefinition(GREMLIN_MAPPING_CONTEXT));
+        Assert.assertTrue(registry.containsBeanDefinition(GREMLIN_MAPPING_CONTEXT));
     }
 
     @EnableGremlinRepository

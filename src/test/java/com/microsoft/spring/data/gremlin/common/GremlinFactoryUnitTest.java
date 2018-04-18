@@ -22,8 +22,8 @@ public class GremlinFactoryUnitTest {
 
     @Test
     public void testGremlinFactoryNormal() {
-        Client client;
-        GremlinFactory factory;
+        final Client client;
+        final GremlinFactory factory;
 
         factory = new GremlinFactory(TestConstants.EMPTY_STRING, TestConstants.EMPTY_STRING,
                 TestConstants.EMPTY_STRING, TestConstants.EMPTY_STRING);
