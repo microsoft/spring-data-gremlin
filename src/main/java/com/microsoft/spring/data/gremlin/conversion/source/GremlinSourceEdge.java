@@ -33,4 +33,9 @@ public class GremlinSourceEdge extends BasicGremlinSource {
         super.setIdField(idField);
         super.setLabel(label);
     }
+
+    public GremlinSourceEdge(@NonNull String id) {
+        super();
+        super.setId(id);
+    }
 }
