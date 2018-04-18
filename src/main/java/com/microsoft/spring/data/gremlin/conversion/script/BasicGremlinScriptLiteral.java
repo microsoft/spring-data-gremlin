@@ -12,10 +12,9 @@ import org.springframework.lang.NonNull;
 import java.util.List;
 import java.util.Map;
 
-public abstract class GremlinScriptPropertiesLiteral {
+public abstract class BasicGremlinScriptLiteral {
 
-    protected void generateGremlinScriptProperties(@NonNull List<String> scriptList,
-                                                   @NonNull final Map<String, Object> properties) {
+    protected void generateProperties(@NonNull List<String> scriptList, @NonNull final Map<String, Object> properties) {
 
         for (final Map.Entry<String, Object> entry : properties.entrySet()) {
             final String name = entry.getKey();

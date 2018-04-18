@@ -11,7 +11,13 @@ import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultEdgeReader;
 import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultVertexReader;
-import com.microsoft.spring.data.gremlin.conversion.script.*;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralEdge;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralVertex;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertexReader;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.conversion.source.*;
 import com.microsoft.spring.data.gremlin.exception.GremlinFindException;
 import com.microsoft.spring.data.gremlin.exception.GremlinInsertionException;
@@ -56,9 +62,9 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     @Override
     public void deleteAll() {
         final Client client = this.gremlinFactory.getGremlinClient();
+        final GremlinScriptLiteral script = new GremlinScriptLiteralGraph();
 
-        client.submit(new GremlinScriptEdgeDropLiteral().generateScript(null)).all().join();
-        client.submit(new GremlinScriptVertexDropLiteral().generateScript(null)).all().join();
+        client.submit(script.generateDeleteAllScript(null)).all().join();
     }
 
     @Override
@@ -67,12 +73,12 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final Client client = this.gremlinFactory.getGremlinClient();
         final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
         final GremlinSource source = information.getGremlinSource();
-        final GremlinScript<String> script = source.getGremlinScriptLiteral();
+        final GremlinScriptLiteral script = source.getGremlinScriptLiteral();
 
         this.mappingConverter.write(object, source);
 
         try {
-            client.submit(script.generateScript(source)).all().join();
+            client.submit(script.generateInsertScript(source)).all().join();
         } catch (CompletionException e) {
             final String typeName = object.getClass().getName();
             throw new GremlinInsertionException(String.format("unable to insert type %s from gremlin", typeName), e);
@@ -86,11 +92,11 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final Client client = this.gremlinFactory.getGremlinClient();
         final String idValue = id.toString();
         final GremlinSource source = new GremlinSourceVertex(idValue);
-        final GremlinScript<String> script = new GremlinScriptVertexFindByIdLiteral();
+        final GremlinScriptLiteral script = new GremlinScriptLiteralVertex();
         final List<Result> results;
 
         try {
-            results = client.submit(script.generateScript(source)).all().join();
+            results = client.submit(script.generateFindByIdScript(source)).all().join();
         } catch (CompletionException e) {
             final String typeName = domainClass.getName();
             throw new GremlinFindException(String.format("unable to complete find %s from gremlin", typeName), e);
@@ -140,11 +146,11 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final Client client = this.gremlinFactory.getGremlinClient();
         final String idValue = id.toString();
         final GremlinSource source = new GremlinSourceEdge(idValue);
-        final GremlinScript<String> script = new GremlinScriptEdgeFindByIdLiteral();
+        final GremlinScriptLiteral script = new GremlinScriptLiteralEdge();
         final List<Result> results;
 
         try {
-            results = client.submit(script.generateScript(source)).all().join();
+            results = client.submit(script.generateFindByIdScript(source)).all().join();
         } catch (CompletionException e) {
             final String typeName = domainClass.getName();
             throw new GremlinFindException(String.format("unable to complete find %s from gremlin", typeName), e);

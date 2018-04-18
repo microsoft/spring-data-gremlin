@@ -6,8 +6,8 @@
 package com.microsoft.spring.data.gremlin.conversion.source;
 
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultReader;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScript;
 import org.apache.tinkerpop.gremlin.driver.Result;
 
 import java.lang.reflect.Field;
@@ -79,14 +79,14 @@ public interface GremlinSource {
     <T extends Object> T doGremlinSourceRead(Class<T> type, MappingGremlinConverter converter);
 
     /**
-     * return the GremlinScript
+     * return the GremlinScriptLiteral
      */
-    GremlinScript<String> getGremlinScriptLiteral();
+    GremlinScriptLiteral getGremlinScriptLiteral();
 
     /**
      * Set the script Strategy of GremlinSource
      */
-    void setGremlinScriptStrategy(GremlinScript script);
+    void setGremlinScriptStrategy(GremlinScriptLiteral script);
 
     /**
      * Set the SourceWriter of GremlinSource
