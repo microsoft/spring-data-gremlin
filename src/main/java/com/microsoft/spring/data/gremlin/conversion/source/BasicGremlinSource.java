@@ -45,7 +45,6 @@ public class BasicGremlinSource implements GremlinSource {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void setGremlinScriptStrategy(@NonNull GremlinScriptLiteral script) {
         this.setScriptLiteral(script);
     }

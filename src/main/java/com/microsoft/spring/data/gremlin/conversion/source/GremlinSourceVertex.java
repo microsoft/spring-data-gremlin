@@ -21,11 +21,6 @@ public class GremlinSourceVertex extends BasicGremlinSource {
         this.setGremlinSourceWriter(new GremlinSourceVertexWriter());
     }
 
-    public GremlinSourceVertex(@NonNull String id) {
-        this();
-        super.setId(id);
-    }
-
     public GremlinSourceVertex(@NonNull Field idField, @NonNull String label) {
         this();
         super.setIdField(idField);

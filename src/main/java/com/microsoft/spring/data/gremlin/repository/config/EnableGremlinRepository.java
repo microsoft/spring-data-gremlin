@@ -9,7 +9,6 @@ import com.microsoft.spring.data.gremlin.common.Constants;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.repository.config.DefaultRepositoryBaseClass;
-import org.springframework.data.repository.query.QueryLookupStrategy;
 
 import java.lang.annotation.*;
 
