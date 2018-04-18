@@ -73,8 +73,9 @@ public abstract class GremlinConfigurationSupport {
 
     @Bean
     public IsNewStrategyFactory isNewStrategyFactory() throws ClassNotFoundException {
-        final PersistentEntities entities = new PersistentEntities(Arrays.<MappingContext<?, ?>>asList(
-                gremlinMappingContext()));
+        final PersistentEntities entities;
+
+        entities = new PersistentEntities(Arrays.<MappingContext<?, ?>>asList(gremlinMappingContext()));
 
         return new CachingIsNewStrategyFactory(new MappingContextIsNewStrategyFactory(entities));
     }
