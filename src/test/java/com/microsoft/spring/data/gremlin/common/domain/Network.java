@@ -8,6 +8,8 @@ package com.microsoft.spring.data.gremlin.common.domain;
 import com.microsoft.spring.data.gremlin.annotation.EdgeSet;
 import com.microsoft.spring.data.gremlin.annotation.Graph;
 import com.microsoft.spring.data.gremlin.annotation.VertexSet;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.List;
 @Graph
 public class Network {
 
+    @Getter
+    @Setter
     private String id;
 
     @VertexSet
