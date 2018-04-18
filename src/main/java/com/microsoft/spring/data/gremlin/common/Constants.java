@@ -48,13 +48,13 @@ public class Constants {
 
     public static final String GREMLIN_SCRIPT_HEAD = GREMLIN_PRIMITIVE_GRAPH + GREMLIN_PRIMITIVE_INVOKE;
 
-    public static final String GREMLIN_SCRIPT_EDGE_DROP = String.join(GREMLIN_PRIMITIVE_INVOKE,
+    public static final String GREMLIN_SCRIPT_EDGE_DROP_ALL = String.join(GREMLIN_PRIMITIVE_INVOKE,
             GREMLIN_PRIMITIVE_GRAPH,
             GREMLIN_PRIMITIVE_EDGE_ALL,
             GREMLIN_PRIMITIVE_DROP
     );
 
-    public static final String GREMLIN_SCRIPT_VERTEX_DROP = String.join(GREMLIN_PRIMITIVE_INVOKE,
+    public static final String GREMLIN_SCRIPT_VERTEX_DROP_ALL = String.join(GREMLIN_PRIMITIVE_INVOKE,
             GREMLIN_PRIMITIVE_GRAPH,
             GREMLIN_PRIMITIVE_VERTEX_ALL,
             GREMLIN_PRIMITIVE_DROP
