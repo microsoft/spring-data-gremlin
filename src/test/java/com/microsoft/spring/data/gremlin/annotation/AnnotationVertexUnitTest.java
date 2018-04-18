@@ -14,9 +14,9 @@ import org.junit.Test;
 public class AnnotationVertexUnitTest {
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testAnnotationVertexDefaultLabel() {
         final Library libc = new Library(TestConstants.LIBC_ID, TestConstants.LIBC_NAME);
+        @SuppressWarnings("unchecked")
         final GremlinEntityInformation info = new GremlinEntityInformation(libc.getClass());
 
         Assert.assertNotNull(info.getEntityLabel());
@@ -25,9 +25,9 @@ public class AnnotationVertexUnitTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testAnnotationVertexSpecifiedLabel() {
         final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
+        @SuppressWarnings("unchecked")
         final GremlinEntityInformation info = new GremlinEntityInformation(person.getClass());
 
         Assert.assertNotNull(info.getEntityLabel());

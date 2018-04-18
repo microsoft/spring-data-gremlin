@@ -23,12 +23,12 @@ import java.util.List;
 @NoArgsConstructor
 public class GremlinSourceGraphWriter implements GremlinSourceWriter {
 
-    @SuppressWarnings("unchecked")
     private void writeGraphSet(@NonNull List<Object> objectList, @NonNull MappingGremlinConverter mappingConverter,
                                @NonNull GremlinSourceGraph sourceGraph) {
         Assert.isInstanceOf(GremlinSourceGraph.class, sourceGraph, "should be instance of GremlinSourceGraph ");
 
         for (final Object object : objectList) {
+            @SuppressWarnings("unchecked")
             final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
             final GremlinSource source = information.getGremlinSource();
 
@@ -38,7 +38,6 @@ public class GremlinSourceGraphWriter implements GremlinSourceWriter {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void write(@NonNull Object domain, @NonNull MappingGremlinConverter converter,
                       @NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceGraph)) {
@@ -52,6 +51,7 @@ public class GremlinSourceGraphWriter implements GremlinSourceWriter {
         for (final Field field : domain.getClass().getDeclaredFields()) {
             final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
             Assert.notNull(property, "persistence property should not be null");
+            @SuppressWarnings("unchecked")
             final List<Object> objectList = (List<Object>) accessor.getProperty(property);
 
             if (field.getAnnotation(VertexSet.class) != null || field.getAnnotation(EdgeSet.class) != null) {

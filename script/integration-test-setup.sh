@@ -1,4 +1,4 @@
-#1/bin/bash
+#!/bin/bash
 
 endpoint="$GREMLIN_ENDPOINT"
 username="$GREMLIN_USERNAME"

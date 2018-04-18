@@ -19,7 +19,7 @@ public class Network {
 
     @Getter
     @Setter
-    String id;
+    private String id;
 
     @VertexSet
     private List<Object> vertexList;
