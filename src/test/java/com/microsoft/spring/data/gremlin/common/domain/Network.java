@@ -15,7 +15,7 @@ import java.util.List;
 @Graph
 public class Network {
 
-    String id;
+    private String id;
 
     @VertexSet
     private List<Object> vertexList;

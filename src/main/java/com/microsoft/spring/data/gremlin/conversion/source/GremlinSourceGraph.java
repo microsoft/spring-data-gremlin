@@ -8,7 +8,6 @@ package com.microsoft.spring.data.gremlin.conversion.source;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.lang.NonNull;
 
 import java.lang.reflect.Field;
@@ -18,11 +17,9 @@ import java.util.List;
 public class GremlinSourceGraph extends BasicGremlinSource {
 
     @Getter
-    @Setter
     private List<GremlinSource> vertexSet;
 
     @Getter
-    @Setter
     private List<GremlinSource> edgeSet;
 
     public GremlinSourceGraph() {

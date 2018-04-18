@@ -14,9 +14,9 @@ import org.junit.Test;
 public class AnnotationGraphUnitTest {
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testAnnotationGraphDefaultCollection() {
         final Network network = new Network();
+        @SuppressWarnings("unchecked")
         final GremlinEntityInformation info = new GremlinEntityInformation(network.getClass());
 
         Assert.assertNull(info.getEntityLabel());
@@ -24,9 +24,9 @@ public class AnnotationGraphUnitTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testAnnotationGraphSpecifiedCollection() {
         final Roadmap roadmap = new Roadmap();
+        @SuppressWarnings("unchecked")
         final GremlinEntityInformation info = new GremlinEntityInformation(roadmap.getClass());
 
         Assert.assertNull(info.getEntityLabel());
