@@ -14,6 +14,7 @@ import org.springframework.lang.Nullable;
 
 
 public class GremlinFactory {
+
     private Cluster gremlinCluster;
     private String endpoint;
     private String port;
@@ -36,7 +37,7 @@ public class GremlinFactory {
 
     private Cluster createGremlinCluster() throws GremlinIllegalConfigurationException {
         final int port;
-        Cluster cluster;
+        final Cluster cluster;
 
         try {
             port = Integer.parseInt(this.port);
