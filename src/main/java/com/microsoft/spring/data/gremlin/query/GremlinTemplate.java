@@ -9,16 +9,11 @@ import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
 import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
-import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultEdgeReader;
-import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultVertexReader;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralEdge;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralVertex;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertexReader;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
-import com.microsoft.spring.data.gremlin.conversion.source.*;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
+import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinFindException;
 import com.microsoft.spring.data.gremlin.exception.GremlinInsertionException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
@@ -68,9 +63,9 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T insert(@NonNull T object) {
         final Client client = this.gremlinFactory.getGremlinClient();
+        @SuppressWarnings("unchecked")
         final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
         final GremlinSource source = information.getGremlinSource();
         final GremlinScriptLiteral script = source.getGremlinScriptLiteral();
@@ -89,14 +84,16 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T findVertexById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        final Client client = this.gremlinFactory.getGremlinClient();
-        final String idValue = id.toString();
-        final GremlinSource source = new GremlinSourceVertex(idValue);
-        final GremlinScriptLiteral script = new GremlinScriptLiteralVertex();
         final List<Result> results;
+        final Client client = this.gremlinFactory.getGremlinClient();
+        @SuppressWarnings("unchecked")
+        final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = information.getGremlinSource();
+
+        source.setId(id.toString());
 
         try {
-            results = client.submit(script.generateFindByIdScript(source)).all().join();
+            results = client.submit(source.getGremlinScriptLiteral().generateFindByIdScript(source)).all().join();
         } catch (CompletionException e) {
             final String typeName = domainClass.getName();
             throw new GremlinFindException(String.format("unable to complete find %s from gremlin", typeName), e);
@@ -107,14 +104,18 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         }
 
         Assert.isTrue(results.size() == 1, "should be only one vertex with given id");
+        Assert.isTrue(id.toString().equals(source.getId()), "should be the same id");
 
-        source.setGremlinResultReader(new GremlinResultVertexReader());
-        source.setGremlinSourceReader(new GremlinSourceVertexReader());
         source.doGremlinResultRead(results.get(0));
+        final T domain = this.mappingConverter.read(domainClass, source);
 
-        return this.mappingConverter.read(domainClass, source);
+        return domain;
     }
 
+    /**
+     * Find Edge need another two query to obtain edgeFrom and edgeTo.
+     * This function will do that and make edge domain completion.
+     */
     private <T> void completeEdge(@NonNull T domain, @NonNull GremlinSourceEdge source) {
         final ConvertingPropertyAccessor accessor = this.mappingConverter.getPropertyAccessor(domain);
         final GremlinPersistentEntity persistentEntity = this.mappingConverter.getPersistentEntity(domain.getClass());
@@ -123,7 +124,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final List<Field> toFields = FieldUtils.getFieldsListWithAnnotation(domain.getClass(), EdgeTo.class);
 
         if (fromFields.size() != 1 || toFields.size() != 1) {
-            throw new IllegalStateException("should be only one Annotation");
+            throw new GremlinEntityInformationException("should be only one Annotation");
         }
 
         final Field fromField = fromFields.get(0);
@@ -134,6 +135,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         final PersistentProperty propertyFrom = persistentEntity.getPersistentProperty(fromField.getName());
         final PersistentProperty propertyTo = persistentEntity.getPersistentProperty(toField.getName());
+
         Assert.notNull(propertyFrom, "persistence property should not be null");
         Assert.notNull(propertyTo, "persistence property should not be null");
 
@@ -142,15 +144,34 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     @Override
+    public <T> T findById(@NonNull Object id, @NonNull Class<T> domainClass) {
+
+        @SuppressWarnings("unchecked")
+        final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
+
+        switch (information.getEntityType()) {
+            case EDGE:
+                return this.findEdgeById(id, domainClass);
+            case VERTEX:
+                return this.findVertexById(id, domainClass);
+            case GRAPH:
+            default:
+                throw new UnsupportedOperationException("not implemented yet");
+        }
+    }
+
+    @Override
     public <T> T findEdgeById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        final Client client = this.gremlinFactory.getGremlinClient();
-        final String idValue = id.toString();
-        final GremlinSource source = new GremlinSourceEdge(idValue);
-        final GremlinScriptLiteral script = new GremlinScriptLiteralEdge();
         final List<Result> results;
+        final Client client = this.gremlinFactory.getGremlinClient();
+        @SuppressWarnings("unchecked")
+        final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = information.getGremlinSource();
+
+        source.setId(id.toString());
 
         try {
-            results = client.submit(script.generateFindByIdScript(source)).all().join();
+            results = client.submit(source.getGremlinScriptLiteral().generateFindByIdScript(source)).all().join();
         } catch (CompletionException e) {
             final String typeName = domainClass.getName();
             throw new GremlinFindException(String.format("unable to complete find %s from gremlin", typeName), e);
@@ -161,11 +182,9 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         }
 
         Assert.isTrue(results.size() == 1, "should be only one edge with given id");
+        Assert.isTrue(id.toString().equals(source.getId()), "should be the same id");
 
-        source.setGremlinResultReader(new GremlinResultEdgeReader());
-        source.setGremlinSourceReader(new GremlinSourceEdgeReader());
         source.doGremlinResultRead(results.get(0));
-
         final T domain = this.mappingConverter.read(domainClass, source);
         this.completeEdge(domain, (GremlinSourceEdge) source);
 
