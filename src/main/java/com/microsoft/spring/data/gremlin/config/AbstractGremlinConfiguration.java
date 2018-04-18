@@ -8,7 +8,6 @@ package com.microsoft.spring.data.gremlin.config;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.query.GremlinTemplate;
-import lombok.SneakyThrows;
 import org.apache.tinkerpop.gremlin.driver.Client;
 import org.springframework.context.annotation.Bean;
 
@@ -22,14 +21,12 @@ public abstract class AbstractGremlinConfiguration extends GremlinConfigurationS
     }
 
     @Bean
-    @SneakyThrows
-    public MappingGremlinConverter mappingGremlinConverter() {
+    public MappingGremlinConverter mappingGremlinConverter() throws ClassNotFoundException {
         return new MappingGremlinConverter(gremlinMappingContext());
     }
 
     @Bean
-    @SneakyThrows
-    public GremlinTemplate gremlinTemplate() {
+    public GremlinTemplate gremlinTemplate() throws ClassNotFoundException {
         return new GremlinTemplate(gremlinFactory(), mappingGremlinConverter());
     }
 }

@@ -6,7 +6,6 @@
 package com.microsoft.spring.data.gremlin.config;
 
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -32,8 +31,7 @@ public abstract class GremlinConfigurationSupport {
         return Collections.singleton(basePackage == null ? null : basePackage.getName());
     }
 
-    @SneakyThrows
-    protected Set<Class<?>> scanEntities(@NonNull String basePackage) {
+    protected Set<Class<?>> scanEntities(@NonNull String basePackage) throws ClassNotFoundException {
         if (!StringUtils.hasText(basePackage)) {
             return Collections.emptySet();
         }
@@ -44,7 +42,7 @@ public abstract class GremlinConfigurationSupport {
 
         provider.addIncludeFilter(new AnnotationTypeFilter(Persistent.class));
 
-        for (final BeanDefinition candidate: provider.findCandidateComponents(basePackage)) {
+        for (final BeanDefinition candidate : provider.findCandidateComponents(basePackage)) {
             final String className = candidate.getBeanClassName();
             Assert.notNull(GremlinConfigurationSupport.class.getClassLoader(), "Class loader cannot be null");
 
@@ -54,16 +52,18 @@ public abstract class GremlinConfigurationSupport {
         return entitySet;
     }
 
-    protected Set<Class<?>> getInitialEntitySet() {
+    protected Set<Class<?>> getInitialEntitySet() throws ClassNotFoundException {
         final Set<Class<?>> entitySet = new HashSet<>();
 
-        this.getMappingBasePackages().forEach(basePackage -> entitySet.addAll(this.scanEntities(basePackage)));
+        for (final String basePackage : this.getMappingBasePackages()) {
+            entitySet.addAll(this.scanEntities(basePackage));
+        }
 
         return entitySet;
     }
 
     @Bean
-    public GremlinMappingContext gremlinMappingContext() {
+    public GremlinMappingContext gremlinMappingContext() throws ClassNotFoundException {
         final GremlinMappingContext context = new GremlinMappingContext();
 
         context.setInitialEntitySet(this.getInitialEntitySet());
@@ -72,7 +72,7 @@ public abstract class GremlinConfigurationSupport {
     }
 
     @Bean
-    public IsNewStrategyFactory isNewStrategyFactory() {
+    public IsNewStrategyFactory isNewStrategyFactory() throws ClassNotFoundException {
         final PersistentEntities entities = new PersistentEntities(Arrays.<MappingContext<?, ?>>asList(
                 gremlinMappingContext()));
 
