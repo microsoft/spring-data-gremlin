@@ -56,4 +56,28 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
     public String generateFindByIdScript(@Nullable GremlinSource source) {
         throw new UnsupportedOperationException("Gremlin graph cannot findById by single query.");
     }
+
+    @Override
+    public String generateUpdateScript(@NonNull GremlinSource source) {
+        if (!(source instanceof GremlinSourceGraph)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceGraph");
+        }
+
+        final List<String> scriptList = new ArrayList<>();
+        final GremlinSourceGraph sourceGraph = (GremlinSourceGraph) source;
+
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
+
+        for (final GremlinSource vertex : sourceGraph.getVertexSet()) {
+            final String vertexScript = new GremlinScriptLiteralVertex().generateUpdateScript(vertex);
+            scriptList.add(this.trimScriptHead(vertexScript));
+        }
+
+        for (final GremlinSource edge : sourceGraph.getEdgeSet()) {
+            final String edgeScript = new GremlinScriptLiteralEdge().generateUpdateScript(edge);
+            scriptList.add(this.trimScriptHead(edgeScript));
+        }
+
+        return String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
+    }
 }
