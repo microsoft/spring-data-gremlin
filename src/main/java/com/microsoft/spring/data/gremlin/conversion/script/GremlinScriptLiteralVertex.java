@@ -67,4 +67,25 @@ public class GremlinScriptLiteralVertex extends BasicGremlinScriptLiteral implem
 
         return String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
     }
+
+    @Override
+    public String generateUpdateScript(@NonNull GremlinSource source) {
+        if (!(source instanceof GremlinSourceVertex)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
+        }
+
+        final List<String> scriptList = new ArrayList<>();
+        final String id = source.getId();
+        final Map<String, Object> properties = source.getProperties();
+
+        Assert.notNull(id, "id should not be null");
+        Assert.notNull(properties, "properties should not be null");
+
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
+        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_VERTEX, id));
+
+        super.generateProperties(scriptList, properties);
+
+        return String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
+    }
 }
