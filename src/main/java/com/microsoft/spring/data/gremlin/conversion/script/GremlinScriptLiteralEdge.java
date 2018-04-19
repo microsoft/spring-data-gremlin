@@ -15,6 +15,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -56,8 +57,8 @@ public class GremlinScriptLiteralEdge extends BasicGremlinScriptLiteral implemen
     }
 
     @Override
-    public String generateDeleteAllScript(@Nullable GremlinSource source) {
-        return Constants.GREMLIN_SCRIPT_EDGE_DROP_ALL;
+    public List<String> generateDeleteAllScript(@Nullable GremlinSource source) {
+        return Arrays.asList(Constants.GREMLIN_SCRIPT_EDGE_DROP_ALL);
     }
 
     @Override
@@ -78,7 +79,7 @@ public class GremlinScriptLiteralEdge extends BasicGremlinScriptLiteral implemen
     }
 
     @Override
-    public String generateUpdateScript(@NonNull GremlinSource source) {
+    public List<String> generateUpdateScript(@NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceEdge)) {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
@@ -95,7 +96,7 @@ public class GremlinScriptLiteralEdge extends BasicGremlinScriptLiteral implemen
 
         super.generateProperties(scriptList, properties);
 
-        return String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
+        return Arrays.asList(String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList));
     }
 }
 

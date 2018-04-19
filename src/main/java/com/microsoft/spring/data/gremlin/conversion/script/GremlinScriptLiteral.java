@@ -7,8 +7,11 @@ package com.microsoft.spring.data.gremlin.conversion.script;
 
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 
+import java.util.List;
+
 /**
  * Provider interface to generate different query to gremlin server.
+ * The scripts may return queries in steps, organized by List.
  */
 public interface GremlinScriptLiteral {
     /**
@@ -20,7 +23,7 @@ public interface GremlinScriptLiteral {
     /**
      * Generate the deleteAll query from source (Vertex, Edge or Graph).
      */
-    String generateDeleteAllScript(GremlinSource source);
+    List<String> generateDeleteAllScript(GremlinSource source);
 
 
     /**
@@ -31,5 +34,5 @@ public interface GremlinScriptLiteral {
     /**
      * Generate the update query from source (Vertex, Edge or Graph).
      */
-    String generateUpdateScript(GremlinSource source);
+    List<String> generateUpdateScript(GremlinSource source);
 }

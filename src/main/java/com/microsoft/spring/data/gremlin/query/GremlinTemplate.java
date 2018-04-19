@@ -56,8 +56,11 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     public void deleteAll() {
         final Client client = this.gremlinFactory.getGremlinClient();
         final GremlinScriptLiteral script = new GremlinScriptLiteralGraph();
+        final List<String> queryList = script.generateDeleteAllScript(null);
 
-        client.submit(script.generateDeleteAllScript(null)).all().join();
+        for (final String query : queryList) {
+            client.submit(query).all().join();
+        }
     }
 
     @Override
@@ -199,12 +202,16 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         this.mappingConverter.write(object, source);
 
-        if (this.findById(source.getId(), domainClass) == null) {
+        if (!information.isEntityGraph() && this.findById(source.getId(), domainClass) == null) {
             throw new GremlinUpdationException("cannot update the object doesn't exist");
         }
 
+        final List<String> queryList = source.getGremlinScriptLiteral().generateUpdateScript(source);
+
         try {
-            client.submit(source.getGremlinScriptLiteral().generateUpdateScript(source)).all().join();
+            for (final String query : queryList) {
+                client.submit(query).all().join();
+            }
         } catch (CompletionException e) {
             final String typeName = object.getClass().getName();
             throw new GremlinInsertionException(String.format("unable to insert type %s from gremlin", typeName), e);
