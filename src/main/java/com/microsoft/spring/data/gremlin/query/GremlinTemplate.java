@@ -13,9 +13,7 @@ import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
-import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
-import com.microsoft.spring.data.gremlin.exception.GremlinFindException;
-import com.microsoft.spring.data.gremlin.exception.GremlinInsertionException;
+import com.microsoft.spring.data.gremlin.exception.*;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -68,12 +66,11 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         @SuppressWarnings("unchecked")
         final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
         final GremlinSource source = information.getGremlinSource();
-        final GremlinScriptLiteral script = source.getGremlinScriptLiteral();
 
         this.mappingConverter.write(object, source);
 
         try {
-            client.submit(script.generateInsertScript(source)).all().join();
+            client.submit(source.getGremlinScriptLiteral().generateInsertScript(source)).all().join();
         } catch (CompletionException e) {
             final String typeName = object.getClass().getName();
             throw new GremlinInsertionException(String.format("unable to insert type %s from gremlin", typeName), e);
@@ -145,7 +142,6 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T findById(@NonNull Object id, @NonNull Class<T> domainClass) {
-
         @SuppressWarnings("unchecked")
         final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
 
@@ -155,8 +151,9 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
             case VERTEX:
                 return this.findVertexById(id, domainClass);
             case GRAPH:
+                throw new UnsupportedOperationException("Gremlin graph cannot findById by single query.");
             default:
-                throw new UnsupportedOperationException("not implemented yet");
+                throw new GremlinUnexpectedEntityTypeException("Unexpected Entity type");
         }
     }
 
@@ -189,6 +186,31 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         this.completeEdge(domain, (GremlinSourceEdge) source);
 
         return domain;
+    }
+
+    @Override
+    public <T> T update(@NonNull T object) {
+        final Client client = this.gremlinFactory.getGremlinClient();
+        @SuppressWarnings("unchecked")
+        final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
+        @SuppressWarnings("unchecked")
+        final Class<T> domainClass = (Class<T>) object.getClass();
+        final GremlinSource source = information.getGremlinSource();
+
+        this.mappingConverter.write(object, source);
+
+        if (this.findById(source.getId(), domainClass) == null) {
+            throw new GremlinUpdationException("cannot update the object doesn't exist");
+        }
+
+        try {
+            client.submit(source.getGremlinScriptLiteral().generateUpdateScript(source)).all().join();
+        } catch (CompletionException e) {
+            final String typeName = object.getClass().getName();
+            throw new GremlinInsertionException(String.format("unable to insert type %s from gremlin", typeName), e);
+        }
+
+        return object;
     }
 }
 

@@ -27,4 +27,9 @@ public interface GremlinScriptLiteral {
      * Generate the findById query from source (Vertex, Edge or Graph).
      */
     String generateFindByIdScript(GremlinSource source);
+
+    /**
+     * Generate the update query from source (Vertex, Edge or Graph).
+     */
+    String generateUpdateScript(GremlinSource source);
 }
