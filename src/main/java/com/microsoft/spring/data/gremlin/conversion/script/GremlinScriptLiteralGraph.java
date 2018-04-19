@@ -12,8 +12,10 @@ import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeEx
 import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @NoArgsConstructor
@@ -48,8 +50,8 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
     }
 
     @Override
-    public String generateDeleteAllScript(@Nullable GremlinSource source) {
-        return Constants.GREMLIN_SCRIPT_VERTEX_DROP_ALL;
+    public List<String> generateDeleteAllScript(@Nullable GremlinSource source) {
+        return Arrays.asList(Constants.GREMLIN_SCRIPT_EDGE_DROP_ALL, Constants.GREMLIN_SCRIPT_VERTEX_DROP_ALL);
     }
 
     @Override
@@ -58,26 +60,35 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
     }
 
     @Override
-    public String generateUpdateScript(@NonNull GremlinSource source) {
+    public List<String> generateUpdateScript(@NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceGraph)) {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceGraph");
         }
 
-        final List<String> scriptList = new ArrayList<>();
+        final List<String> scriptVertex = new ArrayList<>();
+        final List<String> scriptEdge = new ArrayList<>();
         final GremlinSourceGraph sourceGraph = (GremlinSourceGraph) source;
 
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
+        scriptVertex.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
+        scriptEdge.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
 
         for (final GremlinSource vertex : sourceGraph.getVertexSet()) {
-            final String vertexScript = new GremlinScriptLiteralVertex().generateUpdateScript(vertex);
-            scriptList.add(this.trimScriptHead(vertexScript));
+            final List<String> vertexScript = new GremlinScriptLiteralVertex().generateUpdateScript(vertex);
+            Assert.isTrue(vertexScript.size() == 1, "should be only one query");
+
+            scriptVertex.add(this.trimScriptHead(vertexScript.get(0)));
         }
 
         for (final GremlinSource edge : sourceGraph.getEdgeSet()) {
-            final String edgeScript = new GremlinScriptLiteralEdge().generateUpdateScript(edge);
-            scriptList.add(this.trimScriptHead(edgeScript));
+            final List<String> edgeScript = new GremlinScriptLiteralEdge().generateUpdateScript(edge);
+            Assert.isTrue(edgeScript.size() == 1, "should be only one query");
+
+            scriptEdge.add(this.trimScriptHead(edgeScript.get(0)));
         }
 
-        return String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
+        final String queryVertex = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptVertex);
+        final String queryEdge = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptEdge);
+
+        return Arrays.asList(queryVertex, queryEdge);
     }
 }
