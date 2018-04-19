@@ -28,6 +28,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletionException;
 
@@ -72,8 +73,12 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         this.mappingConverter.write(object, source);
 
+        final List<String> queryList = source.getGremlinScriptLiteral().generateInsertScript(source);
+
         try {
-            client.submit(source.getGremlinScriptLiteral().generateInsertScript(source)).all().join();
+            for (final String query : queryList) {
+                client.submit(query).all().join();
+            }
         } catch (CompletionException e) {
             final String typeName = object.getClass().getName();
             throw new GremlinInsertionException(String.format("unable to insert type %s from gremlin", typeName), e);
@@ -84,7 +89,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T findVertexById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        final List<Result> results;
+        final List<Result> results = new ArrayList<>();
         final Client client = this.gremlinFactory.getGremlinClient();
         @SuppressWarnings("unchecked")
         final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
@@ -92,8 +97,12 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         source.setId(id.toString());
 
+        final List<String> queryList = source.getGremlinScriptLiteral().generateFindByIdScript(source);
+
         try {
-            results = client.submit(source.getGremlinScriptLiteral().generateFindByIdScript(source)).all().join();
+            for (final String query : queryList) {
+                results.addAll(client.submit(query).all().join());
+            }
         } catch (CompletionException e) {
             final String typeName = domainClass.getName();
             throw new GremlinFindException(String.format("unable to complete find %s from gremlin", typeName), e);
@@ -107,9 +116,8 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         Assert.isTrue(id.toString().equals(source.getId()), "should be the same id");
 
         source.doGremlinResultRead(results.get(0));
-        final T domain = this.mappingConverter.read(domainClass, source);
 
-        return domain;
+        return this.mappingConverter.read(domainClass, source);
     }
 
     /**
@@ -144,25 +152,8 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     @Override
-    public <T> T findById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
-
-        switch (information.getEntityType()) {
-            case EDGE:
-                return this.findEdgeById(id, domainClass);
-            case VERTEX:
-                return this.findVertexById(id, domainClass);
-            case GRAPH:
-                throw new UnsupportedOperationException("Gremlin graph cannot findById by single query.");
-            default:
-                throw new GremlinUnexpectedEntityTypeException("Unexpected Entity type");
-        }
-    }
-
-    @Override
     public <T> T findEdgeById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        final List<Result> results;
+        final List<Result> results = new ArrayList<>();
         final Client client = this.gremlinFactory.getGremlinClient();
         @SuppressWarnings("unchecked")
         final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
@@ -170,8 +161,12 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         source.setId(id.toString());
 
+        final List<String> queryList = source.getGremlinScriptLiteral().generateFindByIdScript(source);
+
         try {
-            results = client.submit(source.getGremlinScriptLiteral().generateFindByIdScript(source)).all().join();
+            for (final String query : queryList) {
+                results.addAll(client.submit(query).all().join());
+            }
         } catch (CompletionException e) {
             final String typeName = domainClass.getName();
             throw new GremlinFindException(String.format("unable to complete find %s from gremlin", typeName), e);
@@ -189,6 +184,23 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         this.completeEdge(domain, (GremlinSourceEdge) source);
 
         return domain;
+    }
+
+    @Override
+    public <T> T findById(@NonNull Object id, @NonNull Class<T> domainClass) {
+        @SuppressWarnings("unchecked")
+        final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
+
+        switch (information.getEntityType()) {
+            case EDGE:
+                return this.findEdgeById(id, domainClass);
+            case VERTEX:
+                return this.findVertexById(id, domainClass);
+            case GRAPH:
+                throw new UnsupportedOperationException("Gremlin graph cannot findById by single query.");
+            default:
+                throw new GremlinUnexpectedEntityTypeException("Unexpected Entity type");
+        }
     }
 
     @Override
