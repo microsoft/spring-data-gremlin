@@ -10,7 +10,6 @@ import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -55,6 +54,6 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
 
     @Override
     public String generateFindByIdScript(@Nullable GremlinSource source) {
-        throw new NotImplementedException("Gremlin graph findById not implemented yet");
+        throw new UnsupportedOperationException("Gremlin graph cannot findById by single query.");
     }
 }

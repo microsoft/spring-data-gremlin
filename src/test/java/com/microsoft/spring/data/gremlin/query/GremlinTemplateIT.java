@@ -146,8 +146,6 @@ public class GremlinTemplateIT {
 
     @Test
     public void testFindVertexById() {
-        this.template.findVertexById(this.person1.getId(), Person.class);
-
         Person foundPerson = this.template.findVertexById(this.person1.getId(), Person.class);
         Assert.assertNull(foundPerson);
 
@@ -157,6 +155,44 @@ public class GremlinTemplateIT {
         Assert.assertNotNull(foundPerson);
         Assert.assertEquals(foundPerson.getId(), this.person1.getId());
         Assert.assertEquals(foundPerson.getName(), this.person1.getName());
+    }
+
+    @Test
+    public void testFindEdgeById() {
+        Relationship foundRelationship = this.template.findEdgeById(this.relationship2.getId(), Relationship.class);
+        Assert.assertNull(foundRelationship);
+
+        this.template.insert(this.person);
+        this.template.insert(this.project0);
+        this.template.insert(this.relationship2);
+        foundRelationship = this.template.findEdgeById(this.relationship2.getId(), Relationship.class);
+
+        Assert.assertNotNull(foundRelationship);
+        Assert.assertEquals(foundRelationship.getId(), this.relationship2.getId());
+        Assert.assertEquals(foundRelationship.getName(), this.relationship2.getName());
+        Assert.assertEquals(foundRelationship.getLocation(), this.relationship2.getLocation());
+    }
+
+    @Test
+    public void testFindById() {
+        this.buildTestGraph();
+        final Person foundPerson = this.template.findById(this.person1.getId(), Person.class);
+
+        Assert.assertNotNull(foundPerson);
+        Assert.assertEquals(foundPerson.getId(), this.person1.getId());
+        Assert.assertEquals(foundPerson.getName(), this.person1.getName());
+
+        final Relationship foundRelationship = this.template.findById(this.relationship.getId(), Relationship.class);
+
+        Assert.assertNotNull(foundRelationship);
+        Assert.assertEquals(foundRelationship.getId(), this.relationship.getId());
+        Assert.assertEquals(foundRelationship.getName(), this.relationship.getName());
+        Assert.assertEquals(foundRelationship.getLocation(), this.relationship.getLocation());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testFindByIdException() {
+        final Network foundNetwork = this.template.findById(this.network.getId(), Network.class);
     }
 }
 
