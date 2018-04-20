@@ -21,4 +21,6 @@ public interface GremlinOperations {
     <T> T findEdgeById(Object id, Class<T> domainClass);
 
     <T> T update(T object);
+
+    <T> T save(T object);
 }
