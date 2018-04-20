@@ -13,7 +13,6 @@ import com.microsoft.spring.data.gremlin.common.domain.Person;
 import com.microsoft.spring.data.gremlin.common.domain.Project;
 import com.microsoft.spring.data.gremlin.common.domain.Relationship;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
-import com.microsoft.spring.data.gremlin.exception.GremlinUpdationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import lombok.SneakyThrows;
@@ -196,7 +195,7 @@ public class GremlinTemplateIT {
         this.template.findById(this.network.getId(), Network.class);
     }
 
-    @Test(expected = GremlinUpdationException.class)
+    @Test(expected = GremlinQueryException.class)
     public void testUpdateException() {
         this.template.update(this.person);
     }
