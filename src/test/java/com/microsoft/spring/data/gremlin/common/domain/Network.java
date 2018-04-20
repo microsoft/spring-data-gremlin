@@ -21,9 +21,11 @@ public class Network {
     @Setter
     private String id;
 
+    @Getter
     @VertexSet
     private List<Object> vertexList;
 
+    @Getter
     @EdgeSet
     private List<Object> edgeList;
 
