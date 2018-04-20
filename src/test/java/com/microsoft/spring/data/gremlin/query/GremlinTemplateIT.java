@@ -8,10 +8,7 @@ package com.microsoft.spring.data.gremlin.query;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.common.GremlinPropertiesConfiguration;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
-import com.microsoft.spring.data.gremlin.common.domain.Network;
-import com.microsoft.spring.data.gremlin.common.domain.Person;
-import com.microsoft.spring.data.gremlin.common.domain.Project;
-import com.microsoft.spring.data.gremlin.common.domain.Relationship;
+import com.microsoft.spring.data.gremlin.common.domain.*;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
@@ -28,6 +25,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.annotation.Persistent;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource(value = {"classpath:application.properties"})
@@ -353,6 +354,53 @@ public class GremlinTemplateIT {
         Assert.assertEquals(updatedRelationship.getId(), foundRelationship.getId());
         Assert.assertEquals(updatedRelationship.getName(), foundRelationship.getName());
         Assert.assertEquals(updatedRelationship.getLocation(), foundRelationship.getLocation());
+    }
+
+    @Test
+    public void testFindAllVertex() {
+        List<Person> personList = this.template.findAll(Person.class);
+
+        Assert.assertNull(personList);
+
+        final Collection<Person> personCollection = Arrays.asList(this.person, this.person0, this.person1);
+        personCollection.forEach(person -> this.template.insert(person));
+
+        personList = this.template.findAll(Person.class);
+
+        Assert.assertNotNull(personList);
+        Assert.assertEquals(personList.size(), personCollection.size());
+
+        personList.sort((a, b) -> (a.getId().compareTo(b.getId())));
+        ((List<Person>) personCollection).sort((a, b) -> (a.getId().compareTo(b.getId())));
+
+        Assert.assertArrayEquals(personList.toArray(), personCollection.toArray());
+    }
+
+    @Test
+    public void testFindAllEdge() {
+        this.template.insert(this.person);
+        this.template.insert(this.person0);
+        this.template.insert(this.person1);
+        this.template.insert(this.project);
+        this.template.insert(this.project0);
+
+        List<Relationship> relationshipList = this.template.findAll(Relationship.class);
+
+        Assert.assertNull(relationshipList);
+
+        final Collection<Relationship> relationshipCollection = Arrays.asList(this.relationship, this.relationship0,
+                this.relationship1, this.relationship2);
+        relationshipCollection.forEach(relationship -> this.template.insert(relationship));
+
+        relationshipList = this.template.findAll(Relationship.class);
+
+        Assert.assertNotNull(relationshipList);
+        Assert.assertEquals(relationshipList.size(), relationshipCollection.size());
+
+        relationshipList.sort((a, b) -> (a.getId().compareTo(b.getId())));
+        ((List<Relationship>) relationshipCollection).sort((a, b) -> (a.getId().compareTo(b.getId())));
+
+        Assert.assertArrayEquals(relationshipList.toArray(), relationshipCollection.toArray());
     }
 }
 
