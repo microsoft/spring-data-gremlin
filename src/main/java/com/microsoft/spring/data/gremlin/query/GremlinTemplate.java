@@ -16,7 +16,6 @@ import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
-import com.microsoft.spring.data.gremlin.exception.GremlinUpdationException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -183,25 +182,44 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         return domain;
     }
 
-    @Override
-    public <T> T update(@NonNull T object) {
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
-        @SuppressWarnings("unchecked")
-        final Class<T> domainClass = (Class<T>) object.getClass();
+    private <T> T updateInternal(@NonNull T object, @NonNull GremlinEntityInformation information) {
         final GremlinSource source = information.getGremlinSource();
 
         this.mappingConverter.write(object, source);
-
-        if (!information.isEntityGraph() && this.findById(source.getId(), domainClass) == null) {
-            throw new GremlinUpdationException("cannot update the object doesn't exist");
-        }
 
         final List<String> queryList = source.getGremlinScriptLiteral().generateUpdateScript(source);
 
         this.executeQuery(queryList);
 
         return object;
+    }
+
+    @Override
+    public <T> T update(@NonNull T object) {
+        @SuppressWarnings("unchecked")
+        final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
+        @SuppressWarnings("unchecked")
+        final Class<T> domainClass = (Class<T>) object.getClass();
+
+        if (!information.isEntityGraph() && this.findById(information.getId(object), domainClass) == null) {
+            throw new GremlinQueryException("cannot update the object doesn't exist");
+        }
+
+        return this.updateInternal(object, information);
+    }
+
+    @Override
+    public <T> T save(@NonNull T object) {
+        @SuppressWarnings("unchecked")
+        final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
+        @SuppressWarnings("unchecked")
+        final Class<T> domainClass = (Class<T>) object.getClass();
+
+        if (!information.isEntityGraph() && this.findById(information.getId(object), domainClass) == null) {
+            return this.insert(object);
+        } else {
+            return this.updateInternal(object, information);
+        }
     }
 }
 

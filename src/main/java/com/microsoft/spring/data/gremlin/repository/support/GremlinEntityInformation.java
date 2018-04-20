@@ -10,11 +10,12 @@ import com.microsoft.spring.data.gremlin.annotation.Graph;
 import com.microsoft.spring.data.gremlin.annotation.Vertex;
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
-import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceSimpleFactory;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
 import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -68,9 +69,11 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
     }
 
     @Override
+    @NonNull
     public ID getId(T entity) {
         @SuppressWarnings("unchecked")
-        final ID id = (ID) ReflectionUtils.getField(this.id, entity);
+        final ID id = (ID) ReflectionUtils.getField(this.getIdField(), entity);
+        Assert.notNull(id, "id value of idField should not be null");
 
         return id;
     }
