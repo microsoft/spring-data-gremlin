@@ -13,6 +13,7 @@ import com.microsoft.spring.data.gremlin.common.domain.Person;
 import com.microsoft.spring.data.gremlin.common.domain.Project;
 import com.microsoft.spring.data.gremlin.common.domain.Relationship;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
+import com.microsoft.spring.data.gremlin.exception.GremlinUpdationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import lombok.SneakyThrows;
@@ -192,7 +193,83 @@ public class GremlinTemplateIT {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testFindByIdException() {
-        final Network foundNetwork = this.template.findById(this.network.getId(), Network.class);
+        this.template.findById(this.network.getId(), Network.class);
+    }
+
+    @Test(expected = GremlinUpdationException.class)
+    public void testUpdateException() {
+        this.template.update(this.person);
+    }
+
+    @Test
+    public void testUpdateVertex() {
+        this.template.insert(this.person);
+
+        final String updatedName = "updated-person-name";
+        final Person updatedPerson = new Person(this.person.getId(), updatedName);
+        this.template.update(updatedPerson);
+        final Person foundPerson = this.template.findById(updatedPerson.getId(), Person.class);
+
+        Assert.assertNotNull(foundPerson);
+        Assert.assertEquals(this.person.getId(), foundPerson.getId());
+        Assert.assertEquals(updatedPerson.getId(), foundPerson.getId());
+        Assert.assertEquals(updatedPerson.getName(), foundPerson.getName());
+    }
+
+    @Test
+    public void testUpdateEdge() {
+        this.template.insert(this.person);
+        this.template.insert(this.project0);
+        this.template.insert(this.relationship2);
+
+        final String updatedName = "updated-relation-name";
+        final String updatedLocation = "updated-location";
+        final Relationship updatedRelationship = new Relationship(TestConstants.EDGE_RELATIONSHIP_2_ID,
+                updatedName, updatedLocation, this.person, this.project0);
+        this.template.update(updatedRelationship);
+        final Relationship foundRelationship = this.template.findById(updatedRelationship.getId(), Relationship.class);
+
+        Assert.assertNotNull(foundRelationship);
+        Assert.assertEquals(this.relationship2.getId(), foundRelationship.getId());
+        Assert.assertEquals(updatedRelationship.getId(), foundRelationship.getId());
+        Assert.assertEquals(updatedRelationship.getName(), foundRelationship.getName());
+        Assert.assertEquals(updatedRelationship.getLocation(), foundRelationship.getLocation());
+    }
+
+    @Test
+    public void testUpdateGraph() {
+        this.buildTestGraph();
+
+        final String updatedName = "update-person-name";
+        final String updatedLocation = "update-location";
+        final String updatedUri = "http://localhost:2222";
+
+        final Person person = (Person) this.network.getVertexList().get(0);
+        final Project project = (Project) this.network.getVertexList().get(3);
+        final Relationship relationship = (Relationship) this.network.getEdgeList().get(0);
+
+        person.setName(updatedName);
+        project.setUri(updatedUri);
+        relationship.setLocation(updatedLocation);
+
+        this.template.update(network);
+
+        final Person foundPerson = this.template.findById(person.getId(), Person.class);
+        final Project foundProject = this.template.findById(project.getId(), Project.class);
+        final Relationship foundRelationship = this.template.findById(relationship.getId(), Relationship.class);
+
+        Assert.assertNotNull(foundPerson);
+        Assert.assertNotNull(foundProject);
+        Assert.assertNotNull(foundRelationship);
+
+        Assert.assertEquals(foundPerson.getId(), person.getId());
+        Assert.assertEquals(foundPerson.getName(), person.getName());
+
+        Assert.assertEquals(foundProject.getId(), project.getId());
+        Assert.assertEquals(foundProject.getUri(), project.getUri());
+
+        Assert.assertEquals(foundRelationship.getId(), relationship.getId());
+        Assert.assertEquals(foundRelationship.getLocation(), relationship.getLocation());
     }
 }
 
