@@ -13,6 +13,7 @@ import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
 import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
@@ -74,7 +75,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     @Override
     public void deleteAll() {
         final GremlinScriptLiteral script = new GremlinScriptLiteralGraph();
-        final List<String> queryList = script.generateDeleteAllScript(null);
+        final List<String> queryList = script.generateDeleteAllScript(new GremlinSourceGraph());
 
         this.executeQuery(queryList);
     }

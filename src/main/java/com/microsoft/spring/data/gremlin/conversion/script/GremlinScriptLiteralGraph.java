@@ -44,6 +44,10 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
 
     @Override
     public List<String> generateDeleteAllScript(@Nullable GremlinSource source) {
+        if (!(source instanceof GremlinSourceGraph)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceGraph");
+        }
+
         return Arrays.asList(Constants.GREMLIN_SCRIPT_EDGE_DROP_ALL, Constants.GREMLIN_SCRIPT_VERTEX_DROP_ALL);
     }
 
