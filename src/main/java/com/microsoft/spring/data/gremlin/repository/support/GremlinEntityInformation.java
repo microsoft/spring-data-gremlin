@@ -30,6 +30,8 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
         super(domainClass);
 
         this.id = this.getIdField(domainClass);
+        ReflectionUtils.makeAccessible(this.id);
+
         this.entityType = this.getGremlinEntityType(domainClass); // The other fields getter may depend on type
         this.entityLabel = this.getEntityLabel(domainClass);
         this.gremlinSource = this.createGremlinSource();
@@ -81,6 +83,7 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
         return idClass;
     }
 
+    @NonNull
     private Field getIdField(@NonNull Class<T> domainClass) {
         return GremlinUtils.getIdField(domainClass);
     }
