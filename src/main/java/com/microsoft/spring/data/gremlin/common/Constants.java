@@ -5,6 +5,10 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Constants {
 
     public static final String PROPERTY_ID = "id";
@@ -59,8 +63,4 @@ public class Constants {
             GREMLIN_PRIMITIVE_VERTEX_ALL,
             GREMLIN_PRIMITIVE_DROP
     );
-
-    private Constants() {
-        // Hide default constructor
-    }
 }

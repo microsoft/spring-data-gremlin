@@ -5,6 +5,10 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TestConstants {
 
     public static final int DEFAULT_ENDPOINT_PORT = 443;
@@ -61,8 +65,4 @@ public class TestConstants {
     public static final String LIBM_NAME = "libm";
     public static final String DEPENDENCY_ID = "27432";
     public static final String DEPENDENCY_NAME = "dynamic link";
-
-    private TestConstants() {
-        // Hide default constructor
-    }
 }
