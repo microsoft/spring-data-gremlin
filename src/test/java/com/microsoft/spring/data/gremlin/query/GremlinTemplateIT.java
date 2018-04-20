@@ -141,6 +141,33 @@ public class GremlinTemplateIT {
         this.template.insert(this.person);
 
         final Person repeated = new Person(this.person.getId(), this.person.getName());
+
+        this.template.insert(repeated);
+    }
+
+    @Test
+    public void testEdgeInsertNormal() {
+        this.template.insert(this.person);
+        this.template.insert(this.project);
+        this.template.insert(this.relationship);
+
+        final Relationship foundRelationship = this.template.findById(this.relationship.getId(), Relationship.class);
+
+        Assert.assertNotNull(foundRelationship);
+        Assert.assertEquals(foundRelationship.getId(), this.relationship.getId());
+        Assert.assertEquals(foundRelationship.getName(), this.relationship.getName());
+        Assert.assertEquals(foundRelationship.getLocation(), this.relationship.getLocation());
+    }
+
+    @Test(expected = GremlinQueryException.class)
+    public void testEdgeInsertException() {
+        this.template.insert(this.person);
+        this.template.insert(this.project);
+        this.template.insert(this.relationship);
+
+        final Relationship repeated = new Relationship(this.relationship.getId(), this.relationship.getName(),
+                this.relationship.getLocation(), this.person, this.project);
+
         this.template.insert(repeated);
     }
 
@@ -150,6 +177,7 @@ public class GremlinTemplateIT {
         Assert.assertNull(foundPerson);
 
         this.template.insert(this.person1);
+
         foundPerson = this.template.findVertexById(this.person1.getId(), Person.class);
 
         Assert.assertNotNull(foundPerson);
@@ -165,6 +193,7 @@ public class GremlinTemplateIT {
         this.template.insert(this.person);
         this.template.insert(this.project0);
         this.template.insert(this.relationship2);
+
         foundRelationship = this.template.findEdgeById(this.relationship2.getId(), Relationship.class);
 
         Assert.assertNotNull(foundRelationship);
@@ -206,7 +235,9 @@ public class GremlinTemplateIT {
 
         final String updatedName = "updated-person-name";
         final Person updatedPerson = new Person(this.person.getId(), updatedName);
+
         this.template.update(updatedPerson);
+
         final Person foundPerson = this.template.findById(updatedPerson.getId(), Person.class);
 
         Assert.assertNotNull(foundPerson);
@@ -225,7 +256,9 @@ public class GremlinTemplateIT {
         final String updatedLocation = "updated-location";
         final Relationship updatedRelationship = new Relationship(TestConstants.EDGE_RELATIONSHIP_2_ID,
                 updatedName, updatedLocation, this.person, this.project0);
+
         this.template.update(updatedRelationship);
+
         final Relationship foundRelationship = this.template.findById(updatedRelationship.getId(), Relationship.class);
 
         Assert.assertNotNull(foundRelationship);
@@ -269,6 +302,57 @@ public class GremlinTemplateIT {
 
         Assert.assertEquals(foundRelationship.getId(), relationship.getId());
         Assert.assertEquals(foundRelationship.getLocation(), relationship.getLocation());
+    }
+
+    @Test
+    public void testSaveVertex() {
+        this.template.save(this.person);
+
+        Person foundPerson = this.template.findById(this.person.getId(), Person.class);
+
+        Assert.assertNotNull(foundPerson);
+        Assert.assertEquals(foundPerson.getId(), this.person.getId());
+        Assert.assertEquals(foundPerson.getName(), this.person.getName());
+
+        final String updatedName = "update-person-name";
+        final Person updatedPerson = new Person(this.person.getId(), updatedName);
+
+        this.template.save(updatedPerson);
+
+        foundPerson = this.template.findById(updatedPerson.getId(), Person.class);
+
+        Assert.assertNotNull(foundPerson);
+        Assert.assertEquals(foundPerson.getId(), updatedPerson.getId());
+        Assert.assertEquals(foundPerson.getName(), updatedPerson.getName());
+    }
+
+    @Test
+    public void testSaveEdge() {
+        this.template.insert(this.person);
+        this.template.insert(this.project);
+        this.template.save(this.relationship);
+
+        Relationship foundRelationship = this.template.findById(this.relationship.getId(), Relationship.class);
+
+        Assert.assertNotNull(foundRelationship);
+        Assert.assertEquals(foundRelationship.getId(), this.relationship.getId());
+        Assert.assertEquals(foundRelationship.getName(), this.relationship.getName());
+        Assert.assertEquals(foundRelationship.getLocation(), this.relationship.getLocation());
+
+        final String updatedName = "updated-relation-name";
+        final String updatedLocation = "updated-location";
+        final Relationship updatedRelationship = new Relationship(TestConstants.EDGE_RELATIONSHIP_2_ID,
+                updatedName, updatedLocation, this.person, this.project);
+
+        this.template.save(updatedRelationship);
+
+        foundRelationship = this.template.findById(updatedRelationship.getId(), Relationship.class);
+
+        Assert.assertNotNull(foundRelationship);
+        Assert.assertEquals(this.relationship2.getId(), foundRelationship.getId());
+        Assert.assertEquals(updatedRelationship.getId(), foundRelationship.getId());
+        Assert.assertEquals(updatedRelationship.getName(), foundRelationship.getName());
+        Assert.assertEquals(updatedRelationship.getLocation(), foundRelationship.getLocation());
     }
 }
 
