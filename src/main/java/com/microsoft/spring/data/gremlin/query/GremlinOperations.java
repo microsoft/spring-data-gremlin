@@ -5,6 +5,8 @@
  */
 package com.microsoft.spring.data.gremlin.query;
 
+import java.util.List;
+
 /**
  * Provider interface for basic Operations with Gremlin
  */
@@ -23,4 +25,6 @@ public interface GremlinOperations {
     <T> T update(T object);
 
     <T> T save(T object);
+
+    <T> List<T> findAll(Class<T> domainClass);
 }

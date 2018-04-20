@@ -36,7 +36,7 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
 
     @Override
     public <S extends T> S save(@NonNull S domain) {
-        this.operations.insert(domain);
+        this.operations.save(domain);
 
         return domain;
     }

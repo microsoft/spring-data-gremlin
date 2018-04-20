@@ -43,6 +43,7 @@ public class GremlinResultVertexReader extends BasicGremlinResultReader implemen
         Assert.isInstanceOf(Map.class, map.get(Constants.PROPERTY_PROPERTIES), "should be one instance of Map");
         final Map<String, Object> properties = (Map<String, Object>) map.get(Constants.PROPERTY_PROPERTIES);
 
+        source.getProperties().clear();
         super.readResultProperties(properties, source);
     }
 }

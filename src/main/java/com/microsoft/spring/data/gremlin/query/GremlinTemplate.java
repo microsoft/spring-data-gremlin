@@ -221,5 +221,38 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
             return this.updateInternal(object, information);
         }
     }
+
+    @Override
+    public <T> List<T> findAll(@NonNull Class<T> domainClass) {
+        @SuppressWarnings("unchecked")
+        final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = information.getGremlinSource();
+
+        if (information.isEntityGraph()) {
+            throw new UnsupportedOperationException("Gremlin graph cannot be findAll.");
+        }
+
+        final List<String> queryList = source.getGremlinScriptLiteral().generateFindAllScript(source);
+        final List<Result> results = this.executeQuery(queryList);
+
+        if (results.isEmpty()) {
+            return null;
+        }
+
+        final List<T> domainList = new ArrayList<>();
+
+        for (final Result result : results) {
+            source.doGremlinResultRead(result);
+            final T domain = this.mappingConverter.read(domainClass, source);
+
+            if (information.isEntityEdge()) {
+                this.completeEdge(domain, (GremlinSourceEdge) source);
+            }
+
+            domainList.add(domain);
+        }
+
+        return domainList;
+    }
 }
 

@@ -35,4 +35,9 @@ public interface GremlinScriptLiteral {
      * Generate the update query from source (Vertex, Edge or Graph).
      */
     List<String> generateUpdateScript(GremlinSource source);
+
+    /**
+     * Generate the update query from source (Vertex, Edge or Graph).
+     */
+    List<String> generateFindAllScript(GremlinSource source);
 }

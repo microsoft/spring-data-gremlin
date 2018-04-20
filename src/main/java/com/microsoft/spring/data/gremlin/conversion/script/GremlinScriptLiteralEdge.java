@@ -104,5 +104,25 @@ public class GremlinScriptLiteralEdge extends BasicGremlinScriptLiteral implemen
 
         return Arrays.asList(query);
     }
+
+    @Override
+    public List<String> generateFindAllScript(@NonNull GremlinSource source) {
+        if (!(source instanceof GremlinSourceEdge)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
+        }
+
+        final String label = source.getLabel();
+        final List<String> scriptList = new ArrayList<>();
+
+        Assert.notNull(label, "label should not be null");
+
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_EDGE_ALL);
+        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_HAS, Constants.PROPERTY_LABEL, label));
+
+        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
+
+        return Arrays.asList(query);
+    }
 }
 

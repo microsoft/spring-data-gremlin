@@ -49,6 +49,7 @@ public class GremlinResultEdgeReader extends BasicGremlinResultReader implements
         Assert.isInstanceOf(Map.class, map.get(Constants.PROPERTY_PROPERTIES), "should be one instance of Map");
         final Map<String, Object> properties = (Map<String, Object>) map.get(Constants.PROPERTY_PROPERTIES);
 
+        source.getProperties().clear();
         properties.forEach((key, value) -> source.setProperty(key, value));
     }
 }
