@@ -11,13 +11,13 @@ import java.util.List;
 
 /**
  * Provider interface to generate different query to gremlin server.
- * The scripts may return queries in steps, organized by List.
+ * The scripts return queries in steps, organized by List.
  */
 public interface GremlinScriptLiteral {
     /**
      * Generate the insert query from source (Vertex, Edge or Graph).
      */
-    String generateInsertScript(GremlinSource source);
+    List<String> generateInsertScript(GremlinSource source);
 
 
     /**
@@ -29,7 +29,7 @@ public interface GremlinScriptLiteral {
     /**
      * Generate the findById query from source (Vertex, Edge or Graph).
      */
-    String generateFindByIdScript(GremlinSource source);
+    List<String> generateFindByIdScript(GremlinSource source);
 
     /**
      * Generate the update query from source (Vertex, Edge or Graph).
