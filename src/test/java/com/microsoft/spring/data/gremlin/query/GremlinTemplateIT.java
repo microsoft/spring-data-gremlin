@@ -13,7 +13,7 @@ import com.microsoft.spring.data.gremlin.common.domain.Person;
 import com.microsoft.spring.data.gremlin.common.domain.Project;
 import com.microsoft.spring.data.gremlin.common.domain.Relationship;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
-import com.microsoft.spring.data.gremlin.exception.GremlinInsertionException;
+import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import lombok.SneakyThrows;
 import org.junit.After;
@@ -136,7 +136,7 @@ public class GremlinTemplateIT {
         Assert.assertEquals(foundPerson.getName(), this.person0.getName());
     }
 
-    @Test(expected = GremlinInsertionException.class)
+    @Test(expected = GremlinQueryException.class)
     public void testVertexInsertException() {
         this.template.insert(this.person);
 
