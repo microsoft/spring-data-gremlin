@@ -53,20 +53,32 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         return this.context;
     }
 
-    @Override
-    public void deleteAll() {
+    @NonNull
+    private List<Result> executeQuery(@NonNull List<String> queryList) {
         final Client client = this.gremlinFactory.getGremlinClient();
-        final GremlinScriptLiteral script = new GremlinScriptLiteralGraph();
-        final List<String> queryList = script.generateDeleteAllScript(null);
+        final List<Result> results = new ArrayList<>();
 
-        for (final String query : queryList) {
-            client.submit(query).all().join();
+        try {
+            for (final String query : queryList) {
+                results.addAll(client.submit(query).all().join());
+            }
+
+            return results;
+        } catch (CompletionException e) {
+            throw new GremlinFindException(String.format("unable to complete execute %s from gremlin", queryList), e);
         }
     }
 
     @Override
+    public void deleteAll() {
+        final GremlinScriptLiteral script = new GremlinScriptLiteralGraph();
+        final List<String> queryList = script.generateDeleteAllScript(null);
+
+        this.executeQuery(queryList);
+    }
+
+    @Override
     public <T> T insert(@NonNull T object) {
-        final Client client = this.gremlinFactory.getGremlinClient();
         @SuppressWarnings("unchecked")
         final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
         final GremlinSource source = information.getGremlinSource();
@@ -75,49 +87,20 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         final List<String> queryList = source.getGremlinScriptLiteral().generateInsertScript(source);
 
-        try {
-            for (final String query : queryList) {
-                client.submit(query).all().join();
-            }
-        } catch (CompletionException e) {
-            final String typeName = object.getClass().getName();
-            throw new GremlinInsertionException(String.format("unable to insert type %s from gremlin", typeName), e);
-        }
+        this.executeQuery(queryList);
 
         return object;
     }
 
     @Override
     public <T> T findVertexById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        final List<Result> results = new ArrayList<>();
-        final Client client = this.gremlinFactory.getGremlinClient();
-        @SuppressWarnings("unchecked")
         final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
-        final GremlinSource source = information.getGremlinSource();
 
-        source.setId(id.toString());
-
-        final List<String> queryList = source.getGremlinScriptLiteral().generateFindByIdScript(source);
-
-        try {
-            for (final String query : queryList) {
-                results.addAll(client.submit(query).all().join());
-            }
-        } catch (CompletionException e) {
-            final String typeName = domainClass.getName();
-            throw new GremlinFindException(String.format("unable to complete find %s from gremlin", typeName), e);
+        if (!information.isEntityVertex()) {
+            throw new GremlinUnexpectedEntityTypeException("should be edge domain for findEdge");
         }
 
-        if (results.isEmpty()) {
-            return null;
-        }
-
-        Assert.isTrue(results.size() == 1, "should be only one vertex with given id");
-        Assert.isTrue(id.toString().equals(source.getId()), "should be the same id");
-
-        source.doGremlinResultRead(results.get(0));
-
-        return this.mappingConverter.read(domainClass, source);
+        return this.findById(id, domainClass);
     }
 
     /**
@@ -153,59 +136,52 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T findEdgeById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        final List<Result> results = new ArrayList<>();
-        final Client client = this.gremlinFactory.getGremlinClient();
         @SuppressWarnings("unchecked")
         final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
-        final GremlinSource source = information.getGremlinSource();
 
-        source.setId(id.toString());
-
-        final List<String> queryList = source.getGremlinScriptLiteral().generateFindByIdScript(source);
-
-        try {
-            for (final String query : queryList) {
-                results.addAll(client.submit(query).all().join());
-            }
-        } catch (CompletionException e) {
-            final String typeName = domainClass.getName();
-            throw new GremlinFindException(String.format("unable to complete find %s from gremlin", typeName), e);
+        if (!information.isEntityEdge()) {
+            throw new GremlinUnexpectedEntityTypeException("should be edge domain for findEdge");
         }
 
-        if (results.isEmpty()) {
-            return null;
-        }
-
-        Assert.isTrue(results.size() == 1, "should be only one edge with given id");
-        Assert.isTrue(id.toString().equals(source.getId()), "should be the same id");
-
-        source.doGremlinResultRead(results.get(0));
-        final T domain = this.mappingConverter.read(domainClass, source);
-        this.completeEdge(domain, (GremlinSourceEdge) source);
-
-        return domain;
+        return this.findById(id, domainClass);
     }
 
     @Override
     public <T> T findById(@NonNull Object id, @NonNull Class<T> domainClass) {
         @SuppressWarnings("unchecked")
         final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = information.getGremlinSource();
 
-        switch (information.getEntityType()) {
-            case EDGE:
-                return this.findEdgeById(id, domainClass);
-            case VERTEX:
-                return this.findVertexById(id, domainClass);
-            case GRAPH:
-                throw new UnsupportedOperationException("Gremlin graph cannot findById by single query.");
-            default:
-                throw new GremlinUnexpectedEntityTypeException("Unexpected Entity type");
+        if (information.isEntityGraph()) {
+            throw new UnsupportedOperationException("Gremlin graph cannot be findById.");
         }
+
+        Assert.isTrue(information.isEntityEdge() || information.isEntityVertex(), "only accept vertex or edge");
+
+        source.setId(id.toString());
+
+        final List<String> queryList = source.getGremlinScriptLiteral().generateFindByIdScript(source);
+        final List<Result> results = this.executeQuery(queryList);
+
+        if (results.isEmpty()) {
+            return null;
+        }
+
+        Assert.isTrue(results.size() == 1, "should be only one domain with given id");
+        Assert.isTrue(id.toString().equals(source.getId()), "should be the same id");
+
+        source.doGremlinResultRead(results.get(0));
+        final T domain = this.mappingConverter.read(domainClass, source);
+
+        if (information.isEntityEdge()) {
+            this.completeEdge(domain, (GremlinSourceEdge) source);
+        }
+
+        return domain;
     }
 
     @Override
     public <T> T update(@NonNull T object) {
-        final Client client = this.gremlinFactory.getGremlinClient();
         @SuppressWarnings("unchecked")
         final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
         @SuppressWarnings("unchecked")
@@ -220,14 +196,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         final List<String> queryList = source.getGremlinScriptLiteral().generateUpdateScript(source);
 
-        try {
-            for (final String query : queryList) {
-                client.submit(query).all().join();
-            }
-        } catch (CompletionException e) {
-            final String typeName = object.getClass().getName();
-            throw new GremlinInsertionException(String.format("unable to insert type %s from gremlin", typeName), e);
-        }
+        this.executeQuery(queryList);
 
         return object;
     }
