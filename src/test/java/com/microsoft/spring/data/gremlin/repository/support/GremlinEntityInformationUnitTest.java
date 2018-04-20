@@ -13,10 +13,14 @@ import com.microsoft.spring.data.gremlin.common.domain.Relationship;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
+import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import lombok.Data;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.data.annotation.Id;
+
+import java.util.Date;
 
 public class GremlinEntityInformationUnitTest {
 
@@ -56,11 +60,46 @@ public class GremlinEntityInformationUnitTest {
 
     @Test(expected = GremlinUnexpectedEntityTypeException.class)
     public void testEntityInformationException() {
-        new GremlinEntityInformation<TestEntity, String>(TestEntity.class);
+        new GremlinEntityInformation<TestDomain, String>(TestDomain.class);
+    }
+
+    @Test(expected = GremlinInvalidEntityIdFieldException.class)
+    public void testEntityInformationNoIdException() {
+        new GremlinEntityInformation<TestNoIdDomain, String>(TestNoIdDomain.class);
+    }
+
+    @Test(expected = GremlinInvalidEntityIdFieldException.class)
+    public void testEntityInformationMultipleIdException() {
+        new GremlinEntityInformation<TestMultipleIdDomain, String>(TestMultipleIdDomain.class);
+    }
+
+    @Test(expected = GremlinInvalidEntityIdFieldException.class)
+    public void testEntityInformationNoStringIdException() {
+        new GremlinEntityInformation<TestNoStringIdDomain, String>(TestNoStringIdDomain.class);
     }
 
     @Data
-    private class TestEntity {
+    private class TestDomain {
         private String id;
+    }
+
+    @Data
+    private class TestNoIdDomain {
+        private String name;
+    }
+
+    @Data
+    private class TestMultipleIdDomain {
+        @Id
+        private String name;
+
+        @Id
+        private String location;
+    }
+
+    @Data
+    private class TestNoStringIdDomain {
+        @Id
+        private Date date;
     }
 }

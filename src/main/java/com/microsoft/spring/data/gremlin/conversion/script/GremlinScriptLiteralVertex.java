@@ -51,6 +51,10 @@ public class GremlinScriptLiteralVertex extends BasicGremlinScriptLiteral implem
 
     @Override
     public List<String> generateDeleteAllScript(@Nullable GremlinSource source) {
+        if (!(source instanceof GremlinSourceVertex)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
+        }
+
         return Arrays.asList(Constants.GREMLIN_SCRIPT_VERTEX_DROP_ALL);
     }
 
