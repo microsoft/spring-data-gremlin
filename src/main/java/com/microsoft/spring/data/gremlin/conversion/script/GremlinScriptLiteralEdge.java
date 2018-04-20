@@ -60,6 +60,10 @@ public class GremlinScriptLiteralEdge extends BasicGremlinScriptLiteral implemen
 
     @Override
     public List<String> generateDeleteAllScript(@Nullable GremlinSource source) {
+        if (!(source instanceof GremlinSourceEdge)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
+        }
+
         return Arrays.asList(Constants.GREMLIN_SCRIPT_EDGE_DROP_ALL);
     }
 
