@@ -13,7 +13,10 @@ import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
-import com.microsoft.spring.data.gremlin.exception.*;
+import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
+import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUpdationException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -65,7 +68,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
             return results;
         } catch (CompletionException e) {
-            throw new GremlinFindException(String.format("unable to complete execute %s from gremlin", queryList), e);
+            throw new GremlinQueryException(String.format("unable to complete execute %s from gremlin", queryList), e);
         }
     }
 

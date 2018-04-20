@@ -5,13 +5,15 @@
  */
 package com.microsoft.spring.data.gremlin.exception;
 
-public class GremlinFindException extends IllegalStateException {
+import org.springframework.dao.DataAccessResourceFailureException;
 
-    public GremlinFindException(String msg) {
+public class GremlinQueryException extends DataAccessResourceFailureException {
+
+    public GremlinQueryException(String msg) {
         super(msg);
     }
 
-    public GremlinFindException(String msg, Throwable cause) {
+    public GremlinQueryException(String msg, Throwable cause) {
         super(msg, cause);
     }
 }
