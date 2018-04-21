@@ -108,5 +108,25 @@ public class GremlinScriptLiteralEdge extends BasicGremlinScriptLiteral implemen
 
         return Arrays.asList(query);
     }
+
+    @Override
+    public List<String> generateDeleteByIdScript(@NonNull GremlinSource source) {
+        if (!(source instanceof GremlinSourceEdge)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
+        }
+
+        final List<String> scriptList = new ArrayList<>();
+        final String id = source.getId();
+
+        Assert.notNull(id, "id should not be null");
+
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
+        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_EDGE, id));
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_DROP);
+
+        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
+
+        return Arrays.asList(query);
+    }
 }
 
