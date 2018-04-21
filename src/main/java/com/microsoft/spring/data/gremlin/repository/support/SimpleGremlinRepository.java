@@ -43,9 +43,7 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
 
     @Override
     public <S extends T> Iterable<S> saveAll(@NonNull Iterable<S> domains) {
-        for (final S domain : domains) {
-            this.save(domain);
-        }
+        domains.forEach(this::save);
 
         return domains;
     }
