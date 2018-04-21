@@ -28,16 +28,11 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
 
         final List<String> scriptList = new ArrayList<>();
         final GremlinSourceGraph sourceGraph = (GremlinSourceGraph) source;
+        final GremlinScriptLiteralVertex scriptVertex = new GremlinScriptLiteralVertex();
+        final GremlinScriptLiteralEdge scriptEdge = new GremlinScriptLiteralEdge();
 
-        for (final GremlinSource vertex : sourceGraph.getVertexSet()) {
-            final List<String> vertexScript = new GremlinScriptLiteralVertex().generateInsertScript(vertex);
-            scriptList.addAll(vertexScript);
-        }
-
-        for (final GremlinSource edge : sourceGraph.getEdgeSet()) {
-            final List<String> edgeScript = new GremlinScriptLiteralEdge().generateInsertScript(edge);
-            scriptList.addAll(edgeScript);
-        }
+        sourceGraph.getVertexSet().forEach(vertex -> scriptList.addAll(scriptVertex.generateInsertScript(vertex)));
+        sourceGraph.getEdgeSet().forEach(edge -> scriptList.addAll(scriptEdge.generateInsertScript(edge)));
 
         return scriptList;
     }
@@ -62,18 +57,13 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceGraph");
         }
 
-        final GremlinSourceGraph sourceGraph = (GremlinSourceGraph) source;
         final List<String> scriptList = new ArrayList<>();
+        final GremlinSourceGraph sourceGraph = (GremlinSourceGraph) source;
+        final GremlinScriptLiteralVertex scriptVertex = new GremlinScriptLiteralVertex();
+        final GremlinScriptLiteralEdge scriptEdge = new GremlinScriptLiteralEdge();
 
-        for (final GremlinSource vertex : sourceGraph.getVertexSet()) {
-            final List<String> vertexScript = new GremlinScriptLiteralVertex().generateUpdateScript(vertex);
-            scriptList.addAll(vertexScript);
-        }
-
-        for (final GremlinSource edge : sourceGraph.getEdgeSet()) {
-            final List<String> edgeScript = new GremlinScriptLiteralEdge().generateUpdateScript(edge);
-            scriptList.addAll(edgeScript);
-        }
+        sourceGraph.getVertexSet().forEach(vertex -> scriptList.addAll(scriptVertex.generateUpdateScript(vertex)));
+        sourceGraph.getEdgeSet().forEach(edge -> scriptList.addAll(scriptEdge.generateUpdateScript(edge)));
 
         return scriptList;
     }

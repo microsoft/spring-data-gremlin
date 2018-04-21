@@ -62,10 +62,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final List<Result> results = new ArrayList<>();
 
         try {
-            for (final String query : queryList) {
-                results.addAll(client.submit(query).all().join());
-            }
-
+            queryList.forEach(query -> results.addAll(client.submit(query).all().join()));
             return results;
         } catch (CompletionException e) {
             throw new GremlinQueryException(String.format("unable to complete execute %s from gremlin", queryList), e);
@@ -82,9 +79,9 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T insert(@NonNull T object) {
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
-        final GremlinSource source = information.getGremlinSource();
+        final Class domainClass = object.getClass();
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = info.getGremlinSource();
 
         this.mappingConverter.write(object, source);
 
@@ -97,10 +94,10 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T findVertexById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
 
-        if (!information.isEntityVertex()) {
-            throw new GremlinUnexpectedEntityTypeException("should be edge domain for findEdge");
+        if (!info.isEntityVertex()) {
+            throw new GremlinUnexpectedEntityTypeException("should be vertex domain for findEdge");
         }
 
         return this.findById(id, domainClass);
@@ -139,10 +136,9 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T findEdgeById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
 
-        if (!information.isEntityEdge()) {
+        if (!info.isEntityEdge()) {
             throw new GremlinUnexpectedEntityTypeException("should be edge domain for findEdge");
         }
 
@@ -151,15 +147,14 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T findById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
-        final GremlinSource source = information.getGremlinSource();
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = info.getGremlinSource();
 
-        if (information.isEntityGraph()) {
+        if (info.isEntityGraph()) {
             throw new UnsupportedOperationException("Gremlin graph cannot be findById.");
         }
 
-        Assert.isTrue(information.isEntityEdge() || information.isEntityVertex(), "only accept vertex or edge");
+        Assert.isTrue(info.isEntityEdge() || info.isEntityVertex(), "only accept vertex or edge");
 
         source.setId(id.toString());
 
@@ -176,7 +171,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         source.doGremlinResultRead(results.get(0));
         final T domain = this.mappingConverter.read(domainClass, source);
 
-        if (information.isEntityEdge()) {
+        if (info.isEntityEdge()) {
             this.completeEdge(domain, (GremlinSourceEdge) source);
         }
 
@@ -197,29 +192,27 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T update(@NonNull T object) {
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
-        @SuppressWarnings("unchecked")
-        final Class<T> domainClass = (Class<T>) object.getClass();
+        @SuppressWarnings("unchecked") final Class<T> domainClass = (Class<T>) object.getClass();
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        @SuppressWarnings("unchecked") final Object id = info.getId(object);
 
-        if (!information.isEntityGraph() && this.findById(information.getId(object), domainClass) == null) {
+        if (!info.isEntityGraph() && this.findById(id, domainClass) == null) {
             throw new GremlinQueryException("cannot update the object doesn't exist");
         }
 
-        return this.updateInternal(object, information);
+        return this.updateInternal(object, info);
     }
 
     @Override
     public <T> T save(@NonNull T object) {
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
-        @SuppressWarnings("unchecked")
-        final Class<T> domainClass = (Class<T>) object.getClass();
+        @SuppressWarnings("unchecked") final Class<T> domainClass = (Class<T>) object.getClass();
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        @SuppressWarnings("unchecked") final Object id = info.getId(object);
 
-        if (!information.isEntityGraph() && this.findById(information.getId(object), domainClass) == null) {
+        if (!info.isEntityGraph() && this.findById(id, domainClass) == null) {
             return this.insert(object);
         } else {
-            return this.updateInternal(object, information);
+            return this.updateInternal(object, info);
         }
     }
 }

@@ -15,21 +15,13 @@ public class AnnotationGraphUnitTest {
 
     @Test
     public void testAnnotationGraphDefaultCollection() {
-        final Network network = new Network();
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation info = new GremlinEntityInformation(network.getClass());
-
-        Assert.assertNull(info.getEntityLabel());
-        Assert.assertTrue(info.isEntityGraph());
+        Assert.assertNull(new GremlinEntityInformation<>(Network.class).getEntityLabel());
+        Assert.assertTrue(new GremlinEntityInformation<>(Network.class).isEntityGraph());
     }
 
     @Test
     public void testAnnotationGraphSpecifiedCollection() {
-        final Roadmap roadmap = new Roadmap();
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation info = new GremlinEntityInformation(roadmap.getClass());
-
-        Assert.assertNull(info.getEntityLabel());
-        Assert.assertTrue(info.isEntityGraph());
+        Assert.assertNull(new GremlinEntityInformation<>(Roadmap.class).getEntityLabel());
+        Assert.assertTrue(new GremlinEntityInformation<>(Roadmap.class).isEntityGraph());
     }
 }
