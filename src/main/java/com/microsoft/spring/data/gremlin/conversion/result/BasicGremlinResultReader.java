@@ -22,9 +22,9 @@ public class BasicGremlinResultReader {
      * properties's organization is a little complicated.
      *
      * properties is LinkedHashMap<K, V>
-     *     K is String
-     *     V is ArrayList<T>
-     *         T is LinkedHashMap<String, String>
+     * K is String
+     * V is ArrayList<T>
+     * T is LinkedHashMap<String, String>
      */
     protected void readResultProperties(@NonNull Map<String, Object> properties, @NonNull GremlinSource source) {
         Assert.isTrue(source.getProperties().isEmpty(), "should be empty GremlinSource");
@@ -34,8 +34,8 @@ public class BasicGremlinResultReader {
             final Object value = entry.getValue();
 
             Assert.isInstanceOf(ArrayList.class, value, "should be instance of ArrayList");
-            @SuppressWarnings("unchecked")
-            final ArrayList<LinkedHashMap<String, String>> mapList = (ArrayList<LinkedHashMap<String, String>>) value;
+            @SuppressWarnings("unchecked") final ArrayList<LinkedHashMap<String, String>> mapList
+                    = (ArrayList<LinkedHashMap<String, String>>) value;
 
             Assert.isTrue(mapList.size() == 1, "should be only 1 element in ArrayList");
             final LinkedHashMap<String, String> map = mapList.get(0);

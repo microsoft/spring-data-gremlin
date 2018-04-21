@@ -27,7 +27,7 @@ public class GremlinEntityInformationUnitTest {
     @Test
     public void testVertexEntityInformation() {
         final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
-        final GremlinEntityInformation<Person, String> personInfo = new GremlinEntityInformation(Person.class);
+        final GremlinEntityInformation<Person, String> personInfo = new GremlinEntityInformation<>(Person.class);
 
         Assert.assertNotNull(personInfo.getIdField());
         Assert.assertEquals(personInfo.getId(person), TestConstants.VERTEX_PERSON_ID);

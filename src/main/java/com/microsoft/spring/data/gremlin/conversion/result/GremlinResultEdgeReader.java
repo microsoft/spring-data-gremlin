@@ -22,14 +22,13 @@ public class GremlinResultEdgeReader extends BasicGremlinResultReader implements
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void read(@NonNull Result result, @NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceEdge)) {
             throw new GremlinUnexpectedSourceTypeException("Should be instance of GremlinSourceEdge");
         }
 
         Assert.isInstanceOf(Map.class, result.getObject(), "should be one instance of Map");
-        final Map<String, Object> map = (Map<String, Object>) result.getObject();
+        @SuppressWarnings("unchecked") final Map<String, Object> map = (Map<String, Object>) result.getObject();
 
         Assert.isTrue(map.containsKey(Constants.PROPERTY_ID), "should contain id property");
         Assert.isTrue(map.containsKey(Constants.PROPERTY_LABEL), "should contain label property");
@@ -47,9 +46,10 @@ public class GremlinResultEdgeReader extends BasicGremlinResultReader implements
         sourceEdge.setVertexIdTo(map.get(Constants.PROPERTY_INV).toString());
 
         Assert.isInstanceOf(Map.class, map.get(Constants.PROPERTY_PROPERTIES), "should be one instance of Map");
-        final Map<String, Object> properties = (Map<String, Object>) map.get(Constants.PROPERTY_PROPERTIES);
+        @SuppressWarnings("unchecked") final Map<String, Object> properties =
+                (Map<String, Object>) map.get(Constants.PROPERTY_PROPERTIES);
 
-        properties.forEach((key, value) -> source.setProperty(key, value));
+        properties.forEach(source::setProperty);
     }
 }
 

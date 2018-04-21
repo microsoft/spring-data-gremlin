@@ -6,7 +6,8 @@
 package com.microsoft.spring.data.gremlin.annotation;
 
 import com.microsoft.spring.data.gremlin.common.TestConstants;
-import com.microsoft.spring.data.gremlin.common.domain.*;
+import com.microsoft.spring.data.gremlin.common.domain.Library;
+import com.microsoft.spring.data.gremlin.common.domain.Person;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,23 +16,17 @@ public class AnnotationVertexUnitTest {
 
     @Test
     public void testAnnotationVertexDefaultLabel() {
-        final Library libc = new Library(TestConstants.LIBC_ID, TestConstants.LIBC_NAME);
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation info = new GremlinEntityInformation(libc.getClass());
-
-        Assert.assertNotNull(info.getEntityLabel());
-        Assert.assertEquals(info.getEntityLabel(), libc.getClass().getSimpleName());
-        Assert.assertTrue(info.isEntityVertex());
+        Assert.assertNotNull(new GremlinEntityInformation<>(Library.class).getEntityLabel());
+        Assert.assertTrue(new GremlinEntityInformation<>(Library.class).isEntityVertex());
+        Assert.assertEquals(new GremlinEntityInformation<>(Library.class).getEntityLabel(),
+                Library.class.getSimpleName());
     }
 
     @Test
     public void testAnnotationVertexSpecifiedLabel() {
-        final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation info = new GremlinEntityInformation(person.getClass());
-
-        Assert.assertNotNull(info.getEntityLabel());
-        Assert.assertEquals(info.getEntityLabel(), TestConstants.VERTEX_PERSON_LABEL);
-        Assert.assertTrue(info.isEntityVertex());
+        Assert.assertNotNull(new GremlinEntityInformation<>(Person.class).getEntityLabel());
+        Assert.assertTrue(new GremlinEntityInformation<>(Person.class).isEntityVertex());
+        Assert.assertEquals(new GremlinEntityInformation<>(Person.class).getEntityLabel(),
+                TestConstants.VERTEX_PERSON_LABEL);
     }
 }

@@ -16,10 +16,7 @@ import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import lombok.SneakyThrows;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScanner;
@@ -62,13 +59,19 @@ public class GremlinTemplateIT {
     @Autowired
     private ApplicationContext context;
 
+    private static GremlinFactory factory;
     private GremlinTemplate template;
+
+    @AfterClass
+    public static void closeResource() {
+        factory.getGremlinCluster().close();
+    }
 
     @Before
     @SneakyThrows
     public void setup() {
         final GremlinMappingContext mappingContext = new GremlinMappingContext();
-        final GremlinFactory factory = new GremlinFactory(this.config.getEndpoint(), this.config.getPort(),
+        factory = new GremlinFactory(this.config.getEndpoint(), this.config.getPort(),
                 this.config.getUsername(), this.config.getPassword());
 
         mappingContext.setInitialEntitySet(new EntityScanner(this.context).scan(Persistent.class));

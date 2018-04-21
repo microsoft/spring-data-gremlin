@@ -14,30 +14,18 @@ import org.junit.Test;
 public class AnnotationEdgeUnitTest {
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testAnnotationEdgeDefaultLabel() {
-        final Library libc = new Library(TestConstants.LIBC_ID, TestConstants.LIBC_NAME);
-        final Library libm = new Library(TestConstants.LIBM_ID, TestConstants.LIBM_NAME);
-        final Dependency edge = new Dependency(TestConstants.DEPENDENCY_ID, TestConstants.DEPENDENCY_NAME, libc, libm);
-        final GremlinEntityInformation info = new GremlinEntityInformation(edge.getClass());
-
-        Assert.assertNotNull(info.getEntityLabel());
-        Assert.assertEquals(info.getEntityLabel(), edge.getClass().getSimpleName());
-        Assert.assertTrue(info.isEntityEdge());
+        Assert.assertTrue(new GremlinEntityInformation<>(Dependency.class).isEntityEdge());
+        Assert.assertNotNull(new GremlinEntityInformation<>(Dependency.class).getEntityLabel());
+        Assert.assertEquals(new GremlinEntityInformation<>(Dependency.class).getEntityLabel(),
+                Dependency.class.getSimpleName());
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testAnnotationEdgeSpecifiedLabel() {
-        final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
-        final Project project = new Project(TestConstants.VERTEX_PROJECT_ID, TestConstants.VERTEX_PROJECT_NAME,
-                TestConstants.VERTEX_PROJECT_URI);
-        final Relationship edge = new Relationship(TestConstants.EDGE_RELATIONSHIP_ID,
-                TestConstants.EDGE_RELATIONSHIP_NAME, TestConstants.EDGE_RELATIONSHIP_LOCATION, person, project);
-        final GremlinEntityInformation info = new GremlinEntityInformation(edge.getClass());
-
-        Assert.assertNotNull(info.getEntityLabel());
-        Assert.assertEquals(info.getEntityLabel(), TestConstants.EDGE_RELATIONSHIP_LABEL);
-        Assert.assertTrue(info.isEntityEdge());
+        Assert.assertNotNull(new GremlinEntityInformation<>(Relationship.class).getEntityLabel());
+        Assert.assertTrue(new GremlinEntityInformation<>(Relationship.class).isEntityEdge());
+        Assert.assertEquals(new GremlinEntityInformation<>(Relationship.class).getEntityLabel(),
+                TestConstants.EDGE_RELATIONSHIP_LABEL);
     }
 }
