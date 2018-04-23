@@ -215,5 +215,17 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
             return this.updateInternal(object, info);
         }
     }
+
+    @Override
+    public <T> void deleteById(@NonNull Object id, @NonNull Class<T> domainClass) {
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = info.getGremlinSource();
+
+        source.setId(id.toString());
+
+        final List<String> queryList = source.getGremlinScriptLiteral().generateDeleteByIdScript(source);
+
+        this.executeQuery(queryList);
+    }
 }
 
