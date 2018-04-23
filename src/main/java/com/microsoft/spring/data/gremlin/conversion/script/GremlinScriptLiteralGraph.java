@@ -67,4 +67,13 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
 
         return scriptList;
     }
+
+    @Override
+    public List<String> generateDeleteByIdScript(@NonNull GremlinSource source) {
+        if (!(source instanceof GremlinSourceGraph)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceGraph");
+        }
+
+        return this.generateDeleteAllScript(source);
+    }
 }

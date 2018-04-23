@@ -12,11 +12,13 @@ public interface GremlinOperations {
 
     void deleteAll();
 
+    <T> void deleteById(Object id, Class<T> domainClass);
+
     <T> T insert(T object);
 
-    <T> T findVertexById(Object id, Class<T> domainClass);
-
     <T> T findById(Object id, Class<T> domainClass);
+
+    <T> T findVertexById(Object id, Class<T> domainClass);
 
     <T> T findEdgeById(Object id, Class<T> domainClass);
 
