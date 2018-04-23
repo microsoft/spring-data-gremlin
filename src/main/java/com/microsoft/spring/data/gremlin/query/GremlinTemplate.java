@@ -32,6 +32,7 @@ import org.springframework.util.Assert;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletionException;
 
@@ -234,7 +235,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final List<Result> results = this.executeQuery(queryList);
 
         if (results.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
 
         final List<T> domainList = new ArrayList<>();

@@ -363,14 +363,14 @@ public class GremlinTemplateIT {
     public void testFindAllVertex() {
         List<Person> personList = this.template.findAll(Person.class);
 
-        Assert.assertNull(personList);
+        Assert.assertTrue(personList.isEmpty());
 
         final Collection<Person> personCollection = Arrays.asList(this.person, this.person0, this.person1);
         personCollection.forEach(person -> this.template.insert(person));
 
         personList = this.template.findAll(Person.class);
 
-        Assert.assertNotNull(personList);
+        Assert.assertFalse(personList.isEmpty());
         Assert.assertEquals(personList.size(), personCollection.size());
 
         personList.sort((a, b) -> (a.getId().compareTo(b.getId())));
@@ -389,7 +389,7 @@ public class GremlinTemplateIT {
 
         List<Relationship> relationshipList = this.template.findAll(Relationship.class);
 
-        Assert.assertNull(relationshipList);
+        Assert.assertTrue(relationshipList.isEmpty());
 
         final Collection<Relationship> relationshipCollection = Arrays.asList(this.relationship, this.relationship0,
                 this.relationship1, this.relationship2);
@@ -397,7 +397,7 @@ public class GremlinTemplateIT {
 
         relationshipList = this.template.findAll(Relationship.class);
 
-        Assert.assertNotNull(relationshipList);
+        Assert.assertFalse(relationshipList.isEmpty());
         Assert.assertEquals(relationshipList.size(), relationshipCollection.size());
 
         relationshipList.sort((a, b) -> (a.getId().compareTo(b.getId())));
