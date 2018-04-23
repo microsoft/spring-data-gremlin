@@ -20,7 +20,7 @@ public class GremlinRepositoryRegistrarUnitTest {
 
     @Test
     public void testGremlinRepositoryRegistrarGetters() {
-        Assert.assertSame(this.registrar.getAnnotation(), EnableGremlinRepository.class);
+        Assert.assertSame(this.registrar.getAnnotation(), EnableGremlinRepositories.class);
         Assert.assertTrue(this.registrar.getExtension() instanceof GremlinRepositoryConfigurationExtension);
     }
 }
