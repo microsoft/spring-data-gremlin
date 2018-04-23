@@ -51,6 +51,10 @@ public class GremlinScriptLiteralVertex extends BasicGremlinScriptLiteral implem
 
     @Override
     public List<String> generateDeleteAllScript(@Nullable GremlinSource source) {
+        if (!(source instanceof GremlinSourceVertex)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
+        }
+
         return Arrays.asList(Constants.GREMLIN_SCRIPT_VERTEX_DROP_ALL);
     }
 
@@ -98,10 +102,6 @@ public class GremlinScriptLiteralVertex extends BasicGremlinScriptLiteral implem
 
     @Override
     public List<String> generateFindAllScript(@NonNull GremlinSource source) {
-        if (!(source instanceof GremlinSourceVertex)) {
-            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
-        }
-
         final String label = source.getLabel();
         final List<String> scriptList = new ArrayList<>();
 
@@ -110,6 +110,26 @@ public class GremlinScriptLiteralVertex extends BasicGremlinScriptLiteral implem
         scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
         scriptList.add(Constants.GREMLIN_PRIMITIVE_VERTEX_ALL);
         scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_HAS, Constants.PROPERTY_LABEL, label));
+
+        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
+
+        return Arrays.asList(query);
+    }
+
+    @Override
+    public List<String> generateDeleteByIdScript(@NonNull GremlinSource source) {
+        if (!(source instanceof GremlinSourceVertex)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
+        }
+
+        final List<String> scriptList = new ArrayList<>();
+        final String id = source.getId();
+
+        Assert.notNull(id, "id should not be null");
+
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
+        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_VERTEX, id));
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_DROP);
 
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 

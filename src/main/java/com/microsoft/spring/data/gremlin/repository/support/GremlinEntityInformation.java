@@ -15,7 +15,7 @@ import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceSimpleFa
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
 import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
+import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -69,19 +69,16 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
     }
 
     @Override
-    @NonNull
+    @Nullable
     public ID getId(T entity) {
-        @SuppressWarnings("unchecked")
-        final ID id = (ID) ReflectionUtils.getField(this.getIdField(), entity);
-        Assert.notNull(id, "id value of idField should not be null");
+        @SuppressWarnings("unchecked") final ID id = (ID) ReflectionUtils.getField(this.getIdField(), entity);
 
         return id;
     }
 
     @Override
     public Class<ID> getIdType() {
-        @SuppressWarnings("unchecked")
-        final Class<ID> idClass = (Class<ID>) this.id.getType();
+        @SuppressWarnings("unchecked") final Class<ID> idClass = (Class<ID>) this.id.getType();
 
         return idClass;
     }

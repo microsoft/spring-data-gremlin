@@ -49,7 +49,7 @@ public class GremlinRepositoryConfigurationExtensionUnitTest {
         final BeanDefinitionRegistry registry = new DefaultListableBeanFactory();
         final StandardAnnotationMetadata metadata = new StandardAnnotationMetadata(GremlinConfig.class, true);
         final RepositoryConfigurationSource config = new AnnotationRepositoryConfigurationSource(metadata,
-                EnableGremlinRepository.class, loader, environment, registry);
+                EnableGremlinRepositories.class, loader, environment, registry);
 
         Assert.assertFalse(registry.containsBeanDefinition(GREMLIN_MAPPING_CONTEXT));
 
@@ -58,7 +58,7 @@ public class GremlinRepositoryConfigurationExtensionUnitTest {
         Assert.assertTrue(registry.containsBeanDefinition(GREMLIN_MAPPING_CONTEXT));
     }
 
-    @EnableGremlinRepository
+    @EnableGremlinRepositories
     private static class GremlinConfig {
 
     }

@@ -60,6 +60,10 @@ public class GremlinScriptLiteralEdge extends BasicGremlinScriptLiteral implemen
 
     @Override
     public List<String> generateDeleteAllScript(@Nullable GremlinSource source) {
+        if (!(source instanceof GremlinSourceEdge)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
+        }
+
         return Arrays.asList(Constants.GREMLIN_SCRIPT_EDGE_DROP_ALL);
     }
 
@@ -107,10 +111,6 @@ public class GremlinScriptLiteralEdge extends BasicGremlinScriptLiteral implemen
 
     @Override
     public List<String> generateFindAllScript(@NonNull GremlinSource source) {
-        if (!(source instanceof GremlinSourceEdge)) {
-            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
-        }
-
         final String label = source.getLabel();
         final List<String> scriptList = new ArrayList<>();
 
@@ -119,6 +119,26 @@ public class GremlinScriptLiteralEdge extends BasicGremlinScriptLiteral implemen
         scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
         scriptList.add(Constants.GREMLIN_PRIMITIVE_EDGE_ALL);
         scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_HAS, Constants.PROPERTY_LABEL, label));
+
+        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
+
+        return Arrays.asList(query);
+    }
+
+    @Override
+    public List<String> generateDeleteByIdScript(@NonNull GremlinSource source) {
+        if (!(source instanceof GremlinSourceEdge)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
+        }
+
+        final List<String> scriptList = new ArrayList<>();
+        final String id = source.getId();
+
+        Assert.notNull(id, "id should not be null");
+
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
+        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_EDGE, id));
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_DROP);
 
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 

@@ -28,9 +28,7 @@ public class GremlinSourceGraphWriter implements GremlinSourceWriter {
         Assert.isInstanceOf(GremlinSourceGraph.class, sourceGraph, "should be instance of GremlinSourceGraph ");
 
         for (final Object object : objectList) {
-            @SuppressWarnings("unchecked")
-            final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
-            final GremlinSource source = information.getGremlinSource();
+            final GremlinSource source = new GremlinEntityInformation<>(object.getClass()).getGremlinSource();
 
             source.doGremlinSourceWrite(object, mappingConverter);
             sourceGraph.addGremlinSource(source);
@@ -51,11 +49,10 @@ public class GremlinSourceGraphWriter implements GremlinSourceWriter {
         for (final Field field : domain.getClass().getDeclaredFields()) {
             final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
             Assert.notNull(property, "persistence property should not be null");
-            @SuppressWarnings("unchecked")
-            final List<Object> objectList = (List<Object>) accessor.getProperty(property);
+            @SuppressWarnings("unchecked") final List<Object> objects = (List<Object>) accessor.getProperty(property);
 
             if (field.getAnnotation(VertexSet.class) != null || field.getAnnotation(EdgeSet.class) != null) {
-                this.writeGraphSet(objectList, converter, sourceGraph);
+                this.writeGraphSet(objects, converter, sourceGraph);
             }
         }
     }

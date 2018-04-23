@@ -13,10 +13,7 @@ import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import lombok.SneakyThrows;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScanner;
@@ -63,13 +60,19 @@ public class GremlinTemplateIT {
     @Autowired
     private ApplicationContext context;
 
+    private static GremlinFactory factory;
     private GremlinTemplate template;
+
+    @AfterClass
+    public static void closeResource() {
+        factory.getGremlinCluster().close();
+    }
 
     @Before
     @SneakyThrows
     public void setup() {
         final GremlinMappingContext mappingContext = new GremlinMappingContext();
-        final GremlinFactory factory = new GremlinFactory(this.config.getEndpoint(), this.config.getPort(),
+        factory = new GremlinFactory(this.config.getEndpoint(), this.config.getPort(),
                 this.config.getUsername(), this.config.getPassword());
 
         mappingContext.setInitialEntitySet(new EntityScanner(this.context).scan(Persistent.class));
@@ -401,6 +404,52 @@ public class GremlinTemplateIT {
         ((List<Relationship>) relationshipCollection).sort((a, b) -> (a.getId().compareTo(b.getId())));
 
         Assert.assertArrayEquals(relationshipList.toArray(), relationshipCollection.toArray());
+    }
+
+    @Test
+    public void testVertexDeleteById() {
+        this.template.deleteById(this.person.getId(), Person.class);
+        this.template.insert(this.person);
+        this.template.deleteById(this.person0.getId(), Person.class);
+
+        Person foundPerson = this.template.findById(this.person.getId(), Person.class);
+        Assert.assertNotNull(foundPerson);
+
+        this.template.deleteById(this.person.getId(), Person.class);
+
+        foundPerson = this.template.findById(this.person.getId(), Person.class);
+        Assert.assertNull(foundPerson);
+    }
+
+    @Test
+    public void testEdgeDeleteById() {
+        this.template.deleteById(this.relationship.getId(), Relationship.class);
+
+        this.template.insert(this.person);
+        this.template.insert(this.project);
+        this.template.insert(this.relationship);
+
+        this.template.deleteById(this.relationship0.getId(), Relationship.class);
+
+        Relationship foundRelationship = this.template.findById(this.relationship.getId(), Relationship.class);
+        Assert.assertNotNull(foundRelationship);
+
+        this.template.deleteById(this.relationship.getId(), Relationship.class);
+
+        foundRelationship = this.template.findById(this.relationship.getId(), Relationship.class);
+        Assert.assertNull(foundRelationship);
+    }
+
+    @Test
+    public void testGraphDeleteById() {
+        this.network.setId(this.config.getUsername());
+        this.template.deleteById(this.network.getId(), Relationship.class);
+
+        final Relationship foundRelationship = this.template.findById(this.relationship, Relationship.class);
+        Assert.assertNull(foundRelationship);
+
+        final Person foundPerson = this.template.findById(this.person.getId(), Person.class);
+        Assert.assertNull(foundPerson);
     }
 }
 

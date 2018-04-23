@@ -13,6 +13,7 @@ import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
 import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
@@ -51,6 +52,11 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         this.context = context;
     }
 
+    @Override
+    public MappingGremlinConverter getMappingConverter() {
+        return this.mappingConverter;
+    }
+
     public ApplicationContext getApplicationContext() {
         return this.context;
     }
@@ -61,10 +67,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final List<Result> results = new ArrayList<>();
 
         try {
-            for (final String query : queryList) {
-                results.addAll(client.submit(query).all().join());
-            }
-
+            queryList.forEach(query -> results.addAll(client.submit(query).all().join()));
             return results;
         } catch (CompletionException e) {
             throw new GremlinQueryException(String.format("unable to complete execute %s from gremlin", queryList), e);
@@ -74,16 +77,16 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     @Override
     public void deleteAll() {
         final GremlinScriptLiteral script = new GremlinScriptLiteralGraph();
-        final List<String> queryList = script.generateDeleteAllScript(null);
+        final List<String> queryList = script.generateDeleteAllScript(new GremlinSourceGraph());
 
         this.executeQuery(queryList);
     }
 
     @Override
     public <T> T insert(@NonNull T object) {
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
-        final GremlinSource source = information.getGremlinSource();
+        final Class domainClass = object.getClass();
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = info.getGremlinSource();
 
         this.mappingConverter.write(object, source);
 
@@ -96,10 +99,10 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T findVertexById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
 
-        if (!information.isEntityVertex()) {
-            throw new GremlinUnexpectedEntityTypeException("should be edge domain for findEdge");
+        if (!info.isEntityVertex()) {
+            throw new GremlinUnexpectedEntityTypeException("should be vertex domain for findEdge");
         }
 
         return this.findById(id, domainClass);
@@ -138,10 +141,9 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T findEdgeById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
 
-        if (!information.isEntityEdge()) {
+        if (!info.isEntityEdge()) {
             throw new GremlinUnexpectedEntityTypeException("should be edge domain for findEdge");
         }
 
@@ -150,15 +152,14 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T findById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
-        final GremlinSource source = information.getGremlinSource();
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = info.getGremlinSource();
 
-        if (information.isEntityGraph()) {
+        if (info.isEntityGraph()) {
             throw new UnsupportedOperationException("Gremlin graph cannot be findById.");
         }
 
-        Assert.isTrue(information.isEntityEdge() || information.isEntityVertex(), "only accept vertex or edge");
+        Assert.isTrue(info.isEntityEdge() || info.isEntityVertex(), "only accept vertex or edge");
 
         source.setId(id.toString());
 
@@ -175,7 +176,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         source.doGremlinResultRead(results.get(0));
         final T domain = this.mappingConverter.read(domainClass, source);
 
-        if (information.isEntityEdge()) {
+        if (info.isEntityEdge()) {
             this.completeEdge(domain, (GremlinSourceEdge) source);
         }
 
@@ -196,39 +197,36 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T update(@NonNull T object) {
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
-        @SuppressWarnings("unchecked")
-        final Class<T> domainClass = (Class<T>) object.getClass();
+        @SuppressWarnings("unchecked") final Class<T> domainClass = (Class<T>) object.getClass();
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        @SuppressWarnings("unchecked") final Object id = info.getId(object);
 
-        if (!information.isEntityGraph() && this.findById(information.getId(object), domainClass) == null) {
+        if (!info.isEntityGraph() && this.findById(id, domainClass) == null) {
             throw new GremlinQueryException("cannot update the object doesn't exist");
         }
 
-        return this.updateInternal(object, information);
+        return this.updateInternal(object, info);
     }
 
     @Override
     public <T> T save(@NonNull T object) {
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation information = new GremlinEntityInformation(object.getClass());
-        @SuppressWarnings("unchecked")
-        final Class<T> domainClass = (Class<T>) object.getClass();
+        @SuppressWarnings("unchecked") final Class<T> domainClass = (Class<T>) object.getClass();
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        @SuppressWarnings("unchecked") final Object id = info.getId(object);
 
-        if (!information.isEntityGraph() && this.findById(information.getId(object), domainClass) == null) {
+        if (!info.isEntityGraph() && this.findById(id, domainClass) == null) {
             return this.insert(object);
         } else {
-            return this.updateInternal(object, information);
+            return this.updateInternal(object, info);
         }
     }
 
     @Override
     public <T> List<T> findAll(@NonNull Class<T> domainClass) {
-        @SuppressWarnings("unchecked")
-        final GremlinEntityInformation information = new GremlinEntityInformation(domainClass);
-        final GremlinSource source = information.getGremlinSource();
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = info.getGremlinSource();
 
-        if (information.isEntityGraph()) {
+        if (info.isEntityGraph()) {
             throw new UnsupportedOperationException("Gremlin graph cannot be findAll.");
         }
 
@@ -245,7 +243,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
             source.doGremlinResultRead(result);
             final T domain = this.mappingConverter.read(domainClass, source);
 
-            if (information.isEntityEdge()) {
+            if (info.isEntityEdge()) {
                 this.completeEdge(domain, (GremlinSourceEdge) source);
             }
 
@@ -253,6 +251,18 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         }
 
         return domainList;
+    }
+
+    @Override
+    public <T> void deleteById(@NonNull Object id, @NonNull Class<T> domainClass) {
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = info.getGremlinSource();
+
+        source.setId(id.toString());
+
+        final List<String> queryList = source.getGremlinScriptLiteral().generateDeleteByIdScript(source);
+
+        this.executeQuery(queryList);
     }
 }
 

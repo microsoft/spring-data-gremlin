@@ -6,6 +6,7 @@
 package com.microsoft.spring.data.gremlin.repository.config;
 
 import com.microsoft.spring.data.gremlin.common.Constants;
+import com.microsoft.spring.data.gremlin.repository.support.GremlinRepositoryFactoryBean;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.repository.config.DefaultRepositoryBaseClass;
@@ -17,7 +18,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Import(GremlinRepositoryRegistrar.class)
-public @interface EnableGremlinRepository {
+public @interface EnableGremlinRepositories {
 
     /**
      * Alias for basePackages.
@@ -30,9 +31,9 @@ public @interface EnableGremlinRepository {
     String[] basePackages() default {};
 
     /**
-     * Type-safe version of basePackages
+     * Type-safe version of basePackages.
      */
-    Class<?>[] basePackagesClasses() default {};
+    Class<?>[] basePackageClasses() default {};
 
     /**
      * Specifies types for component scan.
@@ -47,7 +48,7 @@ public @interface EnableGremlinRepository {
     /**
      * Specifics the postfix to be used for custom repository implementation class name.
      */
-    String repositoryImplementationPostFix() default Constants.DEFAULT_REPOSITORY_IMPLEMENT_POSTFIX;
+    String repositoryImplementationPostfix() default Constants.DEFAULT_REPOSITORY_IMPLEMENT_POSTFIX;
 
     /**
      * Configures the repository base class to be used to create repository.
@@ -58,5 +59,15 @@ public @interface EnableGremlinRepository {
      * Configures whether nested repository interface.
      */
     boolean considerNestedRepositories() default false;
+
+    /**
+     * Configure the class of repository factory bean.
+     */
+    Class<?> repositoryFactoryBeanClass() default GremlinRepositoryFactoryBean.class;
+
+    /**
+     * Specific the namedQuery location.
+     */
+    String namedQueriesLocation() default "";
 }
 

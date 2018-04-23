@@ -22,14 +22,13 @@ public class GremlinResultVertexReader extends BasicGremlinResultReader implemen
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void read(@NonNull Result result, @NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceVertex)) {
             throw new GremlinUnexpectedSourceTypeException("Should be instance of GremlinSourceVertex");
         }
 
         Assert.isInstanceOf(Map.class, result.getObject(), "should be one instance of Map");
-        final Map<String, Object> map = (Map<String, Object>) result.getObject();
+        @SuppressWarnings("unchecked") final Map<String, Object> map = (Map<String, Object>) result.getObject();
 
         Assert.isTrue(map.containsKey(Constants.PROPERTY_ID), "should contain id property");
         Assert.isTrue(map.containsKey(Constants.PROPERTY_LABEL), "should contain label property");
@@ -41,7 +40,8 @@ public class GremlinResultVertexReader extends BasicGremlinResultReader implemen
         source.setLabel(map.get(Constants.PROPERTY_LABEL).toString());
 
         Assert.isInstanceOf(Map.class, map.get(Constants.PROPERTY_PROPERTIES), "should be one instance of Map");
-        final Map<String, Object> properties = (Map<String, Object>) map.get(Constants.PROPERTY_PROPERTIES);
+        @SuppressWarnings("unchecked") final Map<String, Object> properties =
+                (Map<String, Object>) map.get(Constants.PROPERTY_PROPERTIES);
 
         source.getProperties().clear();
         super.readResultProperties(properties, source);

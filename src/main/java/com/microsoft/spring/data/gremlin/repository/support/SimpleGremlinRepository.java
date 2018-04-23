@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.lang.NonNull;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,9 +44,7 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
 
     @Override
     public <S extends T> Iterable<S> saveAll(@NonNull Iterable<S> domains) {
-        for (final S domain : domains) {
-            this.save(domain);
-        }
+        domains.forEach(this::save);
 
         return domains;
     }
@@ -56,13 +55,19 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
     }
 
     @Override
-    public List<T> findAllById(Iterable<ID> ids) {
-        throw new NotImplementedException("findAllById of Repository is not implemented yet");
+    public List<T> findAllById(@NonNull Iterable<ID> ids) {
+        final List<T> results = new ArrayList<>();
+
+        ids.forEach(id -> this.findById(id).ifPresent(results::add));
+
+        return results;
     }
 
     @Override
     public Optional<T> findById(@NonNull ID id) {
-        throw new NotImplementedException("findById of Repository is not implemented yet");
+        final T domain = this.operations.findById(id, this.information.getJavaType());
+
+        return domain == null ? Optional.empty() : Optional.of(domain);
     }
 
     @Override
@@ -71,13 +76,13 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
     }
 
     @Override
-    public void delete(T domain) {
-        throw new NotImplementedException("delete of Repository is not implemented yet");
+    public void delete(@NonNull T domain) {
+        this.operations.deleteById(this.information.getId(domain), domain.getClass());
     }
 
     @Override
-    public void deleteById(ID id) {
-        throw new NotImplementedException("deleteById of Repository is not implemented yet");
+    public void deleteById(@NonNull ID id) {
+        this.operations.deleteById(id, this.information.getJavaType());
     }
 
     @Override
@@ -86,13 +91,13 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
     }
 
     @Override
-    public void deleteAll(Iterable<? extends T> domains) {
-        throw new NotImplementedException("deleteAll of Repository is not implemented yet");
+    public void deleteAll(@NonNull Iterable<? extends T> domains) {
+        domains.forEach(this::delete);
     }
 
     @Override
-    public boolean existsById(ID id) {
-        throw new NotImplementedException("existsById of Repository is not implemented yet");
+    public boolean existsById(@NonNull ID id) {
+        return this.findById(id).isPresent();
     }
 }
 

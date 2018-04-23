@@ -6,6 +6,7 @@
 package com.microsoft.spring.data.gremlin.query;
 
 import java.util.List;
+import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 
 /**
  * Provider interface for basic Operations with Gremlin
@@ -14,11 +15,13 @@ public interface GremlinOperations {
 
     void deleteAll();
 
+    <T> void deleteById(Object id, Class<T> domainClass);
+
     <T> T insert(T object);
 
-    <T> T findVertexById(Object id, Class<T> domainClass);
-
     <T> T findById(Object id, Class<T> domainClass);
+
+    <T> T findVertexById(Object id, Class<T> domainClass);
 
     <T> T findEdgeById(Object id, Class<T> domainClass);
 
@@ -27,4 +30,6 @@ public interface GremlinOperations {
     <T> T save(T object);
 
     <T> List<T> findAll(Class<T> domainClass);
+
+    MappingGremlinConverter getMappingConverter();
 }

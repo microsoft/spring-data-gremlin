@@ -14,7 +14,7 @@ public class GremlinRepositoryRegistrar extends RepositoryBeanDefinitionRegistra
 
     @Override
     protected Class<? extends Annotation> getAnnotation() {
-        return EnableGremlinRepository.class;
+        return EnableGremlinRepositories.class;
     }
 
     @Override
