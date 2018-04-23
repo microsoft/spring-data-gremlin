@@ -41,9 +41,9 @@ public class GremlinRepositoryFactory extends RepositoryFactorySupport {
 
     @Override
     protected Object getTargetRepository(RepositoryInformation information) {
-        final EntityInformation<?, Serializable> entityInformation = getEntityInformation(information.getDomainType());
+        final EntityInformation<?, Serializable> entityInfo = this.getEntityInformation(information.getDomainType());
 
-        return getTargetRepositoryViaReflection(information, entityInformation, this.context);
+        return getTargetRepositoryViaReflection(information, entityInfo, this.context);
     }
 
     @Override
