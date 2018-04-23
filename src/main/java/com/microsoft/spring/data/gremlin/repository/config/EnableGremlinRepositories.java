@@ -17,7 +17,7 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 @Import(GremlinRepositoryRegistrar.class)
-public @interface EnableGremlinRepository {
+public @interface EnableGremlinRepositories {
 
     /**
      * Alias for basePackages.
@@ -32,7 +32,7 @@ public @interface EnableGremlinRepository {
     /**
      * Type-safe version of basePackages
      */
-    Class<?>[] basePackagesClasses() default {};
+    Class<?>[] basePackageClasses() default {};
 
     /**
      * Specifies types for component scan.

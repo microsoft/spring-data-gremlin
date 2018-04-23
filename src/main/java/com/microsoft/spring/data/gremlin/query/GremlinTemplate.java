@@ -52,6 +52,11 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         this.context = context;
     }
 
+    @Override
+    public MappingGremlinConverter getMappingConverter() {
+        return this.mappingConverter;
+    }
+
     public ApplicationContext getApplicationContext() {
         return this.context;
     }

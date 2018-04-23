@@ -5,6 +5,8 @@
  */
 package com.microsoft.spring.data.gremlin.query;
 
+import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
+
 /**
  * Provider interface for basic Operations with Gremlin
  */
@@ -25,4 +27,6 @@ public interface GremlinOperations {
     <T> T update(T object);
 
     <T> T save(T object);
+
+    MappingGremlinConverter getMappingConverter();
 }
