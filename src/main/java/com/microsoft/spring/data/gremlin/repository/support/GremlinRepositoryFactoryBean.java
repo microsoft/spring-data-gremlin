@@ -61,9 +61,9 @@ public class GremlinRepositoryFactoryBean<T extends Repository<S, ID>, S, ID ext
 
         if (!this.mappingContextConfigured) {
             if (this.operations == null) {
-                setMappingContext(new GremlinMappingContext());
+                this.setMappingContext(new GremlinMappingContext());
             } else {
-                setMappingContext(this.operations.getMappingConverter().getMappingContext());
+                this.setMappingContext(this.operations.getMappingConverter().getMappingContext());
             }
         }
     }
