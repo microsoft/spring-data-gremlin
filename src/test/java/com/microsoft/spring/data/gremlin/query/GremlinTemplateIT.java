@@ -8,7 +8,10 @@ package com.microsoft.spring.data.gremlin.query;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.common.GremlinPropertiesConfiguration;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
-import com.microsoft.spring.data.gremlin.common.domain.*;
+import com.microsoft.spring.data.gremlin.common.domain.Network;
+import com.microsoft.spring.data.gremlin.common.domain.Person;
+import com.microsoft.spring.data.gremlin.common.domain.Project;
+import com.microsoft.spring.data.gremlin.common.domain.Relationship;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
@@ -32,6 +35,7 @@ import java.util.List;
 @EnableConfigurationProperties(GremlinPropertiesConfiguration.class)
 public class GremlinTemplateIT {
 
+    private static GremlinFactory factory;
     private final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
     private final Person person0 = new Person(TestConstants.VERTEX_PERSON_0_ID, TestConstants.VERTEX_PERSON_0_NAME);
     private final Person person1 = new Person(TestConstants.VERTEX_PERSON_1_ID, TestConstants.VERTEX_PERSON_1_NAME);
@@ -51,16 +55,11 @@ public class GremlinTemplateIT {
     private final Relationship relationship2 = new Relationship(TestConstants.EDGE_RELATIONSHIP_2_ID,
             TestConstants.EDGE_RELATIONSHIP_2_NAME, TestConstants.EDGE_RELATIONSHIP_2_LOCATION,
             this.person, this.project0);
-
     private Network network;
-
     @Autowired
     private GremlinPropertiesConfiguration config;
-
     @Autowired
     private ApplicationContext context;
-
-    private static GremlinFactory factory;
     private GremlinTemplate template;
 
     @AfterClass
@@ -359,6 +358,36 @@ public class GremlinTemplateIT {
         Assert.assertEquals(updatedRelationship.getId(), foundRelationship.getId());
         Assert.assertEquals(updatedRelationship.getName(), foundRelationship.getName());
         Assert.assertEquals(updatedRelationship.getLocation(), foundRelationship.getLocation());
+    }
+
+    @Test
+    public void testSaveGraph() {
+        this.network.vertexAdd(this.person);
+        this.network.vertexAdd(this.project);
+        this.network.edgeAdd(this.relationship);
+
+        this.template.save(network);
+
+        final Person personFound = this.template.findById(this.person.getId(), Person.class);
+
+        Assert.assertNotNull(personFound);
+        Assert.assertEquals(personFound.getId(), this.person.getId());
+
+        Relationship relationshipFound = this.template.findById(this.relationship.getId(), Relationship.class);
+
+        Assert.assertNotNull(relationshipFound);
+        Assert.assertEquals(relationshipFound.getId(), this.relationship.getId());
+
+        final String updatedName = "updated-name";
+        this.relationship.setName(updatedName);
+
+        this.template.save(network);
+
+        relationshipFound = this.template.findById(this.relationship.getId(), Relationship.class);
+
+        Assert.assertNotNull(relationshipFound);
+        Assert.assertEquals(relationshipFound.getId(), this.relationship.getId());
+        Assert.assertEquals(relationshipFound.getName(), updatedName);
     }
 
     @Test
