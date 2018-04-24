@@ -76,4 +76,19 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
 
         return this.generateDeleteAllScript(source);
     }
+
+    public List<String> generateIsEmptyScript(@NonNull GremlinSource source) {
+        if (!(source instanceof GremlinSourceGraph)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceGraph");
+        }
+
+        final List<String> scriptList = new ArrayList<>();
+
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_VERTEX_ALL);
+
+        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
+
+        return Arrays.asList(query);
+    }
 }
