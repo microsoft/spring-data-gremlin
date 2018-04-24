@@ -52,7 +52,7 @@ public class GremlinTemplateIT {
             TestConstants.EDGE_RELATIONSHIP_2_NAME, TestConstants.EDGE_RELATIONSHIP_2_LOCATION,
             this.person, this.project0);
 
-    private final Network network = new Network();
+    private Network network;
 
     @Autowired
     private GremlinPropertiesConfiguration config;
@@ -81,6 +81,8 @@ public class GremlinTemplateIT {
 
         this.template = new GremlinTemplate(factory, converter);
         this.template.deleteAll();
+
+        this.network = new Network();
     }
 
     private void buildTestGraph() {
@@ -451,5 +453,23 @@ public class GremlinTemplateIT {
         final Person foundPerson = this.template.findById(this.person.getId(), Person.class);
         Assert.assertNull(foundPerson);
     }
+
+    @Test
+    public void testIsEmptyGraph() {
+        Assert.assertTrue(this.template.isEmptyGraph(this.network));
+
+        this.network.vertexAdd(this.person);
+        this.network.vertexAdd(this.project);
+        this.network.edgeAdd(this.relationship);
+        this.template.insert(this.network);
+
+        Assert.assertFalse(this.template.isEmptyGraph(this.network));
+    }
+
+    @Test(expected = GremlinQueryException.class)
+    public void testIsEmptyGraphException() {
+        this.template.isEmptyGraph(this.project);
+    }
+
 }
 

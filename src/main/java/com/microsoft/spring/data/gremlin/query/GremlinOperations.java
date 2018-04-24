@@ -15,6 +15,8 @@ public interface GremlinOperations {
 
     void deleteAll();
 
+    <T> boolean isEmptyGraph(T object);
+
     <T> void deleteById(Object id, Class<T> domainClass);
 
     <T> T insert(T object);
