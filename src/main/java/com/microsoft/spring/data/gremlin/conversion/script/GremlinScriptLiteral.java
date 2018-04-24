@@ -35,7 +35,12 @@ public interface GremlinScriptLiteral {
     List<String> generateUpdateScript(GremlinSource source);
 
     /**
-     * Generate the update query from source (Vertex, Edge or Graph).
+     * Generate the findAll query from source (Vertex, Edge or Graph).
+     */
+    List<String> generateFindAllScript(GremlinSource source);
+
+    /**
+     * Generate the DeleteById query from source (Vertex, Edge or Graph).
      */
     List<String> generateDeleteByIdScript(GremlinSource source);
 }
