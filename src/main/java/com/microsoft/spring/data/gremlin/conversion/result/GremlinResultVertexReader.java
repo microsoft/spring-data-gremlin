@@ -43,6 +43,7 @@ public class GremlinResultVertexReader extends BasicGremlinResultReader implemen
         @SuppressWarnings("unchecked") final Map<String, Object> properties =
                 (Map<String, Object>) map.get(Constants.PROPERTY_PROPERTIES);
 
+        source.getProperties().clear();
         super.readResultProperties(properties, source);
     }
 }

@@ -32,6 +32,7 @@ import org.springframework.util.Assert;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletionException;
 
@@ -219,6 +220,38 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         } else {
             return this.updateInternal(object, info);
         }
+    }
+
+    @Override
+    public <T> List<T> findAll(@NonNull Class<T> domainClass) {
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = info.getGremlinSource();
+
+        if (info.isEntityGraph()) {
+            throw new UnsupportedOperationException("Gremlin graph cannot be findAll.");
+        }
+
+        final List<String> queryList = source.getGremlinScriptLiteral().generateFindAllScript(source);
+        final List<Result> results = this.executeQuery(queryList);
+
+        if (results.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final List<T> domainList = new ArrayList<>();
+
+        for (final Result result : results) {
+            source.doGremlinResultRead(result);
+            final T domain = this.mappingConverter.read(domainClass, source);
+
+            if (info.isEntityEdge()) {
+                this.completeEdge(domain, (GremlinSourceEdge) source);
+            }
+
+            domainList.add(domain);
+        }
+
+        return domainList;
     }
 
     @Override

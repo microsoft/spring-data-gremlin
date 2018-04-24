@@ -8,12 +8,10 @@ package com.microsoft.spring.data.gremlin.repository.support;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
 import com.microsoft.spring.data.gremlin.common.domain.Person;
 import com.microsoft.spring.data.gremlin.common.repository.PersonRepository;
-import com.microsoft.spring.data.gremlin.query.GremlinOperations;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
@@ -22,16 +20,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class GremlinRepositoryFactoryBeanUnitTest {
 
-    @Mock
-    private GremlinOperations operations;
-
     @Autowired
     private ApplicationContext context;
 
     private GremlinRepositoryFactoryBean factoryBean;
 
     @Before
-    @SuppressWarnings("uncheced")
+    @SuppressWarnings("unchecked")
     public void setup() {
         this.factoryBean = new GremlinRepositoryFactoryBean(PersonRepository.class);
     }

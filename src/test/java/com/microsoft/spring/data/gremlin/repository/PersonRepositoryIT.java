@@ -9,7 +9,6 @@ import com.microsoft.spring.data.gremlin.common.TestConstants;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.common.domain.Person;
 import com.microsoft.spring.data.gremlin.common.repository.PersonRepository;
-import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,7 +29,7 @@ public class PersonRepositoryIT {
     private final Person person0 = new Person(TestConstants.VERTEX_PERSON_0_ID, TestConstants.VERTEX_PERSON_0_NAME);
 
     @Autowired
-    PersonRepository repository;
+    private PersonRepository repository;
 
     @Before
     public void setup() {
