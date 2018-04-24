@@ -265,5 +265,22 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         this.executeQuery(queryList);
     }
+
+    @Override
+    public <T> boolean isEmptyGraph(@NonNull T object) {
+        @SuppressWarnings("unchecked") final Class<T> domainClass = (Class<T>) object.getClass();
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+
+        if (!info.isEntityGraph()) {
+            throw new GremlinQueryException("only graph domain is allowed.");
+        }
+
+        final GremlinSource source = info.getGremlinSource();
+        final GremlinScriptLiteralGraph literalGraph = (GremlinScriptLiteralGraph) source.getGremlinScriptLiteral();
+        final List<String> queryList = literalGraph.generateIsEmptyScript(source);
+        final List<Result> results = this.executeQuery(queryList);
+
+        return results.size() == 0;
+    }
 }
 
