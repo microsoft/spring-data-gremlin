@@ -1,0 +1,15 @@
+language: java
+jdk:
+  - oraclejdk8
+
+before_script:
+  - chmod +x ./script/integration-test-setup.sh
+  - ./script/integration-test-setup.sh > src/test/resources/application.properties
+  - cat src/test/resources/application.properties
+
+script:
+  - mvn clean -P full-test install
+  - mvn clean -P full-test cobertura:cobertura-integration-test
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
