@@ -49,17 +49,17 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     @Override
-    public void setApplicationContext(@NonNull ApplicationContext context) throws BeansException {
-        this.context = context;
-    }
-
-    @Override
     public MappingGremlinConverter getMappingConverter() {
         return this.mappingConverter;
     }
 
     public ApplicationContext getApplicationContext() {
         return this.context;
+    }
+
+    @Override
+    public void setApplicationContext(@NonNull ApplicationContext context) throws BeansException {
+        this.context = context;
     }
 
     @NonNull
@@ -215,7 +215,9 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
         @SuppressWarnings("unchecked") final Object id = info.getId(object);
 
-        if (!info.isEntityGraph() && this.findById(id, domainClass) == null) {
+        if (info.isEntityGraph() && this.isEmptyGraph(object)) {
+            return this.insert(object);
+        } else if (!info.isEntityGraph() && this.findById(id, domainClass) == null) {
             return this.insert(object);
         } else {
             return this.updateInternal(object, info);
