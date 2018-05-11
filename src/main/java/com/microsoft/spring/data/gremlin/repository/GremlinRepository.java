@@ -13,4 +13,5 @@ import java.io.Serializable;
 @NoRepositoryBean
 public interface GremlinRepository<T, ID extends Serializable> extends CrudRepository<T, ID> {
 
+    Iterable<T> findAll(Class<T> domainClass);
 }
