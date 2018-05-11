@@ -134,7 +134,6 @@ public class PersonRepositoryIT {
         Assert.assertTrue(this.repository.existsById(this.person.getId()));
     }
 
-
     @Test
     public void testFindAllById() {
         final List<Person> domains = Arrays.asList(this.person, this.person0);
@@ -143,6 +142,25 @@ public class PersonRepositoryIT {
         this.repository.saveAll(domains);
 
         final List<Person> foundDomains = (List<Person>) this.repository.findAllById(ids);
+
+        domains.sort((a, b) -> (a.getId().compareTo(b.getId())));
+        foundDomains.sort((a, b) -> (a.getId().compareTo(b.getId())));
+
+        Assert.assertArrayEquals(domains.toArray(), foundDomains.toArray());
+    }
+
+    @Test
+    public void testDomainClassFindAll() {
+        final List<Person> domains = Arrays.asList(this.person, this.person0);
+        List<Person> foundDomains = (List<Person>) this.repository.findAll(Person.class);
+
+        Assert.assertTrue(foundDomains.isEmpty());
+
+        this.repository.saveAll(domains);
+
+        foundDomains = (List<Person>) this.repository.findAll(Person.class);
+
+        Assert.assertEquals(domains.size(), foundDomains.size());
 
         domains.sort((a, b) -> (a.getId().compareTo(b.getId())));
         foundDomains.sort((a, b) -> (a.getId().compareTo(b.getId())));

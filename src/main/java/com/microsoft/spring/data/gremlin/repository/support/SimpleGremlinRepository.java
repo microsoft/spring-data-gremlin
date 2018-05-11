@@ -71,6 +71,11 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
     }
 
     @Override
+    public Iterable<T> findAll(@NonNull Class<T> domainClass) {
+        return this.operations.findAll(domainClass);
+    }
+
+    @Override
     public long count() {
         throw new NotImplementedException("count of Repository is not implemented yet");
     }
