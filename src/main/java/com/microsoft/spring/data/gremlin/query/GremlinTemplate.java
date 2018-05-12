@@ -46,7 +46,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     public GremlinTemplate(@NonNull GremlinFactory factory, @NonNull MappingGremlinConverter converter) {
         this.gremlinFactory = factory;
-        this.gremlinClient = factory.getGremlinClient();
+        this.gremlinClient = this.gremlinFactory.getGremlinClient();
         this.mappingConverter = converter;
     }
 
