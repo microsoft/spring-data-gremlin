@@ -46,11 +46,6 @@ public class AbstractGremlinConfigurationIT {
     }
 
     @Test
-    public void testGremlinClient() {
-        Assert.assertNotNull(this.testConfig.gremlinClient());
-    }
-
-    @Test
     @SneakyThrows
     public void testGremlinTemplate() {
         Assert.assertNotNull(this.testConfig.gremlinTemplate());
