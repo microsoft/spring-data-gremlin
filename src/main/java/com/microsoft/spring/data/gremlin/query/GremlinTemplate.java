@@ -39,12 +39,14 @@ import java.util.concurrent.CompletionException;
 
 public class GremlinTemplate implements GremlinOperations, ApplicationContextAware {
 
+    private final Client gremlinClient;
     private final GremlinFactory gremlinFactory;
     private final MappingGremlinConverter mappingConverter;
     private ApplicationContext context;
 
     public GremlinTemplate(@NonNull GremlinFactory factory, @NonNull MappingGremlinConverter converter) {
         this.gremlinFactory = factory;
+        this.gremlinClient = factory.getGremlinClient();
         this.mappingConverter = converter;
     }
 
@@ -64,11 +66,10 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @NonNull
     private List<Result> executeQuery(@NonNull List<String> queryList) {
-        final Client client = this.gremlinFactory.getGremlinClient();
         final List<Result> results = new ArrayList<>();
 
         try {
-            queryList.forEach(query -> results.addAll(client.submit(query).all().join()));
+            queryList.forEach(query -> results.addAll(this.gremlinClient.submit(query).all().join()));
             return results;
         } catch (CompletionException e) {
             throw new GremlinQueryException(String.format("unable to complete execute %s from gremlin", queryList), e);
