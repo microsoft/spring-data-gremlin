@@ -79,11 +79,7 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
 
     @Override
     public List<String> generateFindAllScript(@NonNull GremlinSource source) {
-        if (!(source instanceof GremlinSourceGraph)) {
-            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceGraph");
-        }
-
-        return Arrays.asList(Constants.GREMLIN_SCRIPT_EDGE_ALL, Constants.GREMLIN_SCRIPT_VERTEX_ALL);
+        throw new UnsupportedOperationException("Gremlin graph cannot be findAll.");
     }
 
     public List<String> generateIsEmptyScript(@NonNull GremlinSource source) {

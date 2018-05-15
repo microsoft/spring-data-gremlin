@@ -14,6 +14,7 @@ import com.microsoft.spring.data.gremlin.common.domain.Project;
 import com.microsoft.spring.data.gremlin.common.domain.Relationship;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import lombok.SneakyThrows;
 import org.junit.*;
@@ -190,6 +191,15 @@ public class GremlinTemplateIT {
         Assert.assertEquals(foundPerson.getName(), this.person1.getName());
     }
 
+    @Test(expected = GremlinUnexpectedEntityTypeException.class)
+    public void testFindVertexByIdException() {
+        this.template.insert(this.person);
+        this.template.insert(this.project0);
+        this.template.insert(this.relationship2);
+
+        this.template.findVertexById(this.project.getId(), Relationship.class);
+    }
+
     @Test
     public void testFindEdgeById() {
         Relationship foundRelationship = this.template.findEdgeById(this.relationship2.getId(), Relationship.class);
@@ -205,6 +215,15 @@ public class GremlinTemplateIT {
         Assert.assertEquals(foundRelationship.getId(), this.relationship2.getId());
         Assert.assertEquals(foundRelationship.getName(), this.relationship2.getName());
         Assert.assertEquals(foundRelationship.getLocation(), this.relationship2.getLocation());
+    }
+
+    @Test(expected = GremlinUnexpectedEntityTypeException.class)
+    public void testFindEdgeByIdException() {
+        this.template.insert(this.person);
+        this.template.insert(this.project0);
+        this.template.insert(this.relationship2);
+
+        this.template.findEdgeById(this.relationship2.getId(), Project.class);
     }
 
     @Test
