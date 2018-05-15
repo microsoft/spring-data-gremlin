@@ -13,41 +13,38 @@ import org.springframework.util.Assert;
 
 import java.util.*;
 
-public class AbstractGremlinSourceReader {
+public abstract class AbstractGremlinSourceReader {
+
+    private static final List<String> SUPPORTED_TYPE_NAME = Arrays.asList("int", "boolean",
+            "java.lang.String", "java.lang.Integer", "java.lang.Boolean", "java.util.Map"
+    );
 
     protected <T extends Object> List<String> findDomainFieldsNames(@NonNull Class<T> type,
-                                                     @NonNull GremlinPersistentEntity persistentEntity) {
+                                                                    @NonNull GremlinPersistentEntity persistentEntity) {
         final List<String> fieldNames = new ArrayList<>();
 
         Arrays.asList(type.getDeclaredFields()).forEach(field -> {
             final Class<?> fieldType = persistentEntity.getPersistentProperty(field.getName()).getField().getType();
 
-            switch (fieldType.getName()) {
-                case "int":
-                case "boolean":
-                case "java.lang.String":
-                case "java.lang.Integer":
-                case "java.lang.Boolean":
-                    fieldNames.add(field.getName());
-                    break;
-                case "java.util.Map":
-                    break;
-                default:
-                    throw new UnsupportedOperationException(String.format("unsupported type %s", fieldType.toString()));
-
+            if (SUPPORTED_TYPE_NAME.contains(fieldType.getName())) {
+                fieldNames.add(field.getName());
+            } else {
+                throw new UnsupportedOperationException(String.format("unsupported type %s", fieldType.toString()));
             }
         });
 
         return fieldNames;
     }
 
-    protected void readDomainMapField(@NonNull ConvertingPropertyAccessor accessor, @NonNull PersistentProperty property,
-                                    @NonNull GremlinSource source, @NonNull List<String> fieldNames) {
+    protected void readDomainMapField(@NonNull ConvertingPropertyAccessor accessor,
+                                      @NonNull PersistentProperty property,
+                                      @NonNull GremlinSource source, @NonNull List<String> fieldNames) {
+        Assert.isTrue(property.getTypeInformation().getType() == Map.class, "should be Map type.");
+
         final Map<String, Object> mapProperty = new HashMap<>();
-        Assert.isTrue(property.getField().getType() == Map.class, "should be Map field.");
 
         source.getProperties().forEach((key, value) -> {
-            if (!fieldNames.contains(key)) {
+            if (!fieldNames.contains(key) || property.getName().equals(key)) {
                 mapProperty.put(key, value);
             }
         });

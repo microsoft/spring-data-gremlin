@@ -8,10 +8,7 @@ package com.microsoft.spring.data.gremlin.repository;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.common.domain.Service;
 import com.microsoft.spring.data.gremlin.common.repository.ServiceRepository;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -25,10 +22,11 @@ import java.util.Optional;
 @ContextConfiguration(classes = TestRepositoryConfiguration.class)
 public class ServiceRepositoryIT {
 
-    private final static Map<String, Object> configProperties = new HashMap<>();
-    private final static Map<String, Object> eurekaProperties = new HashMap<>();
+    private static final Map<String, Object> configProperties = new HashMap<>();
+    private static final Map<String, Object> eurekaProperties = new HashMap<>();
 
-    static {
+    @BeforeClass
+    public static void initialize() {
         eurekaProperties.put("eureka-port", 8761);
         eurekaProperties.put("priority", "high");
         eurekaProperties.put("enabled-hystrix", false);
@@ -36,6 +34,7 @@ public class ServiceRepositoryIT {
         configProperties.put("config-port", 8888);
         configProperties.put("eureka-port", 8761);
         configProperties.put("priority", "highest");
+
     }
 
     private final String configId = "1234";

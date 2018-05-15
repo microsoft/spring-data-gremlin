@@ -23,7 +23,6 @@ import java.util.*;
 @NoArgsConstructor
 public class GremlinSourceVertexReader extends AbstractGremlinSourceReader implements GremlinSourceReader {
 
-
     @Override
     public <T extends Object> T read(@NonNull Class<T> type, @NonNull MappingGremlinConverter converter,
                                      @NonNull GremlinSource source) {
@@ -41,7 +40,7 @@ public class GremlinSourceVertexReader extends AbstractGremlinSourceReader imple
             final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
             Assert.notNull(property, "persistence property should not be null");
 
-            if (property.getField().getType() == Map.class) {
+            if (property.getTypeInformation().getType() == Map.class) {
                 mapProperty = property;
             } else if (field.getName().equals(Constants.PROPERTY_ID) || field.getAnnotation(Id.class) != null) {
                 accessor.setProperty(property, source.getId());
