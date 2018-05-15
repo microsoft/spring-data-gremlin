@@ -17,11 +17,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestRepositoryConfiguration.class)
 public class ServiceRepositoryIT {
+
+    private final static Map<String, Object> configProperties = new HashMap<>();
+    private final static Map<String, Object> eurekaProperties = new HashMap<>();
+
+    static {
+        eurekaProperties.put("eureka-port", 8761);
+        eurekaProperties.put("priority", "high");
+        eurekaProperties.put("enabled-hystrix", false);
+
+        configProperties.put("config-port", 8888);
+        configProperties.put("eureka-port", 8761);
+        configProperties.put("priority", "highest");
+    }
 
     private final String configId = "1234";
     private final String eurekaId = "8731";
@@ -32,8 +47,8 @@ public class ServiceRepositoryIT {
     private final String configName = "cloud-config";
     private final String eurekaName = "eureka-server";
 
-    private final Service config = new Service(configId, configCount, true, configName);
-    private final Service eureka = new Service(eurekaId, eurekaCount, false, eurekaName);
+    private final Service config = new Service(configId, configCount, true, configName, configProperties);
+    private final Service eureka = new Service(eurekaId, eurekaCount, false, eurekaName, eurekaProperties);
 
     @Autowired
     private ServiceRepository repository;
