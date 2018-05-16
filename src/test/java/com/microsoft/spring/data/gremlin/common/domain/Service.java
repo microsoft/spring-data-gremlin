@@ -11,6 +11,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
+import java.util.Map;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -25,4 +27,6 @@ public class Service {
     private boolean isActive;
 
     private String name;
+
+    private Map<String, Object> properties;
 }

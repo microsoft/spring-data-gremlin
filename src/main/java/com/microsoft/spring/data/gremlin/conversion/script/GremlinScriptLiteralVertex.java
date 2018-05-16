@@ -38,11 +38,10 @@ public class GremlinScriptLiteralVertex extends BasicGremlinScriptLiteral implem
         Assert.notNull(properties, "properties should not be null");
 
         scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
-
         scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_ADD_VERTEX, label));
         scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_PROPERTY_STRING, Constants.PROPERTY_ID, id));
 
-        super.generateProperties(scriptList, properties);
+        scriptList.addAll(super.generateProperties(properties));
 
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 
@@ -93,7 +92,7 @@ public class GremlinScriptLiteralVertex extends BasicGremlinScriptLiteral implem
         scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
         scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_VERTEX, id));
 
-        super.generateProperties(scriptList, properties);
+        scriptList.addAll(super.generateProperties(properties));
 
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 
