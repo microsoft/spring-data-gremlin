@@ -20,7 +20,7 @@ import org.springframework.util.Assert;
 import java.lang.reflect.Field;
 
 @NoArgsConstructor
-public class GremlinSourceVertexReader implements GremlinSourceReader {
+public class GremlinSourceVertexReader extends AbstractGremlinSourceReader implements GremlinSourceReader {
 
     @Override
     public <T extends Object> T read(@NonNull Class<T> type, @NonNull MappingGremlinConverter converter,
@@ -39,12 +39,10 @@ public class GremlinSourceVertexReader implements GremlinSourceReader {
 
             if (field.getName().equals(Constants.PROPERTY_ID) || field.getAnnotation(Id.class) != null) {
                 accessor.setProperty(property, source.getId());
-                continue;
+            } else {
+                final Object value = super.readProperty(property, source.getProperties().get(field.getName()));
+                accessor.setProperty(property, value);
             }
-
-            final Object value = source.getProperties().get(field.getName());
-
-            accessor.setProperty(property, value);
         }
 
         return domain;
