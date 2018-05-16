@@ -40,13 +40,11 @@ import java.util.concurrent.CompletionException;
 public class GremlinTemplate implements GremlinOperations, ApplicationContextAware {
 
     private final Client gremlinClient;
-    private final GremlinFactory gremlinFactory;
     private final MappingGremlinConverter mappingConverter;
     private ApplicationContext context;
 
     public GremlinTemplate(@NonNull GremlinFactory factory, @NonNull MappingGremlinConverter converter) {
-        this.gremlinFactory = factory;
-        this.gremlinClient = this.gremlinFactory.getGremlinClient();
+        this.gremlinClient = factory.getGremlinClient();
         this.mappingConverter = converter;
     }
 

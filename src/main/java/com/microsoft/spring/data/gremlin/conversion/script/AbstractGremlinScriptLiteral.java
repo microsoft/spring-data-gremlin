@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class BasicGremlinScriptLiteral {
+public abstract class AbstractGremlinScriptLiteral {
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
