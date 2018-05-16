@@ -7,6 +7,7 @@ package com.microsoft.spring.data.gremlin.conversion.source;
 
 import com.microsoft.spring.data.gremlin.annotation.EdgeSet;
 import com.microsoft.spring.data.gremlin.annotation.VertexSet;
+import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
@@ -49,6 +50,11 @@ public class GremlinSourceGraphWriter implements GremlinSourceWriter {
         for (final Field field : domain.getClass().getDeclaredFields()) {
             final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
             Assert.notNull(property, "persistence property should not be null");
+
+            if (field.getName().equals(Constants.PROPERTY_ID)) {
+                continue;
+            }
+
             @SuppressWarnings("unchecked") final List<Object> objects = (List<Object>) accessor.getProperty(property);
 
             if (field.getAnnotation(VertexSet.class) != null || field.getAnnotation(EdgeSet.class) != null) {
