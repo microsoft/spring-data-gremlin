@@ -5,9 +5,9 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
+import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.NonNull;
@@ -52,5 +52,18 @@ public class GremlinUtils {
         }
 
         return idField;
+    }
+
+    public static String getScriptByValue(@NonNull String name, @NonNull Object value) {
+        if (value instanceof String) {
+            return String.format(Constants.GREMLIN_PRIMITIVE_PROPERTY_STRING, name, value.toString());
+        } else if (value instanceof Integer) {
+            return String.format(Constants.GREMLIN_PRIMITIVE_PROPERTY_NUMBER, name, value);
+        } else if (value instanceof Boolean) {
+            return String.format(Constants.GREMLIN_PRIMITIVE_PROPERTY_BOOLEAN, name, value);
+        } else {
+            final String typeName = value.getClass().getName();
+            throw new UnsupportedOperationException(String.format("unsupported type %s from gremlin", typeName));
+        }
     }
 }

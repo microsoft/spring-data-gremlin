@@ -18,9 +18,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Field;
+import java.util.*;
 
 @NoArgsConstructor
-public class GremlinSourceVertexReader implements GremlinSourceReader {
+public class GremlinSourceVertexReader extends AbstractGremlinSourceReader implements GremlinSourceReader {
 
     @Override
     public <T extends Object> T read(@NonNull Class<T> type, @NonNull MappingGremlinConverter converter,
@@ -29,22 +30,28 @@ public class GremlinSourceVertexReader implements GremlinSourceReader {
             throw new GremlinUnexpectedSourceTypeException("should be instance of GremlinSourceVertex");
         }
 
+        PersistentProperty mapProperty = null;
         final T domain = GremlinUtils.createInstance(type);
         final ConvertingPropertyAccessor accessor = converter.getPropertyAccessor(domain);
         final GremlinPersistentEntity persistentEntity = converter.getPersistentEntity(type);
+        final List<String> fieldNames = super.findDomainFieldsNames(type, persistentEntity);
 
         for (final Field field : type.getDeclaredFields()) {
             final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
             Assert.notNull(property, "persistence property should not be null");
 
-            if (field.getName().equals(Constants.PROPERTY_ID) || field.getAnnotation(Id.class) != null) {
+            if (property.getTypeInformation().getType() == Map.class) {
+                mapProperty = property;
+            } else if (field.getName().equals(Constants.PROPERTY_ID) || field.getAnnotation(Id.class) != null) {
                 accessor.setProperty(property, source.getId());
-                continue;
+            } else {
+                final Object value = source.getProperties().get(field.getName());
+                accessor.setProperty(property, value);
             }
+        }
 
-            final Object value = source.getProperties().get(field.getName());
-
-            accessor.setProperty(property, value);
+        if (mapProperty != null) {
+            super.readDomainMapField(accessor, mapProperty, source, fieldNames);
         }
 
         return domain;
