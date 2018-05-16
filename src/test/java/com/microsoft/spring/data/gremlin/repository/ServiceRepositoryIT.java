@@ -25,18 +25,6 @@ public class ServiceRepositoryIT {
     private static final Map<String, Object> configProperties = new HashMap<>();
     private static final Map<String, Object> eurekaProperties = new HashMap<>();
 
-    @BeforeClass
-    public static void initialize() {
-        eurekaProperties.put("eureka-port", 8761);
-        eurekaProperties.put("priority", "high");
-        eurekaProperties.put("enabled-hystrix", false);
-
-        configProperties.put("config-port", 8888);
-        configProperties.put("eureka-port", 8761);
-        configProperties.put("priority", "highest");
-
-    }
-
     private final String configId = "1234";
     private final String eurekaId = "8731";
 
@@ -48,6 +36,18 @@ public class ServiceRepositoryIT {
 
     private final Service config = new Service(configId, configCount, true, configName, configProperties);
     private final Service eureka = new Service(eurekaId, eurekaCount, false, eurekaName, eurekaProperties);
+
+    @BeforeClass
+    public static void initialize() {
+        eurekaProperties.put("eureka-port", 8761);
+        eurekaProperties.put("priority", "high");
+        eurekaProperties.put("enabled-hystrix", false);
+
+        configProperties.put("config-port", 8888);
+        configProperties.put("eureka-port", 8761);
+        configProperties.put("priority", "highest");
+
+    }
 
     @Autowired
     private ServiceRepository repository;

@@ -21,7 +21,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class BasicGremlinSource implements GremlinSource {
+public abstract class AbstractGremlinSource implements GremlinSource {
 
     private String id;
     private String label;
@@ -40,7 +40,7 @@ public class BasicGremlinSource implements GremlinSource {
     @Setter(AccessLevel.PRIVATE)
     private GremlinResultReader resultReader;
 
-    public BasicGremlinSource() {
+    public AbstractGremlinSource() {
         this.properties = new HashMap<>();
     }
 

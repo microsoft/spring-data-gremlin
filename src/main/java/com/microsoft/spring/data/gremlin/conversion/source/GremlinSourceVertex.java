@@ -11,7 +11,7 @@ import org.springframework.lang.NonNull;
 
 import java.lang.reflect.Field;
 
-public class GremlinSourceVertex extends BasicGremlinSource {
+public class GremlinSourceVertex extends AbstractGremlinSource {
 
     public GremlinSourceVertex() {
         super();

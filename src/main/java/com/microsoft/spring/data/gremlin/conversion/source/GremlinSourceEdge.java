@@ -13,7 +13,7 @@ import org.springframework.lang.NonNull;
 
 import java.lang.reflect.Field;
 
-public class GremlinSourceEdge extends BasicGremlinSource {
+public class GremlinSourceEdge extends AbstractGremlinSource {
 
     @Getter
     @Setter

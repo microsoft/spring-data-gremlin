@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GremlinSourceGraph extends BasicGremlinSource {
+public class GremlinSourceGraph extends AbstractGremlinSource {
 
     @Getter
     private List<GremlinSource> vertexSet;

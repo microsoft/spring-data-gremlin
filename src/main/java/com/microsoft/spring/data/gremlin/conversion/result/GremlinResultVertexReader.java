@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
 
 import java.util.Map;
 
-public class GremlinResultVertexReader extends BasicGremlinResultReader implements GremlinResultReader {
+public class GremlinResultVertexReader extends AbstractGremlinResultReader implements GremlinResultReader {
 
     public GremlinResultVertexReader() {
         super();

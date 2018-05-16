@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @NoArgsConstructor
-public class GremlinScriptLiteralEdge extends BasicGremlinScriptLiteral implements GremlinScriptLiteral {
+public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral implements GremlinScriptLiteral {
 
     @Override
     public List<String> generateInsertScript(@NonNull GremlinSource source) {
