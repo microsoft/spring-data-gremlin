@@ -10,10 +10,13 @@ import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralEdge;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralVertex;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
@@ -282,6 +285,24 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final List<Result> results = this.executeQuery(queryList);
 
         return results.size() == 0;
+    }
+
+    @Override
+    public long vertexCount() {
+        final GremlinScriptLiteral script = new GremlinScriptLiteralVertex();
+        final List<String> queryList = script.generateCountScript(new GremlinSourceVertex());
+        final List<Result> results = this.executeQuery(queryList);
+
+        return results.size();
+    }
+
+    @Override
+    public long edgeCount() {
+        final GremlinScriptLiteral script = new GremlinScriptLiteralEdge();
+        final List<String> queryList = script.generateCountScript(new GremlinSourceEdge());
+        final List<Result> results = this.executeQuery(queryList);
+
+        return results.size();
     }
 }
 

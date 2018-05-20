@@ -14,10 +14,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @NoArgsConstructor
 public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral implements GremlinScriptLiteral {
@@ -143,6 +140,15 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 
         return Arrays.asList(query);
+    }
+
+    @Override
+    public List<String> generateCountScript(@NonNull GremlinSource source) {
+        if (!(source instanceof GremlinSourceEdge)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
+        }
+
+        return Collections.singletonList(Constants.GREMLIN_PRIMITIVE_EDGE_ALL);
     }
 }
 

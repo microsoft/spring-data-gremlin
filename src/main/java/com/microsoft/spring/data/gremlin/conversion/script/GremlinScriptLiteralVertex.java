@@ -14,10 +14,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @NoArgsConstructor
 public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral implements GremlinScriptLiteral {
@@ -133,6 +130,15 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 
         return Arrays.asList(query);
+    }
+
+    @Override
+    public List<String> generateCountScript(@NonNull GremlinSource source) {
+        if (!(source instanceof GremlinSourceVertex)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
+        }
+
+        return Collections.singletonList(Constants.GREMLIN_PRIMITIVE_VERTEX_ALL);
     }
 }
 

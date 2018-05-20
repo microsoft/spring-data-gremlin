@@ -14,4 +14,8 @@ import java.io.Serializable;
 public interface GremlinRepository<T, ID extends Serializable> extends CrudRepository<T, ID> {
 
     Iterable<T> findAll(Class<T> domainClass);
+
+    long vertexCount();
+
+    long edgeCount();
 }

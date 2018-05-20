@@ -92,4 +92,9 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
 
         return Arrays.asList(query);
     }
+
+    @Override
+    public List<String> generateCountScript(@NonNull GremlinSource source) {
+        throw new UnsupportedOperationException("Gremlin graph counting is not available.");
+    }
 }

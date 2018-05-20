@@ -43,4 +43,9 @@ public interface GremlinScriptLiteral {
      * Generate the DeleteById query from source (Vertex, Edge or Graph).
      */
     List<String> generateDeleteByIdScript(GremlinSource source);
+
+    /**
+     * Generate the Count query from Source (Vertex, Edge)
+     */
+    List<String> generateCountScript(GremlinSource source);
 }
