@@ -42,7 +42,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
 
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 
-        return Arrays.asList(query);
+        return Collections.singletonList(query);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
         }
 
-        return Arrays.asList(Constants.GREMLIN_SCRIPT_VERTEX_DROP_ALL);
+        return Collections.singletonList(Constants.GREMLIN_SCRIPT_VERTEX_DROP_ALL);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
 
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 
-        return Arrays.asList(query);
+        return Collections.singletonList(query);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
 
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 
-        return Arrays.asList(query);
+        return Collections.singletonList(query);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
 
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 
-        return Arrays.asList(query);
+        return Collections.singletonList(query);
     }
 
     @Override
@@ -129,7 +129,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
 
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 
-        return Arrays.asList(query);
+        return Collections.singletonList(query);
     }
 
     @Override
