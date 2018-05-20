@@ -9,6 +9,7 @@ import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
 import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
 import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,16 @@ import java.lang.reflect.Field;
 
 @NoArgsConstructor
 public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
+
+    private String getIdValue(@NonNull Object object, @NonNull MappingGremlinConverter converter) {
+        if (object instanceof String) {
+            return object.toString();
+        } else if (object.getClass().isPrimitive()) {
+            throw new GremlinUnexpectedEntityTypeException("only String type of primitive is allowed");
+        } else {
+            return converter.getIdFieldValue(object).toString();
+        }
+    }
 
     @Override
     public void write(@NonNull Object domain, @NonNull MappingGremlinConverter converter,
@@ -41,17 +52,13 @@ public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
 
             final Object object = accessor.getProperty(property);
 
-            if (field.getName().equals(Constants.PROPERTY_ID)) {
-                continue;
-            } else if (field.getAnnotation(EdgeFrom.class) != null) {
-                sourceEdge.setVertexIdFrom(converter.getIdFieldValue(object).toString());
-                continue;
+            if (field.getAnnotation(EdgeFrom.class) != null) {
+                sourceEdge.setVertexIdFrom(this.getIdValue(object, converter));
             } else if (field.getAnnotation(EdgeTo.class) != null) {
-                sourceEdge.setVertexIdTo(converter.getIdFieldValue(object).toString());
-                continue;
+                sourceEdge.setVertexIdTo(this.getIdValue(object, converter));
+            } else if (!field.getName().equals(Constants.PROPERTY_ID)) {
+                source.setProperty(field.getName(), accessor.getProperty(property));
             }
-
-            source.setProperty(field.getName(), accessor.getProperty(property));
         }
     }
 }

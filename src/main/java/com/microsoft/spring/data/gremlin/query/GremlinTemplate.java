@@ -33,6 +33,7 @@ import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -111,6 +112,28 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         return this.findById(id, domainClass);
     }
 
+    private Object getEdgeAnnotatedFieldValue(@NonNull Field field, @NonNull String vertexId) {
+        if (field.getType() == String.class) {
+            return vertexId;
+        } else if (field.getType().isPrimitive()) {
+            throw new GremlinUnexpectedEntityTypeException("only String type of primitive is allowed");
+        } else {
+            return this.findVertexById(vertexId, field.getType());
+        }
+    }
+
+    @NonNull
+    private Field getEdgeAnnotatedField(@NonNull Class<?> domainClass,
+                                        @NonNull Class<? extends Annotation> annotationClass) {
+        final List<Field> fields = FieldUtils.getFieldsListWithAnnotation(domainClass, annotationClass);
+
+        if (fields.size() != 1) {
+            throw new GremlinEntityInformationException("should be only one Annotation");
+        }
+
+        return fields.get(0);
+    }
+
     /**
      * Find Edge need another two query to obtain edgeFrom and edgeTo.
      * This function will do that and make edge domain completion.
@@ -119,18 +142,8 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final ConvertingPropertyAccessor accessor = this.mappingConverter.getPropertyAccessor(domain);
         final GremlinPersistentEntity persistentEntity = this.mappingConverter.getPersistentEntity(domain.getClass());
 
-        final List<Field> fromFields = FieldUtils.getFieldsListWithAnnotation(domain.getClass(), EdgeFrom.class);
-        final List<Field> toFields = FieldUtils.getFieldsListWithAnnotation(domain.getClass(), EdgeTo.class);
-
-        if (fromFields.size() != 1 || toFields.size() != 1) {
-            throw new GremlinEntityInformationException("should be only one Annotation");
-        }
-
-        final Field fromField = fromFields.get(0);
-        final Field toField = toFields.get(0);
-
-        final Object vertexFrom = this.findVertexById(source.getVertexIdFrom(), fromField.getType());
-        final Object vertexTo = this.findVertexById(source.getVertexIdTo(), toField.getType());
+        final Field fromField = this.getEdgeAnnotatedField(domain.getClass(), EdgeFrom.class);
+        final Field toField = this.getEdgeAnnotatedField(domain.getClass(), EdgeTo.class);
 
         final PersistentProperty propertyFrom = persistentEntity.getPersistentProperty(fromField.getName());
         final PersistentProperty propertyTo = persistentEntity.getPersistentProperty(toField.getName());
@@ -138,8 +151,8 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         Assert.notNull(propertyFrom, "persistence property should not be null");
         Assert.notNull(propertyTo, "persistence property should not be null");
 
-        accessor.setProperty(propertyFrom, vertexFrom);
-        accessor.setProperty(propertyTo, vertexTo);
+        accessor.setProperty(propertyFrom, this.getEdgeAnnotatedFieldValue(fromField, source.getVertexIdFrom()));
+        accessor.setProperty(propertyTo, this.getEdgeAnnotatedFieldValue(toField, source.getVertexIdTo()));
     }
 
     @Override
