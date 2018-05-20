@@ -15,6 +15,7 @@ import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
@@ -90,6 +91,11 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
 
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 
-        return Arrays.asList(query);
+        return Collections.singletonList(query);
+    }
+
+    @Override
+    public List<String> generateCountScript(@NonNull GremlinSource source) {
+        throw new UnsupportedOperationException("Gremlin graph counting is not available.");
     }
 }

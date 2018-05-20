@@ -76,8 +76,22 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
     }
 
     @Override
+    public long vertexCount() {
+        return this.operations.vertexCount();
+    }
+
+    @Override
+    public long edgeCount() {
+        return this.operations.edgeCount();
+    }
+
+    /**
+     * The total number of vertex and edge, vertexCount and edgeCount is also available.
+     * @return
+     */
+    @Override
     public long count() {
-        throw new NotImplementedException("count of Repository is not implemented yet");
+        return this.vertexCount() + this.edgeCount();
     }
 
     @Override

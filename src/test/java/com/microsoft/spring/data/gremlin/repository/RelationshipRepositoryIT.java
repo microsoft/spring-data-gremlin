@@ -30,6 +30,7 @@ import java.util.List;
 public class RelationshipRepositoryIT {
 
     private final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
+    private final Person person0 = new Person(TestConstants.VERTEX_PERSON_0_ID, TestConstants.VERTEX_PERSON_0_NAME);
     private final Project project = new Project(TestConstants.VERTEX_PROJECT_ID, TestConstants.VERTEX_PROJECT_NAME,
             TestConstants.VERTEX_PROJECT_URI);
     private final Relationship relationship = new Relationship(TestConstants.EDGE_RELATIONSHIP_ID,
@@ -171,6 +172,23 @@ public class RelationshipRepositoryIT {
         foundDomains.sort((a, b) -> (a.getId().compareTo(b.getId())));
 
         Assert.assertArrayEquals(domains.toArray(), foundDomains.toArray());
+    }
+
+    @Test
+    public void testVertexCount() {
+        Assert.assertEquals(this.personRepo.count(), 0);
+        Assert.assertEquals(this.projectRepo.edgeCount(), 0);
+        Assert.assertEquals(this.relationshipRepo.vertexCount(), 0);
+
+        this.personRepo.save(this.person0);
+        this.personRepo.save(this.person);
+        this.projectRepo.save(this.project);
+        this.relationshipRepo.save(this.relationship);
+
+        Assert.assertEquals(this.personRepo.vertexCount(), 3);
+        Assert.assertEquals(this.projectRepo.vertexCount(), 3);
+        Assert.assertEquals(this.relationshipRepo.edgeCount(), 1);
+        Assert.assertEquals(this.relationshipRepo.count(), 4);
     }
 }
 

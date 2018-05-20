@@ -37,6 +37,9 @@ public class ServiceRepositoryIT {
     private final Service config = new Service(configId, configCount, true, configName, configProperties);
     private final Service eureka = new Service(eurekaId, eurekaCount, false, eurekaName, eurekaProperties);
 
+    @Autowired
+    private ServiceRepository repository;
+
     @BeforeClass
     public static void initialize() {
         eurekaProperties.put("eureka-port", 8761);
@@ -48,9 +51,6 @@ public class ServiceRepositoryIT {
         configProperties.put("priority", "highest");
 
     }
-
-    @Autowired
-    private ServiceRepository repository;
 
     @Before
     public void setup() {
