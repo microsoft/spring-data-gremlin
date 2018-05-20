@@ -148,7 +148,7 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 
-        return Collections.singletonList(Constants.GREMLIN_PRIMITIVE_EDGE_ALL);
+        return Collections.singletonList(Constants.GREMLIN_SCRIPT_EDGE_ALL);
     }
 }
 

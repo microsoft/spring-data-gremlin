@@ -138,7 +138,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
         }
 
-        return Collections.singletonList(Constants.GREMLIN_PRIMITIVE_VERTEX_ALL);
+        return Collections.singletonList(Constants.GREMLIN_SCRIPT_VERTEX_ALL);
     }
 }
 

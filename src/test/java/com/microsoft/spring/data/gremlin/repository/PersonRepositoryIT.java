@@ -167,5 +167,19 @@ public class PersonRepositoryIT {
 
         Assert.assertArrayEquals(domains.toArray(), foundDomains.toArray());
     }
+
+    @Test
+    public void testVertexCount() {
+        Assert.assertEquals(this.repository.count(), 0);
+        Assert.assertEquals(this.repository.edgeCount(), 0);
+        Assert.assertEquals(this.repository.vertexCount(), 0);
+
+        this.repository.save(this.person);
+        this.repository.save(this.person0);
+
+        Assert.assertEquals(this.repository.count(), 2);
+        Assert.assertEquals(this.repository.edgeCount(), 0);
+        Assert.assertEquals(this.repository.vertexCount(), this.repository.count());
+    }
 }
 
