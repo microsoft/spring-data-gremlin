@@ -7,7 +7,9 @@ package com.microsoft.spring.data.gremlin.repository;
 
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.common.domain.Service;
+import com.microsoft.spring.data.gremlin.common.domain.SimpleDependency;
 import com.microsoft.spring.data.gremlin.common.repository.ServiceRepository;
+import com.microsoft.spring.data.gremlin.common.repository.SimpleDependencyRepository;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,9 @@ public class ServiceRepositoryIT {
 
     @Autowired
     private ServiceRepository repository;
+
+    @Autowired
+    private SimpleDependencyRepository dependencyRepo;
 
     @BeforeClass
     public static void initialize() {
@@ -84,4 +89,22 @@ public class ServiceRepositoryIT {
         Assert.assertFalse(this.repository.findById(this.config.getId()).isPresent());
         Assert.assertFalse(this.repository.findById(this.eureka.getId()).isPresent());
     }
+
+    @Test
+    public void testEdgeFromToStringId() {
+        final SimpleDependency depend = new SimpleDependency("fake-id", "fake-name", config.getId(), eureka.getId());
+
+        this.repository.save(config);
+        this.repository.save(eureka);
+        this.dependencyRepo.save(depend);
+
+        final Optional<SimpleDependency> foundOptional = this.dependencyRepo.findById(depend.getId());
+        Assert.assertTrue(foundOptional.isPresent());
+        Assert.assertEquals(foundOptional.get(), depend);
+
+        this.dependencyRepo.delete(foundOptional.get());
+        Assert.assertTrue(this.repository.findById(this.config.getId()).isPresent());
+        Assert.assertTrue(this.repository.findById(this.eureka.getId()).isPresent());
+    }
 }
+
