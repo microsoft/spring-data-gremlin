@@ -15,6 +15,7 @@
  */
 package example.springdata.gremlin;
 
+import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import example.springdata.gremlin.domain.Network;
 import example.springdata.gremlin.domain.Person;
 import example.springdata.gremlin.domain.Relation;
@@ -59,22 +60,24 @@ public class Application {
     @Autowired
     private NetworkRepository networkRepo;
 
+    @Autowired
+    private GremlinFactory factory;
+
     public static void main(String... args) {
         SpringApplication.run(Application.class, args);
     }
 
     @PostConstruct
     public void setup() {
+        this.networkRepo.deleteAll();
+
         this.network.getEdges().add(this.relation);
         this.network.getVertexes().add(this.person);
         this.network.getVertexes().add(this.person0);
         this.network.getVertexes().add(this.person1);
 
         this.networkRepo.save(this.network);
-    }
 
-    @PreDestroy
-    public void cleanup() {
-        this.networkRepo.deleteAll();
+        this.factory.getGremlinCluster().close();
     }
 }
