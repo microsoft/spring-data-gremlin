@@ -6,13 +6,21 @@
 package com.microsoft.spring.data.gremlin.config;
 
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
+import com.microsoft.spring.data.gremlin.common.GremlinConfiguration;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.query.GremlinTemplate;
 import org.springframework.context.annotation.Bean;
 
 public abstract class AbstractGremlinConfiguration extends GremlinConfigurationSupport {
 
-    public abstract GremlinFactory gremlinFactory();
+    public abstract GremlinConfiguration getGremlinConfiguration();
+
+    @Bean
+    public GremlinFactory gremlinFactory() {
+        final GremlinConfiguration config = getGremlinConfiguration();
+
+        return new GremlinFactory(config.getEndpoint(), config.getPort(), config.getUsername(), config.getPassword());
+    }
 
     @Bean
     public MappingGremlinConverter mappingGremlinConverter() throws ClassNotFoundException {
