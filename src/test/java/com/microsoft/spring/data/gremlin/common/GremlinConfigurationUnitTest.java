@@ -15,11 +15,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource("classpath:application.properties")
-@EnableConfigurationProperties(GremlinPropertiesConfiguration.class)
-public class GremlinPropertiesConfigurationUnitTest {
+@EnableConfigurationProperties(GremlinConfiguration.class)
+public class GremlinConfigurationUnitTest {
 
     @Autowired
-    private GremlinPropertiesConfiguration configuration;
+    private GremlinConfiguration configuration;
 
     @Test
     public void testPropertiesConfiguration() {
