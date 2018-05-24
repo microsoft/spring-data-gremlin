@@ -37,25 +37,25 @@ public class PropertyLoader {
     }
 
     private static String getPropertyByName(@NonNull String name, @NonNull String filename) {
-        String property = "unknown";
-        final InputStream inputStream = PropertyLoader.class.getResourceAsStream(filename);
         final Properties properties = new Properties();
+        final InputStream inputStream = PropertyLoader.class.getResourceAsStream(filename);
+
+        if (inputStream == null) {
+            return null;
+        }
 
         try {
             properties.load(inputStream);
-            property = properties.getProperty(name);
         } catch (IOException e) {
             LOGGER.warning(String.format("Failed to load file %s to property, will omit IOException.", filename));
         } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    LOGGER.warning(String.format("Unable to close file %s, will omit IOException.", filename));
-                }
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                LOGGER.warning(String.format("Unable to close file %s, will omit IOException.", filename));
             }
         }
 
-        return property;
+        return properties.getProperty(name);
     }
 }
