@@ -12,12 +12,17 @@ import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.ser.Serializers;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.util.ClassUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class GremlinFactory {
 
     @Getter
     private Cluster gremlinCluster;
+    private final TelemetryProxy telemetryProxy;
     private String endpoint;
     private String port;
     private String username;
@@ -35,6 +40,26 @@ public class GremlinFactory {
         this.endpoint = endpoint;
         this.username = username;
         this.password = password;
+
+        this.telemetryProxy = new TelemetryProxy(this.isTelemetryAllowed());
+    }
+
+    private boolean isTelemetryAllowed() {
+        final String telemetryAllowed = PropertyLoader.getApplicationTelemetryAllowed();
+
+        if (telemetryAllowed == null) {
+            return true;
+        } else {
+            return telemetryAllowed.equalsIgnoreCase("false") ? false : true;
+        }
+    }
+
+    private void trackTelemetryCustomEvent() {
+        final Map<String, String> customProperties = new HashMap<>();
+
+        customProperties.put(TelemetryProperties.PROPERTY_SERVICE_NAME, "gremlin");
+
+        this.telemetryProxy.trackEvent(ClassUtils.getUserClass(this.getClass()).getSimpleName(), customProperties);
     }
 
     private Cluster createGremlinCluster() throws GremlinIllegalConfigurationException {
@@ -48,6 +73,8 @@ public class GremlinFactory {
         } catch (IllegalArgumentException e) {
             throw new GremlinIllegalConfigurationException("Invalid configuration of Gremlin", e);
         }
+
+        this.trackTelemetryCustomEvent();
 
         return cluster;
     }
