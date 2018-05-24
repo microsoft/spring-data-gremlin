@@ -23,11 +23,11 @@ public class TelemetryProxy {
         this.isTelemetryAllowed = isTelemetryAllowed;
     }
 
-    public void trackEvent(@NonNull String name, @NonNull Map<String, String> customProperties) {
+    public void trackEvent(@NonNull String name, @Nullable Map<String, String> customProperties) {
         this.trackEvent(name, customProperties, false);
     }
 
-    public void trackEvent(@NonNull String name, @NonNull Map<String, String> customProperties,
+    public void trackEvent(@NonNull String name, @Nullable Map<String, String> customProperties,
                            boolean isOverrideDefault) {
         if (this.isTelemetryAllowed) {
             Map<String, String> properties = this.getDefaultProperties();

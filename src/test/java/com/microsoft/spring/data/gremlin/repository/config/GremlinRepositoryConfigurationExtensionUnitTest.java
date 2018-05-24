@@ -6,6 +6,7 @@
 package com.microsoft.spring.data.gremlin.repository.config;
 
 import com.microsoft.spring.data.gremlin.repository.GremlinRepository;
+import org.apache.commons.lang3.NotImplementedException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,6 +57,11 @@ public class GremlinRepositoryConfigurationExtensionUnitTest {
         this.extension.registerBeansForRoot(registry, config);
 
         Assert.assertTrue(registry.containsBeanDefinition(GREMLIN_MAPPING_CONTEXT));
+    }
+
+    @Test(expected = NotImplementedException.class)
+    public void testGetRepositoryFactoryBeanClassNameException() {
+        this.extension.getRepositoryFactoryBeanClassName();
     }
 
     @EnableGremlinRepositories
