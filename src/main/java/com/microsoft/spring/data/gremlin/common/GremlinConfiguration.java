@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Setter
 @NoArgsConstructor
 @ConfigurationProperties(prefix = "gremlin")
-public class GremlinPropertiesConfiguration {
+public class GremlinConfiguration {
 
     private String endpoint;
 

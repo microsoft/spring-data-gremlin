@@ -6,7 +6,7 @@
 package com.microsoft.spring.data.gremlin.query;
 
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
-import com.microsoft.spring.data.gremlin.common.GremlinPropertiesConfiguration;
+import com.microsoft.spring.data.gremlin.common.GremlinConfiguration;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
 import com.microsoft.spring.data.gremlin.common.domain.Network;
 import com.microsoft.spring.data.gremlin.common.domain.Person;
@@ -33,7 +33,7 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource(value = {"classpath:application.properties"})
-@EnableConfigurationProperties(GremlinPropertiesConfiguration.class)
+@EnableConfigurationProperties(GremlinConfiguration.class)
 public class GremlinTemplateIT {
 
     private static GremlinFactory factory;
@@ -58,7 +58,7 @@ public class GremlinTemplateIT {
             this.person, this.project0);
     private Network network;
     @Autowired
-    private GremlinPropertiesConfiguration config;
+    private GremlinConfiguration config;
     @Autowired
     private ApplicationContext context;
     private GremlinTemplate template;

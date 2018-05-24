@@ -5,8 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.config;
 
-import com.microsoft.spring.data.gremlin.common.GremlinFactory;
-import com.microsoft.spring.data.gremlin.common.GremlinPropertiesConfiguration;
+import com.microsoft.spring.data.gremlin.common.GremlinConfiguration;
 import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,13 +19,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource(value = {"classpath:application.properties"})
-@EnableConfigurationProperties(GremlinPropertiesConfiguration.class)
+@EnableConfigurationProperties(GremlinConfiguration.class)
 public class AbstractGremlinConfigurationIT {
 
     private TestConfig testConfig;
 
     @Autowired
-    private GremlinPropertiesConfiguration config;
+    private GremlinConfiguration config;
 
     @Before
     public void setup() {
@@ -53,16 +52,15 @@ public class AbstractGremlinConfigurationIT {
 
     private class TestConfig extends AbstractGremlinConfiguration {
 
-        private GremlinPropertiesConfiguration config;
+        private GremlinConfiguration config;
 
-        public TestConfig(@NonNull GremlinPropertiesConfiguration config) {
+        public TestConfig(@NonNull GremlinConfiguration config) {
             this.config = config;
         }
 
         @Override
-        public GremlinFactory gremlinFactory() {
-            return new GremlinFactory(this.config.getEndpoint(), this.config.getPort(), this.config.getUsername(),
-                    this.config.getPassword());
+        public GremlinConfiguration getGremlinConfiguration() {
+            return this.config;
         }
     }
 }
