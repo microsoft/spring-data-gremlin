@@ -15,6 +15,7 @@
  */
 package example.springdata.gremlin.config;
 
+import com.microsoft.spring.data.gremlin.common.GremlinConfiguration;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.config.AbstractGremlinConfiguration;
 import com.microsoft.spring.data.gremlin.repository.config.EnableGremlinRepositories;
@@ -27,17 +28,15 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @EnableGremlinRepositories(basePackages = "example.springdata.gremlin.repository")
-@EnableConfigurationProperties(GremlinProperties.class)
-@PropertySource("classpath:application.properties")
+@EnableConfigurationProperties(GremlinConfiguration.class)
+@PropertySource("classpath:application.yml")
 public class UserRepositoryConfiguration extends AbstractGremlinConfiguration {
 
     @Autowired
-    private GremlinProperties properties;
+    private GremlinConfiguration config;
 
-    @Bean
     @Override
-    public GremlinFactory gremlinFactory() {
-        return new GremlinFactory(this.properties.getEndpoint(), this.properties.getPort(),
-                this.properties.getUsername(), this.properties.getPassword());
+    public GremlinConfiguration getGremlinConfiguration() {
+        return this.config;
     }
 }

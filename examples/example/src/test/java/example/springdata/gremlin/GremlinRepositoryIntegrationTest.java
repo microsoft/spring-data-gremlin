@@ -15,7 +15,6 @@
  */
 package example.springdata.gremlin;
 
-import example.springdata.gremlin.config.UserRepositoryConfiguration;
 import example.springdata.gremlin.domain.Network;
 import example.springdata.gremlin.domain.Person;
 import example.springdata.gremlin.domain.Relation;
@@ -28,13 +27,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Optional;
 
+@SpringBootTest
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {UserRepositoryConfiguration.class})
+@ContextConfiguration(classes = RepositoryConfiguration.class)
 public class GremlinRepositoryIntegrationTest {
     private static final String PERSON_ID = "89757";
     private static final String PERSON_ID_0 = "0123456789";

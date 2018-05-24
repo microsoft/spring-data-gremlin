@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package web.service.springdata.gremlin.config;
+package example.springdata.gremlin;
 
 import com.microsoft.spring.data.gremlin.common.GremlinConfiguration;
 import com.microsoft.spring.data.gremlin.config.AbstractGremlinConfiguration;
@@ -27,8 +27,8 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @EnableGremlinRepositories(basePackages = "example.springdata.gremlin.repository")
 @EnableConfigurationProperties(GremlinConfiguration.class)
-@PropertySource("classpath:application.properties")
-public class UserRepositoryConfiguration extends AbstractGremlinConfiguration {
+@PropertySource("classpath:application.yml")
+public class RepositoryConfiguration extends AbstractGremlinConfiguration {
 
     @Autowired
     private GremlinConfiguration config;
