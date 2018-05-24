@@ -1,0 +1,6 @@
+gremlin:
+  endpoint: your-endpoint.gremlin.cosmosdb.azure.com
+  port: 443
+  username: your-username
+  password: your-password
+  telemetryAllowed: true
