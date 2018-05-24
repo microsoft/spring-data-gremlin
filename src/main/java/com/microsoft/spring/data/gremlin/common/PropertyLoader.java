@@ -3,10 +3,10 @@
  * Licensed under the MIT License. See LICENSE in the project root for
  * license information.
  */
-
 package com.microsoft.spring.data.gremlin.common;
 
-import lombok.Getter;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 
 import java.io.IOException;
@@ -14,46 +14,48 @@ import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PropertyLoader {
 
-    @Getter
-    private String propertyFile;
-    private Properties properties;
-    private final Logger log = Logger.getLogger(this.getClass().getName());
+    private static final String PROJECT_PROPERTY_FILE = "/META-INF/project.properties";
+    private static final String APPLICATION_PROPERTY_FILE = "/application.properties";
+    private static final String APPLICATION_YML_FILE = "/application.yml";
+    private static final Logger LOGGER = Logger.getLogger(PropertyLoader.class.getSimpleName());
 
-    public PropertyLoader(@NonNull String propertyFile) {
-        this.propertyFile = propertyFile;
-        this.properties = new Properties();
+    public static String getProjectVersion() {
+        return getPropertyByName("project.version", PROJECT_PROPERTY_FILE);
     }
 
-    private void initializeProperties() {
-        final InputStream inputStream = PropertyLoader.class.getResourceAsStream(this.propertyFile);
+    public static String getApplicationTelemetryAllowed() {
+        String allowed = getPropertyByName("documentdb.telemetryAllowed", APPLICATION_PROPERTY_FILE);
+
+        if (allowed == null) {
+            allowed = getPropertyByName("telemetryAllowed", APPLICATION_YML_FILE);
+        }
+
+        return allowed;
+    }
+
+    private static String getPropertyByName(@NonNull String name, @NonNull String filename) {
+        String property = "unknown";
+        final InputStream inputStream = PropertyLoader.class.getResourceAsStream(filename);
+        final Properties properties = new Properties();
 
         try {
-            this.properties.load(inputStream);
+            properties.load(inputStream);
+            property = properties.getProperty(name);
         } catch (IOException e) {
-            log.warning(String.format("Failed to load file %s to property, will omit IOException.", this.propertyFile));
+            LOGGER.warning(String.format("Failed to load file %s to property, will omit IOException.", filename));
         } finally {
             if (inputStream != null) {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    log.warning(String.format("Unable to close file %s, will omit IOException.", this.propertyFile));
+                    LOGGER.warning(String.format("Unable to close file %s, will omit IOException.", filename));
                 }
             }
         }
-    }
 
-    public String getPropertyValue(@NonNull String propertyName) {
-        if (this.properties == null) {
-            this.initializeProperties();
-        }
-
-        // initializeProperties may failure and leave this.properties still null.
-        if (this.properties != null) {
-            return this.properties.getProperty(propertyName);
-        }
-
-        return "Unknown-Property";
+        return property;
     }
 }
