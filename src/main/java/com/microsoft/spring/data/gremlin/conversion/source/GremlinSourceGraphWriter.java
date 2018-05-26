@@ -13,6 +13,7 @@ import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeEx
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.lang.NonNull;
@@ -51,7 +52,7 @@ public class GremlinSourceGraphWriter implements GremlinSourceWriter {
             final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
             Assert.notNull(property, "persistence property should not be null");
 
-            if (field.getName().equals(Constants.PROPERTY_ID)) {
+            if (field.getName().equals(Constants.PROPERTY_ID) || field.getAnnotation(Id.class) != null) {
                 continue;
             }
 
