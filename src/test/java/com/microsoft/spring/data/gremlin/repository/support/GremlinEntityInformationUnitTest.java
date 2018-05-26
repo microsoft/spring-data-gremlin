@@ -78,6 +78,11 @@ public class GremlinEntityInformationUnitTest {
         new GremlinEntityInformation<TestNoStringIdDomain, String>(TestNoStringIdDomain.class);
     }
 
+    @Test(expected = GremlinInvalidEntityIdFieldException.class)
+    public void testEntityInformationIdFieldAndIdAnnotation() {
+        new GremlinEntityInformation<TestIdFieldAndIdAnnotation, String>(TestIdFieldAndIdAnnotation.class);
+    }
+
     @Data
     private class TestDomain {
         private String id;
@@ -95,6 +100,15 @@ public class GremlinEntityInformationUnitTest {
 
         @Id
         private String location;
+    }
+
+    @Data
+    private class TestIdFieldAndIdAnnotation {
+        @Id
+        private String name;
+
+        @Id
+        private String where;
     }
 
     @Data
