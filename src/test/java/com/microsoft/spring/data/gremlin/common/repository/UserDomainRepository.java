@@ -5,8 +5,8 @@
  */
 package com.microsoft.spring.data.gremlin.common.repository;
 
-import com.microsoft.spring.data.gremlin.common.domain.TestDomain;
+import com.microsoft.spring.data.gremlin.common.domain.UserDomain;
 import com.microsoft.spring.data.gremlin.repository.GremlinRepository;
 
-public interface TestDomainRepository extends GremlinRepository<TestDomain, String> {
+public interface UserDomainRepository extends GremlinRepository<UserDomain, String> {
 }

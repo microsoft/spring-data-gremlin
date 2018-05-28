@@ -15,7 +15,7 @@ import org.springframework.data.annotation.Id;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TestDomain {
+public class UserDomain {
 
     @Id
     private String name;
