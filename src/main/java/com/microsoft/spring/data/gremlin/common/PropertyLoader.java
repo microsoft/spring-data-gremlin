@@ -26,36 +26,40 @@ public class PropertyLoader {
         return getPropertyByName("project.version", PROJECT_PROPERTY_FILE);
     }
 
-    public static String getApplicationTelemetryAllowed() {
-        String allowed = getPropertyByName("documentdb.telemetryAllowed", APPLICATION_PROPERTY_FILE);
+    public static boolean isApplicationTelemetryAllowed() {
+        String telemetryAllowed = getPropertyByName("documentdb.telemetryAllowed", APPLICATION_PROPERTY_FILE);
 
-        if (allowed == null) {
-            allowed = getPropertyByName("telemetryAllowed", APPLICATION_YML_FILE);
+        if (telemetryAllowed == null) {
+            telemetryAllowed = getPropertyByName("telemetryAllowed", APPLICATION_YML_FILE);
         }
 
-        return allowed;
+        if (telemetryAllowed == null) {
+            return true;
+        } else {
+            return telemetryAllowed.equalsIgnoreCase("false") ? false : true;
+        }
     }
 
     private static String getPropertyByName(@NonNull String name, @NonNull String filename) {
-        String property = "unknown";
-        final InputStream inputStream = PropertyLoader.class.getResourceAsStream(filename);
         final Properties properties = new Properties();
+        final InputStream inputStream = PropertyLoader.class.getResourceAsStream(filename);
+
+        if (inputStream == null) {
+            return null;
+        }
 
         try {
             properties.load(inputStream);
-            property = properties.getProperty(name);
         } catch (IOException e) {
             LOGGER.warning(String.format("Failed to load file %s to property, will omit IOException.", filename));
         } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    LOGGER.warning(String.format("Unable to close file %s, will omit IOException.", filename));
-                }
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                LOGGER.warning(String.format("Unable to close file %s, will omit IOException.", filename));
             }
         }
 
-        return property;
+        return properties.getProperty(name);
     }
 }
