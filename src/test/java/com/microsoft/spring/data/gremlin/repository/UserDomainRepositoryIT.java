@@ -6,8 +6,8 @@
 package com.microsoft.spring.data.gremlin.repository;
 
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
-import com.microsoft.spring.data.gremlin.common.domain.TestDomain;
-import com.microsoft.spring.data.gremlin.common.repository.TestDomainRepository;
+import com.microsoft.spring.data.gremlin.common.domain.UserDomain;
+import com.microsoft.spring.data.gremlin.common.repository.UserDomainRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,14 +20,14 @@ import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestRepositoryConfiguration.class)
-public class TestDomainRepositoryIT {
+public class UserDomainRepositoryIT {
 
     private static final String NAME = "incarnation";
     private static final int LEVEL = 4;
-    private static final TestDomain DOMAIN = new TestDomain(NAME, LEVEL);
+    private static final UserDomain DOMAIN = new UserDomain(NAME, LEVEL);
 
     @Autowired
-    private TestDomainRepository repository;
+    private UserDomainRepository repository;
 
     @Before
     public void setup() {
@@ -40,7 +40,7 @@ public class TestDomainRepositoryIT {
         Assert.assertFalse(this.repository.findById(NAME).isPresent());
 
         this.repository.save(DOMAIN);
-        final Optional<TestDomain> optional = this.repository.findById(NAME);
+        final Optional<UserDomain> optional = this.repository.findById(NAME);
 
         Assert.assertTrue(optional.isPresent());
         Assert.assertEquals(DOMAIN.getName(), optional.get().getName());
