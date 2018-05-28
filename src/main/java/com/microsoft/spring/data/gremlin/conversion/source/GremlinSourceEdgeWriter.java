@@ -13,6 +13,7 @@ import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeEx
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.lang.NonNull;
@@ -52,7 +53,9 @@ public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
 
             final Object object = accessor.getProperty(property);
 
-            if (field.getAnnotation(EdgeFrom.class) != null) {
+            if (field.getName().equals(Constants.PROPERTY_ID) || field.getAnnotation(Id.class) != null) {
+                continue;
+            } else if (field.getAnnotation(EdgeFrom.class) != null) {
                 sourceEdge.setVertexIdFrom(this.getIdValue(object, converter));
             } else if (field.getAnnotation(EdgeTo.class) != null) {
                 sourceEdge.setVertexIdTo(this.getIdValue(object, converter));

@@ -53,7 +53,8 @@ public class GremlinConfigurationSupportUnitTest {
         final Set<Class<?>> entities = this.config.scanEntities(TEST_DOMAIN_PACKAGE_NAME);
         final Set<Class<?>> references = new HashSet<>(Arrays.asList(
                 Dependency.class, Library.class, Network.class, Person.class, Project.class,
-                Relationship.class, Roadmap.class, Service.class, SimpleDependency.class, InvalidDependency.class)
+                Relationship.class, Roadmap.class, Service.class, SimpleDependency.class, InvalidDependency.class,
+                UserDomain.class)
         );
 
         Assert.assertNotNull(entities);
