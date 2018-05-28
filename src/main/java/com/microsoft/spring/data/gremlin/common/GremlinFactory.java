@@ -41,17 +41,7 @@ public class GremlinFactory {
         this.username = username;
         this.password = password;
 
-        this.telemetryProxy = new TelemetryProxy(this.isTelemetryAllowed());
-    }
-
-    private boolean isTelemetryAllowed() {
-        final String telemetryAllowed = PropertyLoader.getApplicationTelemetryAllowed();
-
-        if (telemetryAllowed == null) {
-            return true;
-        } else {
-            return telemetryAllowed.equalsIgnoreCase("false") ? false : true;
-        }
+        this.telemetryProxy = new TelemetryProxy(PropertyLoader.isApplicationTelemetryAllowed());
     }
 
     private void trackTelemetryCustomEvent() {

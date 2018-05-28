@@ -26,14 +26,18 @@ public class PropertyLoader {
         return getPropertyByName("project.version", PROJECT_PROPERTY_FILE);
     }
 
-    public static String getApplicationTelemetryAllowed() {
-        String allowed = getPropertyByName("documentdb.telemetryAllowed", APPLICATION_PROPERTY_FILE);
+    public static boolean isApplicationTelemetryAllowed() {
+        String telemetryAllowed = getPropertyByName("documentdb.telemetryAllowed", APPLICATION_PROPERTY_FILE);
 
-        if (allowed == null) {
-            allowed = getPropertyByName("telemetryAllowed", APPLICATION_YML_FILE);
+        if (telemetryAllowed == null) {
+            telemetryAllowed = getPropertyByName("telemetryAllowed", APPLICATION_YML_FILE);
         }
 
-        return allowed;
+        if (telemetryAllowed == null) {
+            return true;
+        } else {
+            return telemetryAllowed.equalsIgnoreCase("false") ? false : true;
+        }
     }
 
     private static String getPropertyByName(@NonNull String name, @NonNull String filename) {
