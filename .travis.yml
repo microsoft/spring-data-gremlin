@@ -8,8 +8,10 @@ before_script:
   - cat src/test/resources/application.properties
 
 script:
-  - mvn clean -P full-test install
-  - mvn clean -P full-test cobertura:cobertura-integration-test
+  - mvn clean -P full-test install > tmp.log
+  - grep "INFO" tmp.log
+  - mvn clean -P full-test cobertura:cobertura-integration-test > tmp.log
+  - grep "INFO" tmp.log
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
