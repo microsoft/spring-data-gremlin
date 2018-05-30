@@ -8,11 +8,9 @@ package com.microsoft.spring.data.gremlin.query;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.common.GremlinConfiguration;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
-import com.microsoft.spring.data.gremlin.common.domain.Network;
-import com.microsoft.spring.data.gremlin.common.domain.Person;
-import com.microsoft.spring.data.gremlin.common.domain.Project;
-import com.microsoft.spring.data.gremlin.common.domain.Relationship;
+import com.microsoft.spring.data.gremlin.common.domain.*;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
+import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
@@ -519,5 +517,16 @@ public class GremlinTemplateIT {
         this.template.isEmptyGraph(this.project);
     }
 
+    @Test(expected = GremlinEntityInformationException.class)
+    public void testInvalidDependencySaveException() {
+        final InvalidDependency dependency = new InvalidDependency(this.relationship.getId(),
+                this.relationship.getName(), this.person.getId(), this.project.getId());
+
+        this.template.save(this.person);
+        this.template.save(this.project);
+        this.template.save(this.relationship);
+
+        this.template.findById(dependency.getId(), InvalidDependency.class);
+    }
 }
 
