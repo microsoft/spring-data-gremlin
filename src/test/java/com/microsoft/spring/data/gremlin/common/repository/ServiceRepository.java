@@ -9,7 +9,9 @@ import com.microsoft.spring.data.gremlin.common.domain.Service;
 import com.microsoft.spring.data.gremlin.repository.GremlinRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ServiceRepository extends GremlinRepository<Service, String> {
-
+    List<Service> findByName(String name);
 }

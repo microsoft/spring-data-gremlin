@@ -21,6 +21,7 @@ import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationExcep
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
+import com.microsoft.spring.data.gremlin.query.query.GremlinQuery;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.tinkerpop.gremlin.driver.Client;
@@ -316,6 +317,11 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final List<Result> results = this.executeQuery(queryList);
 
         return results.size();
+    }
+
+    @Override
+    public <T> List<T> find(@NonNull GremlinQuery query, @NonNull Class<T> domainClass) {
+        throw new UnsupportedOperationException("unsupported operation");
     }
 }
 

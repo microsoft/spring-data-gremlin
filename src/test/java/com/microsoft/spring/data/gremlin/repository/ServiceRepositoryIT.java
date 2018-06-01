@@ -17,6 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -105,6 +106,14 @@ public class ServiceRepositoryIT {
         this.dependencyRepo.delete(foundOptional.get());
         Assert.assertTrue(this.repository.findById(this.config.getId()).isPresent());
         Assert.assertTrue(this.repository.findById(this.eureka.getId()).isPresent());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testServiceFindByName() {
+        this.repository.save(config);
+        this.repository.save(eureka);
+
+        this.repository.findByName(this.config.getName());
     }
 }
 
