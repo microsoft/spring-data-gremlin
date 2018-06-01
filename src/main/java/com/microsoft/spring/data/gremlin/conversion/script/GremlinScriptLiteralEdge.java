@@ -115,7 +115,7 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
 
         scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
         scriptList.add(Constants.GREMLIN_PRIMITIVE_EDGE_ALL);
-        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_HAS, Constants.PROPERTY_LABEL, label));
+        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_HAS_STRING, Constants.PROPERTY_LABEL, label));
 
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 

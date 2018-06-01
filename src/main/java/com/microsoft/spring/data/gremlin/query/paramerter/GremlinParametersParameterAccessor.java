@@ -5,7 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.query.paramerter;
 
-import com.microsoft.spring.data.gremlin.query.GremlinQueryMethod;
+import com.microsoft.spring.data.gremlin.query.query.GremlinQueryMethod;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 
 public class GremlinParametersParameterAccessor extends ParametersParameterAccessor

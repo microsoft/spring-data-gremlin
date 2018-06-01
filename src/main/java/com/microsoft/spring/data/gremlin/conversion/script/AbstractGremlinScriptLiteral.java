@@ -64,4 +64,36 @@ public abstract class AbstractGremlinScriptLiteral {
 
         return scripts;
     }
+
+    private static String generateHas(@NonNull String name, @NonNull Integer value) {
+        return String.format(Constants.GREMLIN_PRIMITIVE_HAS_NUMBER, name, value);
+    }
+
+    private static String generateHas(@NonNull String name, @NonNull Boolean value) {
+        return String.format(Constants.GREMLIN_PRIMITIVE_HAS_BOOLEAN, name, value);
+    }
+
+    private static String generateHas(@NonNull String name, @NonNull String value) {
+        return String.format(Constants.GREMLIN_PRIMITIVE_HAS_STRING, name, value);
+    }
+
+    public static String generateHas(@NonNull String name, @NonNull Object value) {
+        if (value instanceof Integer) {
+            return generateHas(name, (Integer) value);
+        } else if (value instanceof Boolean) {
+            return generateHas(name, (Boolean) value);
+        } else if (value instanceof String) {
+            return generateHas(name, (String) value);
+        } else {
+            final String has;
+
+            try {
+                has = generateHas(name, mapper.writeValueAsString(value));
+            } catch (JsonProcessingException e) {
+                throw new GremlinUnexpectedEntityTypeException("Failed to write object to String", e);
+            }
+
+            return has;
+        }
+    }
 }

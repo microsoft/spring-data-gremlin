@@ -108,12 +108,14 @@ public class ServiceRepositoryIT {
         Assert.assertTrue(this.repository.findById(this.eureka.getId()).isPresent());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testServiceFindByName() {
         this.repository.save(config);
         this.repository.save(eureka);
 
-        this.repository.findByName(this.config.getName());
+        final List<Service> services = this.repository.findByName(this.config.getName());
+
+        Assert.assertEquals(services.size(), 1);
     }
 }
 
