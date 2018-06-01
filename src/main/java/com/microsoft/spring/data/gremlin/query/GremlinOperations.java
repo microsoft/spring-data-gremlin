@@ -6,6 +6,7 @@
 package com.microsoft.spring.data.gremlin.query;
 
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
+import com.microsoft.spring.data.gremlin.query.query.GremlinQuery;
 
 import java.util.List;
 
@@ -37,6 +38,8 @@ public interface GremlinOperations {
     long vertexCount();
 
     long edgeCount();
+
+    <T> List<T> find(GremlinQuery query, Class<T> domainClass);
 
     MappingGremlinConverter getMappingConverter();
 }

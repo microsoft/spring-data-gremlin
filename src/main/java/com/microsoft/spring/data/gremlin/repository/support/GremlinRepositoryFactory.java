@@ -7,6 +7,7 @@ package com.microsoft.spring.data.gremlin.repository.support;
 
 import com.microsoft.spring.data.gremlin.query.GremlinOperations;
 import com.microsoft.spring.data.gremlin.query.GremlinQueryMethod;
+import com.microsoft.spring.data.gremlin.query.query.PartTreeGremlinQuery;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.EntityInformation;
@@ -66,14 +67,14 @@ public class GremlinRepositoryFactory extends RepositoryFactorySupport {
         }
 
         @Override
-        public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory,
-                                            NamedQueries namedQueries) {
+        public RepositoryQuery resolveQuery(@NonNull Method method, RepositoryMetadata metadata,
+                                            ProjectionFactory factory, NamedQueries namedQueries) {
             final GremlinQueryMethod queryMethod = new GremlinQueryMethod(method, metadata, factory);
 
             Assert.notNull(queryMethod, "queryMethod should not be null");
             Assert.notNull(this.operations, "operations should not be null");
 
-            throw new UnsupportedOperationException("PartTree not implemented yet.");
+            return new PartTreeGremlinQuery(queryMethod, this.operations);
         }
     }
 }
