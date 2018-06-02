@@ -45,7 +45,9 @@ public class Constants {
     public static final String GREMLIN_PRIMITIVE_ADD_VERTEX = "addV('%s')";
     public static final String GREMLIN_PRIMITIVE_TO_VERTEX = "to(g.V('%s'))";
 
-    public static final String GREMLIN_PRIMITIVE_HAS = "has('%s', '%s')";
+    public static final String GREMLIN_PRIMITIVE_HAS_STRING = "has('%s', '%s')";
+    public static final String GREMLIN_PRIMITIVE_HAS_NUMBER = "has('%s', %d)";
+    public static final String GREMLIN_PRIMITIVE_HAS_BOOLEAN = "has('%s', %b)";
 
     public static final String GREMLIN_PRIMITIVE_PROPERTY_STRING = "property('%s', '%s')";
     public static final String GREMLIN_PRIMITIVE_PROPERTY_NUMBER = "property('%s', %d)";
