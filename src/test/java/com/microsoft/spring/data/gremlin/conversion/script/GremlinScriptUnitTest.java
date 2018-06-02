@@ -37,7 +37,7 @@ public class GremlinScriptUnitTest {
 
         properties.put("person", source);
 
-        new GremlinScriptLiteralVertex().generateProperties(properties);
+        GremlinScriptLiteralVertex.generateProperties(properties);
     }
 
     @Test(expected = GremlinUnexpectedSourceTypeException.class)
