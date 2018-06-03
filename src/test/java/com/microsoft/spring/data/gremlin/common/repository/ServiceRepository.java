@@ -10,6 +10,7 @@ import com.microsoft.spring.data.gremlin.repository.GremlinRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface ServiceRepository extends GremlinRepository<Service, String> {
@@ -17,4 +18,8 @@ public interface ServiceRepository extends GremlinRepository<Service, String> {
     List<Service> findByName(String name);
 
     List<Service> findByInstanceCount(int instanceCount);
+
+    List<Service> findByIsActive(boolean isActive);
+
+    List<Service> findByProperties(Map<String, Object> properties);
 }

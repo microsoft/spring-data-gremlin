@@ -55,7 +55,6 @@ public class ServiceRepositoryIT {
         configProperties.put("config-port", 8888);
         configProperties.put("eureka-port", 8761);
         configProperties.put("priority", "highest");
-
     }
 
     @Before
@@ -113,20 +112,59 @@ public class ServiceRepositoryIT {
         this.repository.save(config);
         this.repository.save(eureka);
 
-        List<Service> services = this.repository.findByName(this.config.getName());
+        final List<Service> services = this.repository.findByName(this.config.getName());
 
         Assert.assertEquals(services.size(), 1);
         Assert.assertEquals(services.get(0), this.config);
 
-        services = this.repository.findByInstanceCount(this.eureka.getInstanceCount());
+        this.repository.deleteAll();
+
+        Assert.assertTrue(this.repository.findByName(this.config.getName()).isEmpty());
+    }
+
+    @Test
+    public void testServiceFindByInstanceCount() {
+        this.repository.save(config);
+        this.repository.save(eureka);
+
+        final List<Service> services = this.repository.findByInstanceCount(this.eureka.getInstanceCount());
 
         Assert.assertEquals(services.size(), 1);
         Assert.assertEquals(services.get(0), this.eureka);
 
         this.repository.deleteAll();
 
-        Assert.assertTrue(this.repository.findByName(this.config.getName()).isEmpty());
         Assert.assertTrue(this.repository.findByInstanceCount(this.eureka.getInstanceCount()).isEmpty());
+    }
+
+    @Test
+    public void testServiceFindByIsActive() {
+        this.repository.save(config);
+        this.repository.save(eureka);
+
+        final List<Service> services = this.repository.findByIsActive(this.eureka.isActive());
+
+        Assert.assertEquals(services.size(), 1);
+        Assert.assertEquals(services.get(0), this.eureka);
+
+        this.repository.deleteAll();
+
+        Assert.assertTrue(this.repository.findByIsActive(this.eureka.isActive()).isEmpty());
+    }
+
+    @Test
+    public void testServiceFindByProperties() {
+        this.repository.save(config);
+        this.repository.save(eureka);
+
+        final List<Service> services = this.repository.findByProperties(this.eureka.getProperties());
+
+        Assert.assertEquals(services.size(), 1);
+        Assert.assertEquals(services.get(0), this.eureka);
+
+        this.repository.deleteAll();
+
+        Assert.assertTrue(this.repository.findByProperties(this.eureka.getProperties()).isEmpty());
     }
 }
 

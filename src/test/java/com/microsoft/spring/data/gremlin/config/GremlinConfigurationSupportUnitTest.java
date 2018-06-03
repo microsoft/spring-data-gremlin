@@ -63,6 +63,14 @@ public class GremlinConfigurationSupportUnitTest {
         references.forEach(entity -> Assert.assertTrue(entities.contains(entity)));
     }
 
+    @Test
+    @SneakyThrows
+    public void testScanEntityEmpty() {
+        final Set<Class<?>> entities = this.config.scanEntities("");
+
+        Assert.assertTrue(entities.isEmpty());
+    }
+
     @NoArgsConstructor
     private class TestConfig extends GremlinConfigurationSupport {
 
