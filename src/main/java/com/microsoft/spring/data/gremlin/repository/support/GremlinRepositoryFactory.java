@@ -6,7 +6,7 @@
 package com.microsoft.spring.data.gremlin.repository.support;
 
 import com.microsoft.spring.data.gremlin.query.GremlinOperations;
-import com.microsoft.spring.data.gremlin.query.GremlinQueryMethod;
+import com.microsoft.spring.data.gremlin.query.query.GremlinQueryMethod;
 import com.microsoft.spring.data.gremlin.query.query.PartTreeGremlinQuery;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.projection.ProjectionFactory;

@@ -3,8 +3,10 @@
  * Licensed under the MIT License. See LICENSE in the project root for
  * license information.
  */
-package com.microsoft.spring.data.gremlin.query;
+package com.microsoft.spring.data.gremlin.query.query;
 
+import com.microsoft.spring.data.gremlin.query.GremlinEntityMetadata;
+import com.microsoft.spring.data.gremlin.query.SimpleGremlinEntityMetadata;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.repository.core.EntityMetadata;
 import org.springframework.data.repository.core.RepositoryMetadata;

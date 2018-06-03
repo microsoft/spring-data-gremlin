@@ -22,6 +22,7 @@ import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.query.query.GremlinQuery;
+import com.microsoft.spring.data.gremlin.query.query.QueryFindScriptGenerator;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.tinkerpop.gremlin.driver.Client;
@@ -324,7 +325,19 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> List<T> find(@NonNull GremlinQuery query, @NonNull Class<T> domainClass) {
-        throw new UnsupportedOperationException("unsupported operation");
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = info.getGremlinSource();
+
+        query.setScriptGenerator(new QueryFindScriptGenerator());
+
+        final List<String> queryList = query.doSentenceGenerate(domainClass);
+        final List<Result> results = this.executeQuery(queryList);
+
+        if (results.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return this.recoverDomainList(source, results, domainClass, info.isEntityEdge());
     }
 }
 

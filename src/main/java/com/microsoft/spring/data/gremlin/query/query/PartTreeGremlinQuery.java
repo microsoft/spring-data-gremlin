@@ -7,7 +7,6 @@ package com.microsoft.spring.data.gremlin.query.query;
 
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentProperty;
 import com.microsoft.spring.data.gremlin.query.GremlinOperations;
-import com.microsoft.spring.data.gremlin.query.GremlinQueryMethod;
 import com.microsoft.spring.data.gremlin.query.paramerter.GremlinParameterAccessor;
 import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.repository.query.ResultProcessor;
