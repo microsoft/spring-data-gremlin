@@ -58,11 +58,16 @@ public class GremlinSourceUnitTest {
 
     @Test(expected = GremlinUnexpectedSourceTypeException.class)
     public void testGraphWriteException() {
-        new GremlinSourceEdgeWriter().write(new Object(), this.converter, new GremlinSourceVertex());
+        new GremlinSourceGraphWriter().write(new Object(), this.converter, new GremlinSourceVertex());
     }
 
     @Test(expected = GremlinUnexpectedSourceTypeException.class)
     public void testGraphReadException() {
         new GremlinSourceEdgeReader().read(Object.class, this.converter, new GremlinSourceVertex());
+    }
+
+    @Test(expected = GremlinUnexpectedSourceTypeException.class)
+    public void testGraphAddSourceException() {
+        new GremlinSourceGraph().addGremlinSource(new GremlinSourceGraph());
     }
 }
