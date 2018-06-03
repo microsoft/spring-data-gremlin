@@ -20,7 +20,7 @@ import java.util.List;
 public class QueryFindScriptGenerator implements QueryScriptGenerator {
 
     private <T> List<String> generateIsEqual(@NonNull Criteria criteria, @NonNull Class<T> domainClass) {
-        @SuppressWarnings("unchecked") GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
         String subject = criteria.getSubject();
 
         if (subject.equals(info.getIdField().getName())) {

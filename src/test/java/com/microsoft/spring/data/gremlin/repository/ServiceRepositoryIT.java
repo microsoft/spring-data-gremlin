@@ -113,9 +113,20 @@ public class ServiceRepositoryIT {
         this.repository.save(config);
         this.repository.save(eureka);
 
-        final List<Service> services = this.repository.findByName(this.config.getName());
+        List<Service> services = this.repository.findByName(this.config.getName());
 
         Assert.assertEquals(services.size(), 1);
+        Assert.assertEquals(services.get(0), this.config);
+
+        services = this.repository.findByInstanceCount(this.eureka.getInstanceCount());
+
+        Assert.assertEquals(services.size(), 1);
+        Assert.assertEquals(services.get(0), this.eureka);
+
+        this.repository.deleteAll();
+
+        Assert.assertTrue(this.repository.findByName(this.config.getName()).isEmpty());
+        Assert.assertTrue(this.repository.findByInstanceCount(this.eureka.getInstanceCount()).isEmpty());
     }
 }
 

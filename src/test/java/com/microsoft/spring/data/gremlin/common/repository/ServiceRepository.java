@@ -13,5 +13,8 @@ import java.util.List;
 
 @Repository
 public interface ServiceRepository extends GremlinRepository<Service, String> {
+
     List<Service> findByName(String name);
+
+    List<Service> findByInstanceCount(int instanceCount);
 }

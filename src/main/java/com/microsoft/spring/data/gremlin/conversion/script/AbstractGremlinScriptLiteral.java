@@ -24,40 +24,40 @@ public abstract class AbstractGremlinScriptLiteral {
         mapper.configure(MapperFeature.AUTO_DETECT_FIELDS, false);
     }
 
-    private String generateProperty(@NonNull String name, @NonNull String value) {
+    private static String generateProperty(@NonNull String name, @NonNull String value) {
         return String.format(Constants.GREMLIN_PRIMITIVE_PROPERTY_STRING, name, value);
     }
 
-    private String generateProperty(@NonNull String name, @NonNull Integer value) {
+    private static String generateProperty(@NonNull String name, @NonNull Integer value) {
         return String.format(Constants.GREMLIN_PRIMITIVE_PROPERTY_NUMBER, name, value);
     }
 
-    private String generateProperty(@NonNull String name, @NonNull Boolean value) {
+    private static String generateProperty(@NonNull String name, @NonNull Boolean value) {
         return String.format(Constants.GREMLIN_PRIMITIVE_PROPERTY_BOOLEAN, name, value);
     }
 
-    private String generateProperty(@NonNull String name, @NonNull Object value) {
+    private static String generateProperty(@NonNull String name, @NonNull Object value) {
 
         if (value instanceof Integer) {
-            return this.generateProperty(name, (Integer) value);
+            return generateProperty(name, (Integer) value);
         } else if (value instanceof Boolean) {
-            return this.generateProperty(name, (Boolean) value);
+            return generateProperty(name, (Boolean) value);
         } else if (value instanceof String) {
-            return this.generateProperty(name, (String) value);
+            return generateProperty(name, (String) value);
         } else {
-            final String property;
+            final String propertyScript;
 
             try {
-                property = this.generateProperty(name, mapper.writeValueAsString(value));
+                propertyScript = generateProperty(name, mapper.writeValueAsString(value));
             } catch (JsonProcessingException e) {
                 throw new GremlinUnexpectedEntityTypeException("Failed to write object to String", e);
             }
 
-            return property;
+            return propertyScript;
         }
     }
 
-    protected List<String> generateProperties(@NonNull final Map<String, Object> properties) {
+    public static List<String> generateProperties(@NonNull final Map<String, Object> properties) {
         final List<String> scripts = new ArrayList<>();
 
         properties.forEach((name, value) -> scripts.add(generateProperty(name, value)));
@@ -78,6 +78,7 @@ public abstract class AbstractGremlinScriptLiteral {
     }
 
     public static String generateHas(@NonNull String name, @NonNull Object value) {
+
         if (value instanceof Integer) {
             return generateHas(name, (Integer) value);
         } else if (value instanceof Boolean) {
@@ -85,15 +86,15 @@ public abstract class AbstractGremlinScriptLiteral {
         } else if (value instanceof String) {
             return generateHas(name, (String) value);
         } else {
-            final String has;
+            final String hasScript;
 
             try {
-                has = generateHas(name, mapper.writeValueAsString(value));
+                hasScript = generateHas(name, mapper.writeValueAsString(value));
             } catch (JsonProcessingException e) {
                 throw new GremlinUnexpectedEntityTypeException("Failed to write object to String", e);
             }
 
-            return has;
+            return hasScript;
         }
     }
 }
