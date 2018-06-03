@@ -190,14 +190,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         Assert.isTrue(results.size() == 1, "should be only one domain with given id");
         Assert.isTrue(id.toString().equals(source.getId()), "should be the same id");
 
-        source.doGremlinResultRead(results.get(0));
-        final T domain = this.mappingConverter.read(domainClass, source);
-
-        if (info.isEntityEdge()) {
-            this.completeEdge(domain, (GremlinSourceEdge) source);
-        }
-
-        return domain;
+        return this.recoverDomain(source, results.get(0), domainClass, info.isEntityEdge());
     }
 
     private <T> T updateInternal(@NonNull T object, @NonNull GremlinEntityInformation information) {
@@ -256,20 +249,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
             return Collections.emptyList();
         }
 
-        final List<T> domainList = new ArrayList<>();
-
-        for (final Result result : results) {
-            source.doGremlinResultRead(result);
-            final T domain = this.mappingConverter.read(domainClass, source);
-
-            if (info.isEntityEdge()) {
-                this.completeEdge(domain, (GremlinSourceEdge) source);
-            }
-
-            domainList.add(domain);
-        }
-
-        return domainList;
+        return this.recoverDomainList(source, results, domainClass, info.isEntityEdge());
     }
 
     @Override
@@ -317,6 +297,29 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final List<Result> results = this.executeQuery(queryList);
 
         return results.size();
+    }
+
+    private <T> T recoverDomain(@NonNull GremlinSource source, @NonNull Result result,
+                                @NonNull Class<T> domainClass, boolean isEntityEdge) {
+        final T domain;
+
+        source.doGremlinResultRead(result);
+        domain = this.mappingConverter.read(domainClass, source);
+
+        if (isEntityEdge) {
+            this.completeEdge(domain, (GremlinSourceEdge) source);
+        }
+
+        return domain;
+    }
+
+    private <T> List<T> recoverDomainList(@NonNull GremlinSource source, @NonNull List<Result> results,
+                                          @NonNull Class<T> domainClass, boolean isEntityEdge) {
+        final List<T> domainList = new ArrayList<>();
+
+        results.forEach(s -> domainList.add(this.recoverDomain(source, s, domainClass, isEntityEdge)));
+
+        return domainList;
     }
 
     @Override
