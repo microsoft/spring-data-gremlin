@@ -190,5 +190,22 @@ public class RelationshipRepositoryIT {
         Assert.assertEquals(this.relationshipRepo.edgeCount(), 1);
         Assert.assertEquals(this.relationshipRepo.count(), 4);
     }
+
+    @Test
+    public void testRelationshipFindByName() {
+        this.personRepo.save(this.person0);
+        this.personRepo.save(this.person);
+        this.projectRepo.save(this.project);
+        this.relationshipRepo.save(this.relationship);
+
+        final List<Relationship> relationships = this.relationshipRepo.findByLocation(this.relationship.getLocation());
+
+        Assert.assertEquals(relationships.size(), 1);
+        Assert.assertEquals(relationships.get(0), this.relationship);
+
+        this.relationshipRepo.deleteAll();
+
+        Assert.assertTrue(this.relationshipRepo.findByLocation(this.relationship.getLocation()).isEmpty());
+    }
 }
 

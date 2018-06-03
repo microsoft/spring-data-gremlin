@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -48,5 +49,19 @@ public class UserDomainRepositoryIT {
 
         this.repository.deleteById(NAME);
         Assert.assertFalse(this.repository.findById(NAME).isPresent());
+    }
+
+    @Test
+    public void testDomainFindByName() {
+        this.repository.save(DOMAIN);
+
+        final List<UserDomain> domains = this.repository.findByName(DOMAIN.getName());
+
+        Assert.assertEquals(domains.size(), 1);
+        Assert.assertEquals(domains.get(0), DOMAIN);
+
+        this.repository.deleteAll();
+
+        Assert.assertTrue(this.repository.findByName(DOMAIN.getName()).isEmpty());
     }
 }

@@ -9,6 +9,10 @@ import com.microsoft.spring.data.gremlin.common.domain.Network;
 import com.microsoft.spring.data.gremlin.repository.GremlinRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface NetworkRepository extends GremlinRepository<Network, String> {
+
+    List<Network> findByEdgeList(List<Object> edgeList);
 }
