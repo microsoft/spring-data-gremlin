@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.repository;
 
+import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.common.domain.Network;
@@ -104,7 +105,23 @@ public class NetworkRepositoryIT {
         network.edgeAdd(this.relationship);
 
         this.networkRepository.save(network);
-
         this.networkRepository.findByEdgeList(Collections.singletonList(this.relationship));
+    }
+
+    @Test
+    public void testDeleteAllByType() {
+        final Network network = new Network();
+
+        network.setId("fake-id");
+        network.vertexAdd(this.person);
+        network.vertexAdd(this.project);
+        network.edgeAdd(this.relationship);
+
+        this.networkRepository.save(network);
+        this.networkRepository.deleteAll(GremlinEntityType.GRAPH);
+
+        Assert.assertFalse(this.personRepository.findById(this.person.getId()).isPresent());
+        Assert.assertFalse(this.projectRepository.findById(this.project.getId()).isPresent());
+        Assert.assertFalse(this.relationshipRepository.findById(this.relationship.getId()).isPresent());
     }
 }

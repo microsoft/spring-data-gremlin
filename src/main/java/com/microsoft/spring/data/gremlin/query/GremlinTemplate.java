@@ -7,16 +7,14 @@ package com.microsoft.spring.data.gremlin.query;
 
 import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
 import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
+import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralEdge;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralVertex;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
+import com.microsoft.spring.data.gremlin.conversion.source.*;
 import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
@@ -84,6 +82,25 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     public void deleteAll() {
         final GremlinScriptLiteral script = new GremlinScriptLiteralGraph();
         final List<String> queryList = script.generateDeleteAllScript(new GremlinSourceGraph());
+
+        this.executeQuery(queryList);
+    }
+
+    @Override
+    public void deleteAll(GremlinEntityType type) {
+        if (type == GremlinEntityType.UNKNOWN) {
+            throw new GremlinUnexpectedEntityTypeException("must be explicit entity type");
+        }
+
+        if (type != GremlinEntityType.EDGE) {
+            this.deleteAll();
+        }
+
+        final GremlinSource source = new GremlinSourceEdge();
+
+        source.setGremlinScriptStrategy(new GremlinScriptLiteralEdge());
+
+        final List<String> queryList = source.getGremlinScriptLiteral().generateDeleteAllScript(source);
 
         this.executeQuery(queryList);
     }

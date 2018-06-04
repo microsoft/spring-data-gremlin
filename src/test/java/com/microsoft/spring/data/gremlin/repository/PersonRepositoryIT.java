@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.repository;
 
+import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.common.domain.Person;
@@ -180,6 +181,17 @@ public class PersonRepositoryIT {
         Assert.assertEquals(this.repository.count(), 2);
         Assert.assertEquals(this.repository.edgeCount(), 0);
         Assert.assertEquals(this.repository.vertexCount(), this.repository.count());
+    }
+
+    @Test
+    public void testDeleteAllByType() {
+        this.repository.save(this.person);
+        this.repository.save(this.person0);
+
+        this.repository.deleteAll(GremlinEntityType.VERTEX);
+
+        Assert.assertFalse(this.repository.findById(this.person.getId()).isPresent());
+        Assert.assertFalse(this.repository.findById(this.person0.getId()).isPresent());
     }
 }
 

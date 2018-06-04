@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.repository;
 
+import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -14,6 +15,8 @@ import java.io.Serializable;
 public interface GremlinRepository<T, ID extends Serializable> extends CrudRepository<T, ID> {
 
     Iterable<T> findAll(Class<T> domainClass);
+
+    void deleteAll(GremlinEntityType type);
 
     long vertexCount();
 

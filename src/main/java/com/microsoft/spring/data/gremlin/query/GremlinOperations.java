@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.query;
 
+import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.query.query.GremlinQuery;
 
@@ -16,6 +17,8 @@ import java.util.List;
 public interface GremlinOperations {
 
     void deleteAll();
+
+    void deleteAll(GremlinEntityType type);
 
     <T> boolean isEmptyGraph(T object);
 
