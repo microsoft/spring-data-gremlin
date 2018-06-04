@@ -25,6 +25,11 @@ public interface GremlinScriptLiteral {
     List<String> generateDeleteAllScript(GremlinSource source);
 
     /**
+     * Generate the deleteAll By Domain Class query from source (Vertex, Edge or Graph).
+     */
+    List<String> generateDeleteAllByClassScript(GremlinSource source);
+
+    /**
      * Generate the findById query from source (Vertex, Edge).
      */
     List<String> generateFindByIdScript(GremlinSource source);

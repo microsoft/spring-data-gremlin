@@ -20,6 +20,8 @@ public interface GremlinOperations {
 
     void deleteAll(GremlinEntityType type);
 
+    <T> void deleteAll(Class<T> domainClass);
+
     <T> boolean isEmptyGraph(T object);
 
     <T> void deleteById(Object id, Class<T> domainClass);

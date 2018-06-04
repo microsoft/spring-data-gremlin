@@ -18,6 +18,8 @@ public interface GremlinRepository<T, ID extends Serializable> extends CrudRepos
 
     void deleteAll(GremlinEntityType type);
 
+    void deleteAll(Class<T> domainClass);
+
     long vertexCount();
 
     long edgeCount();

@@ -48,6 +48,11 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
     }
 
     @Override
+    public List<String> generateDeleteAllByClassScript(@NonNull GremlinSource source) {
+        return generateDeleteAllScript(source);
+    }
+
+    @Override
     public List<String> generateFindByIdScript(@Nullable GremlinSource source) {
         throw new UnsupportedOperationException("Gremlin graph cannot findById by single query.");
     }

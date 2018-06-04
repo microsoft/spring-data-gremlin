@@ -14,7 +14,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral implements GremlinScriptLiteral {
@@ -62,6 +65,27 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         }
 
         return Collections.singletonList(Constants.GREMLIN_SCRIPT_EDGE_DROP_ALL);
+    }
+
+    @Override
+    public List<String> generateDeleteAllByClassScript(@NonNull GremlinSource source) {
+        if (!(source instanceof GremlinSourceEdge)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
+        }
+
+        final List<String> scriptList = new ArrayList<>();
+        final String label = source.getLabel();
+
+        Assert.notNull(label, "label should not be null");
+
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_EDGE_ALL);
+        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_HAS_STRING, Constants.PROPERTY_LABEL, label));
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_DROP);
+
+        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
+
+        return Collections.singletonList(query);
     }
 
     @Override
