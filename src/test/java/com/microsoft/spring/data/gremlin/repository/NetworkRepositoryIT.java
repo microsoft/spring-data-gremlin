@@ -24,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Collections;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestRepositoryConfiguration.class)
 public class NetworkRepositoryIT {
@@ -90,5 +92,19 @@ public class NetworkRepositoryIT {
 
         this.networkRepository.save(network);
         this.networkRepository.findAll(Network.class);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testFindScriptGeneratorException() {
+        final Network network = new Network();
+
+        network.setId("fake-id");
+        network.vertexAdd(this.person);
+        network.vertexAdd(this.project);
+        network.edgeAdd(this.relationship);
+
+        this.networkRepository.save(network);
+
+        this.networkRepository.findByEdgeList(Collections.singletonList(this.relationship));
     }
 }

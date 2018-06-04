@@ -19,13 +19,22 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-@Getter
-@Setter
 public abstract class AbstractGremlinSource implements GremlinSource {
 
+    @Getter
+    @Setter
     private String id;
+
+    @Getter
+    @Setter
     private String label;
+
+    @Getter
+    @Setter
     private Field idField;
+
+    @Getter
+    @Setter
     private Map<String, Object> properties;
 
     @Setter(AccessLevel.PRIVATE)
