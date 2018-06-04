@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.query;
 
+import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.common.GremlinConfiguration;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
@@ -126,7 +127,9 @@ public class GremlinTemplateIT {
         Assert.assertNull(projectVertex);
         Assert.assertNull(relationshipEdge);
 
-        // Todo(pan): should add findVertexAll here.
+        Assert.assertTrue(this.template.findAll(Person.class).isEmpty());
+        Assert.assertTrue(this.template.findAll(Project.class).isEmpty());
+        Assert.assertTrue(this.template.findAll(Relationship.class).isEmpty());
     }
 
     @Test
@@ -249,6 +252,11 @@ public class GremlinTemplateIT {
     @Test(expected = GremlinQueryException.class)
     public void testUpdateException() {
         this.template.update(this.person);
+    }
+
+    @Test(expected = GremlinUnexpectedEntityTypeException.class)
+    public void testDeleteAllByTypeException() {
+        this.template.deleteAll(GremlinEntityType.UNKNOWN);
     }
 
     @Test

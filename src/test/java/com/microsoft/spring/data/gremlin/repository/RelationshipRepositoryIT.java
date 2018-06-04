@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.repository;
 
+import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.common.domain.Person;
@@ -206,6 +207,21 @@ public class RelationshipRepositoryIT {
         this.relationshipRepo.deleteAll();
 
         Assert.assertTrue(this.relationshipRepo.findByLocation(this.relationship.getLocation()).isEmpty());
+    }
+
+    @Test
+    public void testDeleteAllByType() {
+        this.personRepo.save(this.person0);
+        this.personRepo.save(this.person);
+        this.projectRepo.save(this.project);
+        this.relationshipRepo.save(this.relationship);
+
+        this.relationshipRepo.deleteAll(GremlinEntityType.EDGE);
+
+        Assert.assertFalse(this.relationshipRepo.findById(this.relationship.getId()).isPresent());
+        Assert.assertTrue(this.personRepo.existsById(this.person.getId()));
+        Assert.assertTrue(this.personRepo.existsById(this.person0.getId()));
+        Assert.assertTrue(this.projectRepo.existsById(this.project.getId()));
     }
 }
 

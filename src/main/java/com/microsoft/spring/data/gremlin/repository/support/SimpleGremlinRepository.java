@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.repository.support;
 
+import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.query.GremlinOperations;
 import com.microsoft.spring.data.gremlin.repository.GremlinRepository;
 import org.apache.commons.lang3.NotImplementedException;
@@ -107,6 +108,11 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
     @Override
     public void deleteAll() {
         this.operations.deleteAll();
+    }
+
+    @Override
+    public void deleteAll(GremlinEntityType type) {
+        this.operations.deleteAll(type);
     }
 
     @Override
