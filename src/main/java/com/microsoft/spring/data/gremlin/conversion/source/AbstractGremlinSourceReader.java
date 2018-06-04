@@ -5,10 +5,9 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
+import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import org.apache.tinkerpop.shaded.jackson.databind.JavaType;
-import org.apache.tinkerpop.shaded.jackson.databind.MapperFeature;
-import org.apache.tinkerpop.shaded.jackson.databind.ObjectMapper;
 import org.apache.tinkerpop.shaded.jackson.databind.type.TypeFactory;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.lang.NonNull;
@@ -16,12 +15,6 @@ import org.springframework.lang.NonNull;
 import java.io.IOException;
 
 public abstract class AbstractGremlinSourceReader {
-
-    private static final ObjectMapper mapper = new ObjectMapper();
-
-    static {
-        mapper.configure(MapperFeature.AUTO_DETECT_FIELDS, false);
-    }
 
     protected Object readProperty(@NonNull PersistentProperty property, @NonNull Object value) {
         final Class<?> type = property.getTypeInformation().getType();
@@ -35,7 +28,7 @@ public abstract class AbstractGremlinSourceReader {
             final Object object;
 
             try {
-                object = mapper.readValue(value.toString(), javaType);
+                object = GremlinUtils.getObjectMapper().readValue(value.toString(), javaType);
             } catch (IOException e) {
                 throw new GremlinUnexpectedEntityTypeException("Failed to read String to Object", e);
             }
