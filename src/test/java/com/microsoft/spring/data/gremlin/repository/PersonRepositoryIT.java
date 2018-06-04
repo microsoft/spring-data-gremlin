@@ -9,7 +9,9 @@ import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.common.domain.Person;
+import com.microsoft.spring.data.gremlin.common.domain.Project;
 import com.microsoft.spring.data.gremlin.common.repository.PersonRepository;
+import com.microsoft.spring.data.gremlin.common.repository.ProjectRepository;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,9 +30,14 @@ public class PersonRepositoryIT {
 
     private final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
     private final Person person0 = new Person(TestConstants.VERTEX_PERSON_0_ID, TestConstants.VERTEX_PERSON_0_NAME);
+    private final Project project = new Project(TestConstants.VERTEX_PROJECT_ID, TestConstants.VERTEX_PROJECT_NAME,
+            TestConstants.VERTEX_PROJECT_URI);
 
     @Autowired
     private PersonRepository repository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
 
     @Before
     public void setup() {
@@ -192,6 +199,19 @@ public class PersonRepositoryIT {
 
         Assert.assertFalse(this.repository.findById(this.person.getId()).isPresent());
         Assert.assertFalse(this.repository.findById(this.person0.getId()).isPresent());
+    }
+
+    @Test
+    public void testDeleteAllByClass() {
+        this.repository.save(this.person);
+        this.repository.save(this.person0);
+        this.projectRepository.save(this.project);
+
+        this.repository.deleteAll(Person.class);
+
+        Assert.assertFalse(this.repository.findById(this.person.getId()).isPresent());
+        Assert.assertFalse(this.repository.findById(this.person0.getId()).isPresent());
+        Assert.assertTrue(this.projectRepository.findById(this.project.getId()).isPresent());
     }
 }
 
