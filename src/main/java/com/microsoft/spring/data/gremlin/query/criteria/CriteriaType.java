@@ -6,5 +6,6 @@
 package com.microsoft.spring.data.gremlin.query.criteria;
 
 public enum CriteriaType {
-    IS_EQUAL
+    IS_EQUAL,
+    AND
 }

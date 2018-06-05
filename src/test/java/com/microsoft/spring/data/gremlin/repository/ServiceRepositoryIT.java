@@ -184,5 +184,31 @@ public class ServiceRepositoryIT {
         Assert.assertEquals(foundConfig.get(), this.config);
         Assert.assertEquals(foundEureka.get(), this.eureka);
     }
+
+    @Test
+    public void testServiceFindByNameAndInstanceCount() {
+        this.repository.save(config);
+        this.repository.save(eureka);
+
+        final List<Service> services = repository.findByNameAndInstanceCount(eurekaName, eurekaCount);
+
+        Assert.assertEquals(services.size(), 1);
+        Assert.assertEquals(services.get(0), this.eureka);
+        Assert.assertTrue(repository.findByNameAndInstanceCount(eurekaName, configCount).isEmpty());
+    }
+
+    @Test
+    public void testServiceFindByNameAndInstanceCountAndType() {
+        this.repository.save(config);
+        this.repository.save(eureka);
+
+        final List<Service> services = repository.findByNameAndInstanceCountAndType(eurekaName, eurekaCount,
+                ServiceType.BACK_END);
+
+        Assert.assertEquals(services.size(), 1);
+        Assert.assertEquals(services.get(0), this.eureka);
+        Assert.assertTrue(repository.findByNameAndInstanceCountAndType(eurekaName, configCount, ServiceType.BOTH)
+                .isEmpty());
+    }
 }
 
