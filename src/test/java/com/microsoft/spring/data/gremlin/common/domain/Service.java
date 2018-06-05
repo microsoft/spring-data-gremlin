@@ -28,5 +28,7 @@ public class Service {
 
     private String name;
 
+    private ServiceType type;
+
     private Map<String, Object> properties;
 }

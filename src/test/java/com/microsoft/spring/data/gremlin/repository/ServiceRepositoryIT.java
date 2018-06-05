@@ -7,6 +7,7 @@ package com.microsoft.spring.data.gremlin.repository;
 
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.common.domain.Service;
+import com.microsoft.spring.data.gremlin.common.domain.ServiceType;
 import com.microsoft.spring.data.gremlin.common.domain.SimpleDependency;
 import com.microsoft.spring.data.gremlin.common.repository.ServiceRepository;
 import com.microsoft.spring.data.gremlin.common.repository.SimpleDependencyRepository;
@@ -37,8 +38,10 @@ public class ServiceRepositoryIT {
     private final String configName = "cloud-config";
     private final String eurekaName = "eureka-server";
 
-    private final Service config = new Service(configId, configCount, true, configName, configProperties);
-    private final Service eureka = new Service(eurekaId, eurekaCount, false, eurekaName, eurekaProperties);
+    private final Service config = new Service(configId, configCount, true, configName, ServiceType.FRONT_END,
+            configProperties);
+    private final Service eureka = new Service(eurekaId, eurekaCount, false, eurekaName, ServiceType.BACK_END,
+            eurekaProperties);
 
     @Autowired
     private ServiceRepository repository;
@@ -165,6 +168,21 @@ public class ServiceRepositoryIT {
         this.repository.deleteAll();
 
         Assert.assertTrue(this.repository.findByProperties(this.eureka.getProperties()).isEmpty());
+    }
+
+    @Test
+    public void testServiceFindById() {
+        this.repository.save(config);
+        this.repository.save(eureka);
+
+        final Optional<Service> foundConfig = this.repository.findById(this.config.getId());
+        final Optional<Service> foundEureka = this.repository.findById(this.eureka.getId());
+
+        Assert.assertTrue(foundConfig.isPresent());
+        Assert.assertTrue(foundEureka.isPresent());
+
+        Assert.assertEquals(foundConfig.get(), this.config);
+        Assert.assertEquals(foundEureka.get(), this.eureka);
     }
 }
 

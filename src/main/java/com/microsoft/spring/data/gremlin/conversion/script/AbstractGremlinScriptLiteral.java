@@ -6,10 +6,9 @@
 package com.microsoft.spring.data.gremlin.conversion.script;
 
 import com.microsoft.spring.data.gremlin.common.Constants;
+import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import org.apache.tinkerpop.shaded.jackson.core.JsonProcessingException;
-import org.apache.tinkerpop.shaded.jackson.databind.MapperFeature;
-import org.apache.tinkerpop.shaded.jackson.databind.ObjectMapper;
 import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
@@ -17,12 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractGremlinScriptLiteral {
-
-    private static final ObjectMapper mapper = new ObjectMapper();
-
-    static {
-        mapper.configure(MapperFeature.AUTO_DETECT_FIELDS, false);
-    }
 
     private static String generateProperty(@NonNull String name, @NonNull String value) {
         return String.format(Constants.GREMLIN_PRIMITIVE_PROPERTY_STRING, name, value);
@@ -48,7 +41,7 @@ public abstract class AbstractGremlinScriptLiteral {
             final String propertyScript;
 
             try {
-                propertyScript = generateProperty(name, mapper.writeValueAsString(value));
+                propertyScript = generateProperty(name, GremlinUtils.getObjectMapper().writeValueAsString(value));
             } catch (JsonProcessingException e) {
                 throw new GremlinUnexpectedEntityTypeException("Failed to write object to String", e);
             }
@@ -89,7 +82,7 @@ public abstract class AbstractGremlinScriptLiteral {
             final String hasScript;
 
             try {
-                hasScript = generateHas(name, mapper.writeValueAsString(value));
+                hasScript = generateHas(name, GremlinUtils.getObjectMapper().writeValueAsString(value));
             } catch (JsonProcessingException e) {
                 throw new GremlinUnexpectedEntityTypeException("Failed to write object to String", e);
             }

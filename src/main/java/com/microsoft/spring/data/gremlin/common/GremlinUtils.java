@@ -5,10 +5,12 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
+import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.tinkerpop.shaded.jackson.databind.MapperFeature;
+import org.apache.tinkerpop.shaded.jackson.databind.ObjectMapper;
 import org.springframework.data.annotation.Id;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
@@ -18,6 +20,16 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GremlinUtils {
+
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    static {
+        mapper.configure(MapperFeature.AUTO_DETECT_FIELDS, false);
+    }
+
+    public static ObjectMapper getObjectMapper() {
+        return mapper;
+    }
 
     public static <T> T createInstance(@NonNull Class<T> type) {
         final T instance;
