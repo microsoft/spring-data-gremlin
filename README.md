@@ -24,7 +24,7 @@
 
 ## Welcome To Contribute
 
-Contribution is welcome. Please follow [this instruction](./HowToContribute.md) to contribute code.
+Contribution is welcome. Please follow [this instruction](./CONTRIBUTING.md) to contribute code.
 
 ## Sample Code
 Please refer to [sample project here](./examples/example/).
