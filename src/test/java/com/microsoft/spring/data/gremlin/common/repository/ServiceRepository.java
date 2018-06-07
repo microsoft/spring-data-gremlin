@@ -26,5 +26,9 @@ public interface ServiceRepository extends GremlinRepository<Service, String> {
 
     List<Service> findByNameAndInstanceCount(String name, int instanceCount);
 
+    List<Service> findByNameOrInstanceCount(String name, int instanceCount);
+
     List<Service> findByNameAndInstanceCountAndType(String name, int instanceCount, ServiceType type);
+
+    List<Service> findByNameAndIsActiveOrProperties(String name, boolean isActive, Map<String, Object> properties);
 }

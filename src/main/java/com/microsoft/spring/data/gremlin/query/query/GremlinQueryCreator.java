@@ -54,19 +54,19 @@ public class GremlinQueryCreator extends AbstractQueryCreator<GremlinQuery, Crit
             values.add(parameters.next());
         }
 
-        return Criteria.getInstance(subject, criteriaMap.get(type), values);
+        return Criteria.getUnaryInstance(criteriaMap.get(type), subject, values);
     }
 
     @Override
     protected Criteria and(@NonNull Part part, @NonNull Criteria base, @NonNull Iterator<Object> parameters) {
         final Criteria right = this.create(part, parameters);
 
-        return Criteria.genAndInstance(base, right);
+        return Criteria.getBinaryInstance(CriteriaType.AND, base, right);
     }
 
     @Override
     protected Criteria or(@NonNull Criteria base, @NonNull Criteria criteria) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return Criteria.getBinaryInstance(CriteriaType.OR, base, criteria);
     }
 
     @Override

@@ -24,6 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -35,7 +36,11 @@ public class RelationshipRepositoryIT {
     private final Project project = new Project(TestConstants.VERTEX_PROJECT_ID, TestConstants.VERTEX_PROJECT_NAME,
             TestConstants.VERTEX_PROJECT_URI);
     private final Relationship relationship = new Relationship(TestConstants.EDGE_RELATIONSHIP_ID,
-            TestConstants.EDGE_RELATIONSHIP_NAME, TestConstants.EDGE_RELATIONSHIP_LOCATION, this.person, this.project);
+            TestConstants.EDGE_RELATIONSHIP_NAME, TestConstants.EDGE_RELATIONSHIP_LOCATION,
+            this.person, this.project);
+    private final Relationship relationship0 = new Relationship(TestConstants.EDGE_RELATIONSHIP_0_ID,
+            TestConstants.EDGE_RELATIONSHIP_0_NAME, TestConstants.EDGE_RELATIONSHIP_0_LOCATION,
+            this.person0, this.project);
 
     @Autowired
     private RelationshipRepository relationshipRepo;
@@ -237,6 +242,30 @@ public class RelationshipRepositoryIT {
         Assert.assertEquals(domains.size(), 1);
         Assert.assertEquals(domains.get(0), this.relationship);
         Assert.assertTrue(relationshipRepo.findByNameAndLocation(relationship.getName(), "faker").isEmpty());
+    }
+
+    @Test
+    public void testByNameOrId() {
+        this.personRepo.save(this.person0);
+        this.personRepo.save(this.person);
+        this.projectRepo.save(this.project);
+        this.relationshipRepo.save(this.relationship);
+        this.relationshipRepo.save(this.relationship0);
+
+        final List<Relationship> domains = Arrays.asList(this.relationship, this.relationship0);
+        List<Relationship> foundDomains = relationshipRepo.findByNameOrId(relationship.getName(),
+                relationship0.getId());
+
+        domains.sort(Comparator.comparing(Relationship::getId));
+        foundDomains.sort(Comparator.comparing(Relationship::getId));
+
+        Assert.assertEquals(foundDomains.size(), 2);
+        Assert.assertEquals(foundDomains, domains);
+
+        foundDomains = this.relationshipRepo.findByNameOrId("fake-name", relationship0.getId());
+
+        Assert.assertEquals(foundDomains.size(), 1);
+        Assert.assertEquals(foundDomains.get(0), this.relationship0);
     }
 }
 

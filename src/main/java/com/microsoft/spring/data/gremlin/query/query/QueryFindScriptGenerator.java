@@ -14,7 +14,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,17 +49,18 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
             case IS_EQUAL:
                 return this.generateIsEqual(criteria);
             case AND:
-                Assert.isTrue(criteria.getSubCriteria().size() == 2, "And should contains 2 subCriteria");
-
                 scriptList.addAll(this.generateScriptTraversal(criteria.getSubCriteria().get(0)));
-
                 scriptList.add(Constants.GREMLIN_PRIMITIVE_AND);
+                scriptList.addAll(this.generateScriptTraversal(criteria.getSubCriteria().get(1)));
 
+                return scriptList;
+            case OR:
+                scriptList.addAll(this.generateScriptTraversal(criteria.getSubCriteria().get(0)));
+                scriptList.add(Constants.GREMLIN_PRIMITIVE_OR);
                 scriptList.addAll(this.generateScriptTraversal(criteria.getSubCriteria().get(1)));
 
                 return scriptList;
             default:
-                // TODO(panli): More keyword will be add in future
                 throw new UnsupportedOperationException("unsupported Criteria type");
         }
     }
