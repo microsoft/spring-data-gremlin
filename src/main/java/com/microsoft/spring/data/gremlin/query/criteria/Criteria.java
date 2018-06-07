@@ -45,9 +45,9 @@ public class Criteria {
     }
 
     public static Criteria getUnaryInstance(CriteriaType type, @NonNull String subject, @NonNull List<Object> values) {
-        final Criteria criteria = new Criteria(type);
-
         Assert.isTrue(isUnaryOperation(type), "type should be Unary operation");
+
+        final Criteria criteria = new Criteria(type);
 
         criteria.subject = subject;
         criteria.subValues = values;
@@ -56,9 +56,9 @@ public class Criteria {
     }
 
     public static Criteria getBinaryInstance(CriteriaType type, @NonNull Criteria left, @NonNull Criteria right) {
-        final Criteria criteria = new Criteria(type);
-
         Assert.isTrue(isBinaryOperation(type), "type should be Binary operation");
+
+        final Criteria criteria = new Criteria(type);
 
         criteria.subCriteria.add(left);
         criteria.subCriteria.add(right);
