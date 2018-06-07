@@ -15,6 +15,7 @@ import org.springframework.data.repository.query.parser.AbstractQueryCreator;
 import org.springframework.data.repository.query.parser.Part;
 import org.springframework.data.repository.query.parser.PartTree;
 import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -38,7 +39,7 @@ public class GremlinQueryCreator extends AbstractQueryCreator<GremlinQuery, Crit
         this.mappingContext = mappingContext;
     }
 
-    @Override
+    @Override // Note (panli): side effect here, this method will change the iterator status of parameters.
     protected Criteria create(@NonNull Part part, @NonNull Iterator<Object> parameters) {
         final Part.Type type = part.getType();
         final String subject = this.mappingContext.getPersistentPropertyPath(part.getProperty()).toDotPath();
@@ -48,14 +49,19 @@ public class GremlinQueryCreator extends AbstractQueryCreator<GremlinQuery, Crit
             throw new UnsupportedOperationException("Unsupported keyword: " + type.toString());
         }
 
-        parameters.forEachRemaining(values::add);
+        for (int i = 0; i < part.getNumberOfArguments(); i++) {
+            Assert.isTrue(parameters.hasNext(), "should not reach the end of iterator");
+            values.add(parameters.next());
+        }
 
         return Criteria.getInstance(subject, criteriaMap.get(type), values);
     }
 
     @Override
-    protected Criteria and(@NonNull Part part, @NonNull Criteria base, @NonNull Iterator<Object> iterator) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+    protected Criteria and(@NonNull Part part, @NonNull Criteria base, @NonNull Iterator<Object> parameters) {
+        final Criteria right = this.create(part, parameters);
+
+        return Criteria.genAndInstance(base, right);
     }
 
     @Override

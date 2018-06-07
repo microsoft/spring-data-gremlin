@@ -223,5 +223,20 @@ public class RelationshipRepositoryIT {
         Assert.assertTrue(this.personRepo.existsById(this.person0.getId()));
         Assert.assertTrue(this.projectRepo.existsById(this.project.getId()));
     }
+
+    @Test
+    public void testFindByNameAndLocation() {
+        this.personRepo.save(this.person0);
+        this.personRepo.save(this.person);
+        this.projectRepo.save(this.project);
+        this.relationshipRepo.save(this.relationship);
+
+        final List<Relationship> domains = this.relationshipRepo.findByNameAndLocation(relationship.getName(),
+                relationship.getLocation());
+
+        Assert.assertEquals(domains.size(), 1);
+        Assert.assertEquals(domains.get(0), this.relationship);
+        Assert.assertTrue(relationshipRepo.findByNameAndLocation(relationship.getName(), "faker").isEmpty());
+    }
 }
 

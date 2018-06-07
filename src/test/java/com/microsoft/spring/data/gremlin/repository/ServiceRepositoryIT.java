@@ -26,22 +26,22 @@ import java.util.Optional;
 @ContextConfiguration(classes = TestRepositoryConfiguration.class)
 public class ServiceRepositoryIT {
 
-    private static final Map<String, Object> configProperties = new HashMap<>();
-    private static final Map<String, Object> eurekaProperties = new HashMap<>();
+    private static final Map<String, Object> serviceAProperties = new HashMap<>();
+    private static final Map<String, Object> serviceBProperties = new HashMap<>();
 
-    private final String configId = "1234";
-    private final String eurekaId = "8731";
+    private final String serviceAId = "1234";
+    private final String serviceBId = "8731";
 
-    private final int configCount = 2;
-    private final int eurekaCount = 8;
+    private final int serviceACount = 2;
+    private final int serviceBCount = 8;
 
-    private final String configName = "cloud-config";
-    private final String eurekaName = "eureka-server";
+    private final String serviceAName = "serviceA-name";
+    private final String serviceBName = "serviceB-name";
 
-    private final Service config = new Service(configId, configCount, true, configName, ServiceType.FRONT_END,
-            configProperties);
-    private final Service eureka = new Service(eurekaId, eurekaCount, false, eurekaName, ServiceType.BACK_END,
-            eurekaProperties);
+    private final Service serviceA = new Service(serviceAId, serviceACount, true, serviceAName,
+            ServiceType.FRONT_END, serviceAProperties);
+    private final Service serviceB = new Service(serviceBId, serviceBCount, false, serviceBName,
+            ServiceType.BACK_END, serviceBProperties);
 
     @Autowired
     private ServiceRepository repository;
@@ -51,13 +51,13 @@ public class ServiceRepositoryIT {
 
     @BeforeClass
     public static void initialize() {
-        eurekaProperties.put("eureka-port", 8761);
-        eurekaProperties.put("priority", "high");
-        eurekaProperties.put("enabled-hystrix", false);
+        serviceBProperties.put("serviceB-port", 8761);
+        serviceBProperties.put("priority", "high");
+        serviceBProperties.put("enabled-hystrix", false);
 
-        configProperties.put("config-port", 8888);
-        configProperties.put("eureka-port", 8761);
-        configProperties.put("priority", "highest");
+        serviceAProperties.put("serviceA-port", 8888);
+        serviceAProperties.put("serviceB-port", 8761);
+        serviceAProperties.put("priority", "highest");
     }
 
     @Before
@@ -72,33 +72,33 @@ public class ServiceRepositoryIT {
 
     @Test
     public void testServiceQueries() {
-        Assert.assertFalse(this.repository.findById(this.config.getId()).isPresent());
-        Assert.assertFalse(this.repository.findById(this.eureka.getId()).isPresent());
+        Assert.assertFalse(this.repository.findById(this.serviceA.getId()).isPresent());
+        Assert.assertFalse(this.repository.findById(this.serviceB.getId()).isPresent());
 
-        this.repository.save(config);
-        this.repository.save(eureka);
+        this.repository.save(serviceA);
+        this.repository.save(serviceB);
 
-        Optional<Service> foundOptional = this.repository.findById(this.config.getId());
+        Optional<Service> foundOptional = this.repository.findById(this.serviceA.getId());
         Assert.assertTrue(foundOptional.isPresent());
-        Assert.assertEquals(foundOptional.get(), this.config);
+        Assert.assertEquals(foundOptional.get(), this.serviceA);
 
-        foundOptional = this.repository.findById(this.eureka.getId());
+        foundOptional = this.repository.findById(this.serviceB.getId());
         Assert.assertTrue(foundOptional.isPresent());
-        Assert.assertEquals(foundOptional.get(), this.eureka);
+        Assert.assertEquals(foundOptional.get(), this.serviceB);
 
-        this.repository.deleteById(this.config.getId());
-        this.repository.deleteById(this.eureka.getId());
+        this.repository.deleteById(this.serviceA.getId());
+        this.repository.deleteById(this.serviceB.getId());
 
-        Assert.assertFalse(this.repository.findById(this.config.getId()).isPresent());
-        Assert.assertFalse(this.repository.findById(this.eureka.getId()).isPresent());
+        Assert.assertFalse(this.repository.findById(this.serviceA.getId()).isPresent());
+        Assert.assertFalse(this.repository.findById(this.serviceB.getId()).isPresent());
     }
 
     @Test
     public void testEdgeFromToStringId() {
-        final SimpleDependency depend = new SimpleDependency("fake-id", "fake-name", config.getId(), eureka.getId());
+        final SimpleDependency depend = new SimpleDependency("fakeId", "fakeName", serviceA.getId(), serviceB.getId());
 
-        this.repository.save(config);
-        this.repository.save(eureka);
+        this.repository.save(serviceA);
+        this.repository.save(serviceB);
         this.dependencyRepo.save(depend);
 
         final Optional<SimpleDependency> foundOptional = this.dependencyRepo.findById(depend.getId());
@@ -106,83 +106,109 @@ public class ServiceRepositoryIT {
         Assert.assertEquals(foundOptional.get(), depend);
 
         this.dependencyRepo.delete(foundOptional.get());
-        Assert.assertTrue(this.repository.findById(this.config.getId()).isPresent());
-        Assert.assertTrue(this.repository.findById(this.eureka.getId()).isPresent());
+        Assert.assertTrue(this.repository.findById(this.serviceA.getId()).isPresent());
+        Assert.assertTrue(this.repository.findById(this.serviceB.getId()).isPresent());
     }
 
     @Test
     public void testServiceFindByName() {
-        this.repository.save(config);
-        this.repository.save(eureka);
+        this.repository.save(serviceA);
+        this.repository.save(serviceB);
 
-        final List<Service> services = this.repository.findByName(this.config.getName());
+        final List<Service> services = this.repository.findByName(this.serviceA.getName());
 
         Assert.assertEquals(services.size(), 1);
-        Assert.assertEquals(services.get(0), this.config);
+        Assert.assertEquals(services.get(0), this.serviceA);
 
         this.repository.deleteAll();
 
-        Assert.assertTrue(this.repository.findByName(this.config.getName()).isEmpty());
+        Assert.assertTrue(this.repository.findByName(this.serviceA.getName()).isEmpty());
     }
 
     @Test
     public void testServiceFindByInstanceCount() {
-        this.repository.save(config);
-        this.repository.save(eureka);
+        this.repository.save(serviceA);
+        this.repository.save(serviceB);
 
-        final List<Service> services = this.repository.findByInstanceCount(this.eureka.getInstanceCount());
+        final List<Service> services = this.repository.findByInstanceCount(this.serviceB.getInstanceCount());
 
         Assert.assertEquals(services.size(), 1);
-        Assert.assertEquals(services.get(0), this.eureka);
+        Assert.assertEquals(services.get(0), this.serviceB);
 
         this.repository.deleteAll();
 
-        Assert.assertTrue(this.repository.findByInstanceCount(this.eureka.getInstanceCount()).isEmpty());
+        Assert.assertTrue(this.repository.findByInstanceCount(this.serviceB.getInstanceCount()).isEmpty());
     }
 
     @Test
     public void testServiceFindByIsActive() {
-        this.repository.save(config);
-        this.repository.save(eureka);
+        this.repository.save(serviceA);
+        this.repository.save(serviceB);
 
-        final List<Service> services = this.repository.findByIsActive(this.eureka.isActive());
+        final List<Service> services = this.repository.findByIsActive(this.serviceB.isActive());
 
         Assert.assertEquals(services.size(), 1);
-        Assert.assertEquals(services.get(0), this.eureka);
+        Assert.assertEquals(services.get(0), this.serviceB);
 
         this.repository.deleteAll();
 
-        Assert.assertTrue(this.repository.findByIsActive(this.eureka.isActive()).isEmpty());
+        Assert.assertTrue(this.repository.findByIsActive(this.serviceB.isActive()).isEmpty());
     }
 
     @Test
     public void testServiceFindByProperties() {
-        this.repository.save(config);
-        this.repository.save(eureka);
+        this.repository.save(serviceA);
+        this.repository.save(serviceB);
 
-        final List<Service> services = this.repository.findByProperties(this.eureka.getProperties());
+        final List<Service> services = this.repository.findByProperties(this.serviceB.getProperties());
 
         Assert.assertEquals(services.size(), 1);
-        Assert.assertEquals(services.get(0), this.eureka);
+        Assert.assertEquals(services.get(0), this.serviceB);
 
         this.repository.deleteAll();
 
-        Assert.assertTrue(this.repository.findByProperties(this.eureka.getProperties()).isEmpty());
+        Assert.assertTrue(this.repository.findByProperties(this.serviceB.getProperties()).isEmpty());
     }
 
     @Test
     public void testServiceFindById() {
-        this.repository.save(config);
-        this.repository.save(eureka);
+        this.repository.save(serviceA);
+        this.repository.save(serviceB);
 
-        final Optional<Service> foundConfig = this.repository.findById(this.config.getId());
-        final Optional<Service> foundEureka = this.repository.findById(this.eureka.getId());
+        final Optional<Service> foundConfig = this.repository.findById(this.serviceA.getId());
+        final Optional<Service> foundEureka = this.repository.findById(this.serviceB.getId());
 
         Assert.assertTrue(foundConfig.isPresent());
         Assert.assertTrue(foundEureka.isPresent());
 
-        Assert.assertEquals(foundConfig.get(), this.config);
-        Assert.assertEquals(foundEureka.get(), this.eureka);
+        Assert.assertEquals(foundConfig.get(), this.serviceA);
+        Assert.assertEquals(foundEureka.get(), this.serviceB);
+    }
+
+    @Test
+    public void testServiceFindByNameAndInstanceCount() {
+        this.repository.save(serviceA);
+        this.repository.save(serviceB);
+
+        final List<Service> services = repository.findByNameAndInstanceCount(serviceBName, serviceBCount);
+
+        Assert.assertEquals(services.size(), 1);
+        Assert.assertEquals(services.get(0), this.serviceB);
+        Assert.assertTrue(repository.findByNameAndInstanceCount(serviceBName, serviceACount).isEmpty());
+    }
+
+    @Test
+    public void testServiceFindByNameAndInstanceCountAndType() {
+        this.repository.save(serviceA);
+        this.repository.save(serviceB);
+
+        final List<Service> services = repository.findByNameAndInstanceCountAndType(serviceBName, serviceBCount,
+                ServiceType.BACK_END);
+
+        Assert.assertEquals(services.size(), 1);
+        Assert.assertEquals(services.get(0), this.serviceB);
+        Assert.assertTrue(repository.findByNameAndInstanceCountAndType(serviceBName, serviceACount, ServiceType.BOTH)
+                .isEmpty());
     }
 }
 

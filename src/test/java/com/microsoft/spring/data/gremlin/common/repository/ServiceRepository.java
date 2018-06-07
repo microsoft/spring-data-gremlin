@@ -6,6 +6,7 @@
 package com.microsoft.spring.data.gremlin.common.repository;
 
 import com.microsoft.spring.data.gremlin.common.domain.Service;
+import com.microsoft.spring.data.gremlin.common.domain.ServiceType;
 import com.microsoft.spring.data.gremlin.repository.GremlinRepository;
 import org.springframework.stereotype.Repository;
 
@@ -22,4 +23,8 @@ public interface ServiceRepository extends GremlinRepository<Service, String> {
     List<Service> findByIsActive(boolean isActive);
 
     List<Service> findByProperties(Map<String, Object> properties);
+
+    List<Service> findByNameAndInstanceCount(String name, int instanceCount);
+
+    List<Service> findByNameAndInstanceCountAndType(String name, int instanceCount, ServiceType type);
 }

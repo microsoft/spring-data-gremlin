@@ -32,4 +32,13 @@ public class Criteria {
 
         return criteria;
     }
+
+    public static Criteria genAndInstance(@NonNull Criteria left, @NonNull Criteria right) {
+        final Criteria criteria = new Criteria(CriteriaType.AND);
+
+        criteria.subCriteria.add(left);
+        criteria.subCriteria.add(right);
+
+        return criteria;
+    }
 }
