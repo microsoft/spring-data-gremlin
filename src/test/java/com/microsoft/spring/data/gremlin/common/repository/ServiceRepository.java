@@ -10,6 +10,7 @@ import com.microsoft.spring.data.gremlin.common.domain.ServiceType;
 import com.microsoft.spring.data.gremlin.repository.GremlinRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,8 @@ public interface ServiceRepository extends GremlinRepository<Service, String> {
     List<Service> findByInstanceCount(int instanceCount);
 
     List<Service> findByIsActive(boolean isActive);
+
+    List<Service> findByCreateAt(Date createAt);
 
     List<Service> findByProperties(Map<String, Object> properties);
 
