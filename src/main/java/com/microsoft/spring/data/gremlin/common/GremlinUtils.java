@@ -16,6 +16,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -64,5 +65,13 @@ public class GremlinUtils {
         }
 
         return idField;
+    }
+
+    public static long timeToMilliSeconds(@NonNull Object time) {
+        if (time instanceof Date) {
+            return ((Date) time).getTime();
+        } else {
+            throw new UnsupportedOperationException("Unsupported time type");
+        }
     }
 }
