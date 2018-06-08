@@ -307,5 +307,52 @@ public class ServiceRepositoryIT {
         Assert.assertEquals(foundServices.size(), 1);
         Assert.assertEquals(foundServices.get(0), serviceB);
     }
+
+    @Test
+    @SneakyThrows
+    public void testFindByCreateAtAfter() {
+        final List<Service> services = Arrays.asList(serviceA, serviceB);
+        this.repository.saveAll(services);
+
+        Date testDate = new SimpleDateFormat("yyyyMMdd").parse("20180602");
+        List<Service> foundServices = repository.findByCreateAtAfter(testDate);
+        Assert.assertEquals(foundServices.size(), 1);
+        Assert.assertEquals(foundServices.get(0), serviceB);
+
+        testDate = new SimpleDateFormat("yyyyMMdd").parse("20180502");
+        foundServices = repository.findByCreateAtAfter(testDate);
+        services.sort(Comparator.comparing(Service::getId));
+        foundServices.sort(Comparator.comparing(Service::getId));
+        Assert.assertEquals(foundServices.size(), 2);
+        Assert.assertEquals(foundServices, services);
+
+        testDate = new SimpleDateFormat("yyyyMMdd").parse("20180606");
+        foundServices = repository.findByCreateAtAfter(testDate);
+        Assert.assertTrue(foundServices.isEmpty());
+    }
+
+    @Test
+    @SneakyThrows
+    public void testFindByNameOrTypeAndInstanceCountAndCreateAtAfter() {
+        final List<Service> services = Arrays.asList(serviceA, serviceB);
+        this.repository.saveAll(services);
+
+        Date testDate = new SimpleDateFormat("yyyyMMdd").parse("20180601");
+        List<Service> foundServices = repository.findByNameOrTypeAndInstanceCountAndCreateAtAfter(NAME_A,
+                serviceB.getType(), COUNT_B, testDate);
+
+        services.sort(Comparator.comparing(Service::getId));
+        foundServices.sort(Comparator.comparing(Service::getId));
+        Assert.assertEquals(foundServices.size(), 2);
+        Assert.assertEquals(foundServices, services);
+
+        testDate = new SimpleDateFormat("yyyyMMdd").parse("20180607");
+        foundServices = repository.findByNameOrTypeAndInstanceCountAndCreateAtAfter(NAME_A, serviceB.getType(), COUNT_B,
+                testDate);
+        Assert.assertEquals(foundServices.size(), 1);
+        Assert.assertEquals(foundServices.get(0), serviceA);
+        Assert.assertTrue(repository.findByNameOrTypeAndInstanceCountAndCreateAtAfter("fake-name", serviceB.getType(),
+                COUNT_B, testDate).isEmpty());
+    }
 }
 
