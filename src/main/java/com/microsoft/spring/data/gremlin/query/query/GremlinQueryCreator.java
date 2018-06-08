@@ -28,6 +28,7 @@ public class GremlinQueryCreator extends AbstractQueryCreator<GremlinQuery, Crit
         final Map<Part.Type, CriteriaType> map = new HashMap<>();
 
         map.put(Part.Type.AFTER, CriteriaType.AFTER);
+        map.put(Part.Type.BEFORE, CriteriaType.BEFORE);
         map.put(Part.Type.SIMPLE_PROPERTY, CriteriaType.IS_EQUAL);
 
         criteriaMap = Collections.unmodifiableMap(map);

@@ -354,5 +354,54 @@ public class ServiceRepositoryIT {
         Assert.assertTrue(repository.findByNameOrTypeAndInstanceCountAndCreateAtAfter("fake-name", serviceB.getType(),
                 COUNT_B, testDate).isEmpty());
     }
+
+    @Test
+    @SneakyThrows
+    public void testFindByCreateAtBefore() {
+        final List<Service> services = Arrays.asList(serviceA, serviceB);
+        this.repository.saveAll(services);
+
+        Date testDate = new SimpleDateFormat("yyyyMMdd").parse("20180602");
+        List<Service> foundServices = repository.findByCreateAtBefore(testDate);
+        Assert.assertEquals(foundServices.size(), 1);
+        Assert.assertEquals(foundServices.get(0), serviceA);
+
+        testDate = new SimpleDateFormat("yyyyMMdd").parse("20180606");
+        foundServices = repository.findByCreateAtBefore(testDate);
+        services.sort(Comparator.comparing(Service::getId));
+        foundServices.sort(Comparator.comparing(Service::getId));
+        Assert.assertEquals(foundServices.size(), 2);
+        Assert.assertEquals(foundServices, services);
+
+        testDate = new SimpleDateFormat("yyyyMMdd").parse("20180506");
+        foundServices = repository.findByCreateAtBefore(testDate);
+        Assert.assertTrue(foundServices.isEmpty());
+    }
+
+    @Test
+    @SneakyThrows
+    public void testFindByCreateAtBeforeAndCreateAtAfter() {
+        final List<Service> services = Arrays.asList(serviceA, serviceB);
+        this.repository.saveAll(services);
+
+        Date startDate = new SimpleDateFormat("yyyyMMdd").parse("20180602");
+        Date endDate = new SimpleDateFormat("yyyyMMdd").parse("20180606");
+        List<Service> foundServices = repository.findByCreateAtAfterAndCreateAtBefore(startDate, endDate);
+        Assert.assertEquals(foundServices.size(), 1);
+        Assert.assertEquals(foundServices.get(0), serviceB);
+
+        startDate = new SimpleDateFormat("yyyyMMdd").parse("20180506");
+        endDate = new SimpleDateFormat("yyyyMMdd").parse("20180606");
+        foundServices = repository.findByCreateAtAfterAndCreateAtBefore(startDate, endDate);
+        services.sort(Comparator.comparing(Service::getId));
+        foundServices.sort(Comparator.comparing(Service::getId));
+        Assert.assertEquals(foundServices.size(), 2);
+        Assert.assertEquals(foundServices, services);
+
+        startDate = new SimpleDateFormat("yyyyMMdd").parse("20180606");
+        endDate = new SimpleDateFormat("yyyyMMdd").parse("20180607");
+        foundServices = repository.findByCreateAtAfterAndCreateAtBefore(startDate, endDate);
+        Assert.assertTrue(foundServices.isEmpty());
+    }
 }
 

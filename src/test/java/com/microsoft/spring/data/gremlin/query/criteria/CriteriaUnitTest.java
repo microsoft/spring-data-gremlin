@@ -5,12 +5,13 @@
  */
 package com.microsoft.spring.data.gremlin.query.criteria;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.microsoft.spring.data.gremlin.query.criteria.CriteriaType.IS_EQUAL;
+import static com.microsoft.spring.data.gremlin.query.criteria.CriteriaType.*;
 
 public class CriteriaUnitTest {
 
@@ -18,7 +19,7 @@ public class CriteriaUnitTest {
     public void testGetUnaryInstanceException() {
         final List<Object> values = new ArrayList<>();
 
-        Criteria.getUnaryInstance(CriteriaType.OR, "fake-name", values);
+        Criteria.getUnaryInstance(OR, "fake-name", values);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -33,5 +34,14 @@ public class CriteriaUnitTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testCriteriaTypeToGremlinException() {
         CriteriaType.criteriaTypeToGremlin(IS_EQUAL);
+    }
+
+    @Test
+    public void testCriteriaOperationType() {
+        Assert.assertTrue(Criteria.isBinaryOperation(AND));
+        Assert.assertFalse(Criteria.isBinaryOperation(AFTER));
+
+        Assert.assertTrue(Criteria.isUnaryOperation(AFTER));
+        Assert.assertFalse(Criteria.isUnaryOperation(OR));
     }
 }
