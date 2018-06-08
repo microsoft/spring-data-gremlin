@@ -17,4 +17,6 @@ public interface RelationshipRepository extends GremlinRepository<Relationship, 
     List<Relationship> findByLocation(String location);
 
     List<Relationship> findByNameAndLocation(String name, String location);
+
+    List<Relationship> findByNameOrId(String name, String id);
 }

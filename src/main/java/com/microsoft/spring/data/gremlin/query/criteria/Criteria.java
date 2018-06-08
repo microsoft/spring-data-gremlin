@@ -7,6 +7,7 @@ package com.microsoft.spring.data.gremlin.query.criteria;
 
 import lombok.Getter;
 import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,28 @@ public class Criteria {
         this.subCriteria = new ArrayList<>();
     }
 
-    public static Criteria getInstance(@NonNull String subject, CriteriaType type, @NonNull List<Object> values) {
+    private static boolean isBinaryOperation(CriteriaType type) {
+        switch (type) {
+            case AND:
+            case OR:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private static boolean isUnaryOperation(CriteriaType type) {
+        switch (type) {
+            case IS_EQUAL:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static Criteria getUnaryInstance(CriteriaType type, @NonNull String subject, @NonNull List<Object> values) {
+        Assert.isTrue(isUnaryOperation(type), "type should be Unary operation");
+
         final Criteria criteria = new Criteria(type);
 
         criteria.subject = subject;
@@ -33,11 +55,15 @@ public class Criteria {
         return criteria;
     }
 
-    public static Criteria genAndInstance(@NonNull Criteria left, @NonNull Criteria right) {
-        final Criteria criteria = new Criteria(CriteriaType.AND);
+    public static Criteria getBinaryInstance(CriteriaType type, @NonNull Criteria left, @NonNull Criteria right) {
+        Assert.isTrue(isBinaryOperation(type), "type should be Binary operation");
+
+        final Criteria criteria = new Criteria(type);
 
         criteria.subCriteria.add(left);
         criteria.subCriteria.add(right);
+
+        Assert.isTrue(criteria.getSubCriteria().size() == 2, "Binary should contains 2 subCriteria");
 
         return criteria;
     }

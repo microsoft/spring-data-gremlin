@@ -18,8 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
+import java.text.SimpleDateFormat;
 
 import static com.microsoft.spring.data.gremlin.common.domain.ServiceType.BACK_END;
 import static com.microsoft.spring.data.gremlin.common.domain.ServiceType.FRONT_END;
@@ -232,6 +232,45 @@ public class ServiceRepositoryIT {
         Assert.assertEquals(services.size(), 1);
         Assert.assertEquals(services.get(0), serviceB);
         Assert.assertTrue(repository.findByNameAndInstanceCountAndType(NAME_B, COUNT_A, ServiceType.BOTH).isEmpty());
+    }
+
+    @Test
+    public void testFindByNameOrInstanceCount() {
+        this.repository.save(serviceA);
+        this.repository.save(serviceB);
+
+        final List<Service> services = Arrays.asList(serviceA, serviceB);
+        List<Service> foundServices = repository.findByNameOrInstanceCount(NAME_A, COUNT_B);
+
+        services.sort(Comparator.comparing(Service::getId));
+        foundServices.sort(Comparator.comparing(Service::getId));
+
+        Assert.assertEquals(foundServices.size(), 2);
+        Assert.assertEquals(foundServices, services);
+
+        foundServices = repository.findByNameOrInstanceCount("fake-name", COUNT_A);
+
+        Assert.assertEquals(foundServices.size(), 1);
+        Assert.assertEquals(foundServices.get(0), serviceA);
+    }
+
+    @Test
+    public void testFindByNameAndIsActiveOrProperties() {
+        this.repository.save(serviceA);
+        this.repository.save(serviceB);
+
+        final List<Service> services = Arrays.asList(serviceA, serviceB);
+        List<Service> foundServices = repository.findByNameAndIsActiveOrProperties(NAME_A, true, PROPERTIES_B);
+
+        services.sort(Comparator.comparing(Service::getId));
+        foundServices.sort(Comparator.comparing(Service::getId));
+
+        Assert.assertEquals(foundServices.size(), 2);
+        Assert.assertEquals(foundServices, services);
+
+        foundServices = repository.findByNameAndIsActiveOrProperties(NAME_B, false, new HashMap<>());
+        Assert.assertEquals(foundServices.size(), 1);
+        Assert.assertEquals(foundServices.get(0), serviceB);
     }
 }
 
