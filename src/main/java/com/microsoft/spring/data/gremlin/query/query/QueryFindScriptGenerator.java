@@ -5,7 +5,6 @@
  */
 package com.microsoft.spring.data.gremlin.query.query;
 
-import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.script.AbstractGremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.query.criteria.Criteria;
 import com.microsoft.spring.data.gremlin.query.criteria.CriteriaType;
@@ -34,7 +33,7 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
         String subject = criteria.getSubject();
 
         if (subject.equals(this.information.getIdField().getName())) {
-            subject = Constants.PROPERTY_ID; // If subject is @Id/id field, use id property in database.
+            subject = PROPERTY_ID; // If subject is @Id/id field, use id property in database.
         }
 
         final String has = AbstractGremlinScriptLiteral.generateHas(subject, criteria.getSubValues().get(0));
@@ -71,7 +70,8 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
     private List<String> generateScript(@NonNull GremlinQuery query) {
         final Criteria criteria = query.getCriteria();
         final List<String> scriptList = new ArrayList<>();
-        final String label = this.information.getEntityLabel();
+
+        scriptList.add(GREMLIN_PRIMITIVE_GRAPH);
 
         if (this.information.isEntityVertex()) {
             scriptList.add(GREMLIN_PRIMITIVE_VERTEX_ALL);
@@ -81,7 +81,7 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
             throw new UnsupportedOperationException("Cannot generate script from graph entity");
         }
 
-        scriptList.add(String.format(GREMLIN_PRIMITIVE_HAS_STRING, PROPERTY_LABEL, label));
+        scriptList.add(String.format(GREMLIN_PRIMITIVE_HAS_STRING, PROPERTY_LABEL, this.information.getEntityLabel()));
         scriptList.add(this.generateScriptTraversal(criteria));
 
         return scriptList;
@@ -94,7 +94,6 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
 
         this.setInformation(new GremlinEntityInformation(domainClass));
 
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
         scriptList.addAll(this.generateScript(query));
 
         return Collections.singletonList(String.join(GREMLIN_PRIMITIVE_INVOKE, scriptList));
