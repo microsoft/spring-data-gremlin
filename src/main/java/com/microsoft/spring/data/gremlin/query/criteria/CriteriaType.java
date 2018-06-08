@@ -5,8 +5,22 @@
  */
 package com.microsoft.spring.data.gremlin.query.criteria;
 
+import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_PRIMITIVE_AND;
+import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_PRIMITIVE_OR;
+
 public enum CriteriaType {
     IS_EQUAL,
     OR,
-    AND
+    AND;
+
+    public static String criteriaTypeToGremlin(CriteriaType type) {
+        switch (type) {
+            case OR:
+                return GREMLIN_PRIMITIVE_OR;
+            case AND:
+                return GREMLIN_PRIMITIVE_AND;
+            default:
+                throw new UnsupportedOperationException("Unsupported criteria type.");
+        }
+    }
 }

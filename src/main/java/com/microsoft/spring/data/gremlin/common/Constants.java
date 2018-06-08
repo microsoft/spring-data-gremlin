@@ -55,6 +55,7 @@ public class Constants {
 
     public static final String GREMLIN_PRIMITIVE_AND = "and()";
     public static final String GREMLIN_PRIMITIVE_OR = "or()";
+    public static final String GREMLIN_PRIMITIVE_WHERE = "where(%s)";
 
     public static final String GREMLIN_SCRIPT_EDGE_ALL = String.join(GREMLIN_PRIMITIVE_INVOKE,
             GREMLIN_PRIMITIVE_GRAPH,

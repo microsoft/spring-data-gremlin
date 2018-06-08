@@ -10,6 +10,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.microsoft.spring.data.gremlin.query.criteria.CriteriaType.IS_EQUAL;
+
 public class CriteriaUnitTest {
 
     @Test(expected = IllegalArgumentException.class)
@@ -22,9 +24,14 @@ public class CriteriaUnitTest {
     @Test(expected = IllegalArgumentException.class)
     public void testGetBinaryInstanceException() {
         final List<Object> values = new ArrayList<>();
-        final Criteria left = Criteria.getUnaryInstance(CriteriaType.IS_EQUAL, "fake-name", values);
-        final Criteria right = Criteria.getUnaryInstance(CriteriaType.IS_EQUAL, "fake-name", values);
+        final Criteria left = Criteria.getUnaryInstance(IS_EQUAL, "fake-name", values);
+        final Criteria right = Criteria.getUnaryInstance(IS_EQUAL, "fake-name", values);
 
-        Criteria.getBinaryInstance(CriteriaType.IS_EQUAL, left, right);
+        Criteria.getBinaryInstance(IS_EQUAL, left, right);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testCriteriaTypeToGremlinException() {
+        CriteriaType.criteriaTypeToGremlin(IS_EQUAL);
     }
 }

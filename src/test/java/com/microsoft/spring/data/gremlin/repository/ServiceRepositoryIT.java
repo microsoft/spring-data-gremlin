@@ -238,7 +238,6 @@ public class ServiceRepositoryIT {
     @Test
     public void testFindByNameOrInstanceCount() {
         final List<Service> services = Arrays.asList(serviceA, serviceB);
-
         this.repository.saveAll(services);
 
         List<Service> foundServices = repository.findByNameOrInstanceCount(NAME_A, COUNT_B);
@@ -258,11 +257,9 @@ public class ServiceRepositoryIT {
     @Test
     public void testFindByNameAndIsActiveOrProperties() {
         final List<Service> services = Arrays.asList(serviceA, serviceB);
-
         this.repository.saveAll(services);
 
-        List<Service> foundServices = repository.findByNameAndIsActiveOrProperties(NAME_A, true,
-                PROPERTIES_B);
+        List<Service> foundServices = repository.findByNameAndIsActiveOrProperties(NAME_A, true, PROPERTIES_B);
 
         services.sort(Comparator.comparing(Service::getId));
         foundServices.sort(Comparator.comparing(Service::getId));
@@ -271,6 +268,42 @@ public class ServiceRepositoryIT {
         Assert.assertEquals(foundServices, services);
 
         foundServices = repository.findByNameAndIsActiveOrProperties(NAME_B, false, new HashMap<>());
+        Assert.assertEquals(foundServices.size(), 1);
+        Assert.assertEquals(foundServices.get(0), serviceB);
+    }
+
+    @Test
+    public void testFindByNameOrInstanceCountAndType() {
+        final List<Service> services = Arrays.asList(serviceA, serviceB);
+        this.repository.saveAll(services);
+
+        List<Service> foundServices = repository.findByNameOrInstanceCountAndType(NAME_A, COUNT_B, BACK_END);
+
+        services.sort(Comparator.comparing(Service::getId));
+        foundServices.sort(Comparator.comparing(Service::getId));
+
+        Assert.assertEquals(foundServices.size(), 2);
+        Assert.assertEquals(foundServices, services);
+
+        foundServices = repository.findByNameOrInstanceCountAndType(NAME_B, COUNT_A, BACK_END);
+        Assert.assertEquals(foundServices.size(), 1);
+        Assert.assertEquals(foundServices.get(0), serviceB);
+    }
+
+    @Test
+    public void testFindByNameAndInstanceCountOrType() {
+        final List<Service> services = Arrays.asList(serviceA, serviceB);
+        this.repository.saveAll(services);
+
+        List<Service> foundServices = repository.findByNameAndInstanceCountOrType(NAME_A, COUNT_A, BACK_END);
+
+        services.sort(Comparator.comparing(Service::getId));
+        foundServices.sort(Comparator.comparing(Service::getId));
+
+        Assert.assertEquals(foundServices.size(), 2);
+        Assert.assertEquals(foundServices, services);
+
+        foundServices = repository.findByNameAndInstanceCountOrType(NAME_A, COUNT_B, BACK_END);
         Assert.assertEquals(foundServices.size(), 1);
         Assert.assertEquals(foundServices.get(0), serviceB);
     }
