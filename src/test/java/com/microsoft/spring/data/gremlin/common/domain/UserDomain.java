@@ -21,4 +21,6 @@ public class UserDomain {
     private String name;
 
     private int level;
+
+    private boolean enabled;
 }

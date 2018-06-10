@@ -11,7 +11,8 @@ import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_PRIMITI
 public enum CriteriaType {
     IS_EQUAL,
     OR,
-    AND;
+    AND,
+    EXISTS;
 
     public static String criteriaTypeToGremlin(CriteriaType type) {
         switch (type) {

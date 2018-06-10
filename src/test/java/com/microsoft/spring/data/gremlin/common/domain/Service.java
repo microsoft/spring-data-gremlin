@@ -25,7 +25,7 @@ public class Service {
 
     private int instanceCount;
 
-    private boolean isActive;
+    private boolean active;
 
     private String name;
 

@@ -29,14 +29,26 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
     @Setter(AccessLevel.PRIVATE)
     private GremlinEntityInformation information;
 
-    private String generateIsEqual(@NonNull Criteria criteria) {
+    private String getCriteriaSubject(@NonNull Criteria criteria) {
         String subject = criteria.getSubject();
 
         if (subject.equals(this.information.getIdField().getName())) {
             subject = PROPERTY_ID; // If subject is @Id/id field, use id property in database.
         }
 
+        return subject;
+    }
+
+    private String generateIsEqual(@NonNull Criteria criteria) {
+        final String subject = this.getCriteriaSubject(criteria);
         final String has = AbstractGremlinScriptLiteral.generateHas(subject, criteria.getSubValues().get(0));
+
+        return String.format(GREMLIN_PRIMITIVE_WHERE, has);
+    }
+
+    private String generateExists(@NonNull Criteria criteria) {
+        final String subject = this.getCriteriaSubject(criteria);
+        final String has = AbstractGremlinScriptLiteral.generateHas(subject, true);
 
         return String.format(GREMLIN_PRIMITIVE_WHERE, has);
     }
@@ -56,6 +68,8 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
         switch (type) {
             case IS_EQUAL:
                 return this.generateIsEqual(criteria);
+            case EXISTS:
+                return this.generateExists(criteria);
             case AND:
             case OR:
                 final String left = this.generateScriptTraversal(criteria.getSubCriteria().get(0));
@@ -90,11 +104,10 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
     @Override
     @SuppressWarnings("unchecked")
     public <T> List<String> generate(@NonNull GremlinQuery query, @NonNull Class<T> domainClass) {
-        final List<String> scriptList = new ArrayList<>();
 
         this.setInformation(new GremlinEntityInformation(domainClass));
 
-        scriptList.addAll(this.generateScript(query));
+        final List<String> scriptList = new ArrayList<>(this.generateScript(query));
 
         return Collections.singletonList(String.join(GREMLIN_PRIMITIVE_INVOKE, scriptList));
     }
