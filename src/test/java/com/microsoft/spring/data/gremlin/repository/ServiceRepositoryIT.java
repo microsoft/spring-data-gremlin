@@ -28,23 +28,23 @@ import static com.microsoft.spring.data.gremlin.common.domain.ServiceType.FRONT_
 @ContextConfiguration(classes = TestRepositoryConfiguration.class)
 public class ServiceRepositoryIT {
 
+    private static Service serviceA;
+    private static Service serviceB;
+
+    private static Date createDateA;
+    private static Date createDateB;
+
     private static final Map<String, Object> PROPERTIES_A = new HashMap<>();
     private static final Map<String, Object> PROPERTIES_B = new HashMap<>();
 
     private static final String ID_A = "1234";
     private static final String ID_B = "8731";
 
+    private static final String NAME_A = "SERVICE_A-name";
+    private static final String NAME_B = "SERVICE_B-name";
+
     private static final int COUNT_A = 2;
     private static final int COUNT_B = 8;
-
-    private static final String NAME_A = "name-A";
-    private static final String NAME_B = "name-B";
-
-    private static Service serviceA;
-    private static Service serviceB;
-
-    private static Date createDateA;
-    private static Date createDateB;
 
     @Autowired
     private ServiceRepository repository;
@@ -116,6 +116,7 @@ public class ServiceRepositoryIT {
         Assert.assertEquals(foundOptional.get(), depend);
 
         this.dependencyRepo.delete(foundOptional.get());
+
         Assert.assertTrue(this.repository.findById(serviceA.getId()).isPresent());
         Assert.assertTrue(this.repository.findById(serviceB.getId()).isPresent());
     }
@@ -305,6 +306,53 @@ public class ServiceRepositoryIT {
         foundServices = repository.findByNameAndInstanceCountOrType(NAME_A, COUNT_B, BACK_END);
         Assert.assertEquals(foundServices.size(), 1);
         Assert.assertEquals(foundServices.get(0), serviceB);
+    }
+
+    @Test
+    @SneakyThrows
+    public void testFindByCreateAtAfter() {
+        final List<Service> services = Arrays.asList(serviceA, serviceB);
+        this.repository.saveAll(services);
+
+        Date testDate = new SimpleDateFormat("yyyyMMdd").parse("20180602");
+        List<Service> foundServices = repository.findByCreateAtAfter(testDate);
+        Assert.assertEquals(foundServices.size(), 1);
+        Assert.assertEquals(foundServices.get(0), serviceB);
+
+        testDate = new SimpleDateFormat("yyyyMMdd").parse("20180502");
+        foundServices = repository.findByCreateAtAfter(testDate);
+        services.sort(Comparator.comparing(Service::getId));
+        foundServices.sort(Comparator.comparing(Service::getId));
+        Assert.assertEquals(foundServices.size(), 2);
+        Assert.assertEquals(foundServices, services);
+
+        testDate = new SimpleDateFormat("yyyyMMdd").parse("20180606");
+        foundServices = repository.findByCreateAtAfter(testDate);
+        Assert.assertTrue(foundServices.isEmpty());
+    }
+
+    @Test
+    @SneakyThrows
+    public void testFindByNameOrTypeAndInstanceCountAndCreateAtAfter() {
+        final List<Service> services = Arrays.asList(serviceA, serviceB);
+        this.repository.saveAll(services);
+
+        Date testDate = new SimpleDateFormat("yyyyMMdd").parse("20180601");
+        List<Service> foundServices = repository.findByNameOrTypeAndInstanceCountAndCreateAtAfter(NAME_A,
+                serviceB.getType(), COUNT_B, testDate);
+
+        services.sort(Comparator.comparing(Service::getId));
+        foundServices.sort(Comparator.comparing(Service::getId));
+        Assert.assertEquals(foundServices.size(), 2);
+        Assert.assertEquals(foundServices, services);
+
+        testDate = new SimpleDateFormat("yyyyMMdd").parse("20180607");
+        foundServices = repository.findByNameOrTypeAndInstanceCountAndCreateAtAfter(NAME_A, serviceB.getType(), COUNT_B,
+                testDate);
+        Assert.assertEquals(foundServices.size(), 1);
+        Assert.assertEquals(foundServices.get(0), serviceA);
+        Assert.assertTrue(repository.findByNameOrTypeAndInstanceCountAndCreateAtAfter("fake-name", serviceB.getType(),
+                COUNT_B, testDate).isEmpty());
     }
 }
 
