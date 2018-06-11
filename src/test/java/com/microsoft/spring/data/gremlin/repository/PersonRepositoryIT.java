@@ -10,6 +10,7 @@ import com.microsoft.spring.data.gremlin.common.TestConstants;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.common.domain.Person;
 import com.microsoft.spring.data.gremlin.common.repository.PersonRepository;
+import org.assertj.core.util.Lists;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -192,6 +194,24 @@ public class PersonRepositoryIT {
 
         Assert.assertFalse(this.repository.findById(this.person.getId()).isPresent());
         Assert.assertFalse(this.repository.findById(this.person0.getId()).isPresent());
+    }
+
+    @Test
+    public void testFindAll() {
+        final List<Person> persons = Arrays.asList(this.person, this.person0);
+
+        this.repository.saveAll(persons);
+
+        final List<Person> foundPersons = Lists.newArrayList(this.repository.findAll());
+
+        foundPersons.sort(Comparator.comparing(Person::getId));
+        persons.sort(Comparator.comparing(Person::getId));
+
+        Assert.assertEquals(persons, foundPersons);
+
+        this.repository.deleteAll();
+
+        Assert.assertFalse(this.repository.findAll().iterator().hasNext());
     }
 }
 
