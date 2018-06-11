@@ -41,7 +41,7 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
     }
 
     private String generateUnaryScript(@NonNull Criteria criteria, CriteriaType type) {
-        Assert.isTrue(Criteria.isUnaryOperation(type), "should be binary type of CriteriaType");
+        Assert.isTrue(Criteria.isUnaryOperation(type), "should be unary type of CriteriaType");
 
         final String subject = criteria.getSubject();
         final long milliSeconds = GremlinUtils.timeToMilliSeconds(criteria.getSubValues().get(0));
