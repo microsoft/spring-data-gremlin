@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.query.query;
 
+import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.conversion.script.AbstractGremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.query.criteria.Criteria;
 import com.microsoft.spring.data.gremlin.query.criteria.CriteriaType;
@@ -20,8 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.microsoft.spring.data.gremlin.common.Constants.*;
-import static com.microsoft.spring.data.gremlin.query.criteria.CriteriaType.AND;
-import static com.microsoft.spring.data.gremlin.query.criteria.CriteriaType.OR;
 
 @NoArgsConstructor
 public class QueryFindScriptGenerator implements QueryScriptGenerator {
@@ -41,9 +40,22 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
 
     private String generateIsEqual(@NonNull Criteria criteria) {
         final String subject = this.getCriteriaSubject(criteria);
-        final String has = AbstractGremlinScriptLiteral.generateHas(subject, criteria.getSubValues().get(0));
+        final String content = AbstractGremlinScriptLiteral.generateHas(subject, criteria.getSubValues().get(0));
 
-        return String.format(GREMLIN_PRIMITIVE_WHERE, has);
+        return String.format(GREMLIN_PRIMITIVE_WHERE, content);
+    }
+
+    private String generateUnaryScript(@NonNull Criteria criteria, CriteriaType type) {
+        Assert.isTrue(Criteria.isUnaryOperation(type), "should be unary type of CriteriaType");
+
+        final String subject = criteria.getSubject();
+        final long milliSeconds = GremlinUtils.timeToMilliSeconds(criteria.getSubValues().get(0));
+
+        final String values = String.format(GREMLIN_PRIMITIVE_VALUES, subject);
+        final String query = String.format(CriteriaType.criteriaTypeToGremlin(type), milliSeconds);
+        final String content = String.join(GREMLIN_PRIMITIVE_INVOKE, values, query);
+
+        return String.format(GREMLIN_PRIMITIVE_WHERE, content);
     }
 
     private String generateExists(@NonNull Criteria criteria) {
@@ -53,8 +65,8 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
         return String.format(GREMLIN_PRIMITIVE_WHERE, has);
     }
 
-    private String generateBinaryOperation(@NonNull String left, @NonNull String right, CriteriaType type) {
-        Assert.isTrue(type == AND || type == OR, "binary should be AND or OR.");
+    private String generateBinaryScript(@NonNull String left, @NonNull String right, CriteriaType type) {
+        Assert.isTrue(Criteria.isBinaryOperation(type), "should be binary type of CriteriaType");
 
         final String operation = CriteriaType.criteriaTypeToGremlin(type);
         final String content = String.join(GREMLIN_PRIMITIVE_INVOKE, left, operation, right);
@@ -75,7 +87,10 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
                 final String left = this.generateScriptTraversal(criteria.getSubCriteria().get(0));
                 final String right = this.generateScriptTraversal(criteria.getSubCriteria().get(1));
 
-                return this.generateBinaryOperation(left, right, type);
+                return this.generateBinaryScript(left, right, type);
+            case AFTER:
+            case BEFORE:
+                return this.generateUnaryScript(criteria, type);
             default:
                 throw new UnsupportedOperationException("unsupported Criteria type");
         }

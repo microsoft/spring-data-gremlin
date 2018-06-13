@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.repository;
 
+import com.google.common.collect.Lists;
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
@@ -266,6 +267,28 @@ public class RelationshipRepositoryIT {
 
         Assert.assertEquals(foundDomains.size(), 1);
         Assert.assertEquals(foundDomains.get(0), this.relationship0);
+    }
+
+    @Test
+    public void testFindAll() {
+        this.personRepo.save(this.person0);
+        this.personRepo.save(this.person);
+        this.projectRepo.save(this.project);
+
+        final List<Relationship> relationships = Arrays.asList(this.relationship, this.relationship0);
+
+        this.relationshipRepo.saveAll(relationships);
+
+        final List<Relationship> foundRelationships = Lists.newArrayList(this.relationshipRepo.findAll());
+
+        foundRelationships.sort(Comparator.comparing(Relationship::getId));
+        relationships.sort(Comparator.comparing(Relationship::getId));
+
+        Assert.assertEquals(foundRelationships, relationships);
+
+        this.relationshipRepo.deleteAll();
+
+        Assert.assertFalse(this.relationshipRepo.findAll().iterator().hasNext());
     }
 }
 

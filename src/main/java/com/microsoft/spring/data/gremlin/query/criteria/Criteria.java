@@ -25,7 +25,7 @@ public class Criteria {
         this.subCriteria = new ArrayList<>();
     }
 
-    private static boolean isBinaryOperation(CriteriaType type) {
+    public static boolean isBinaryOperation(CriteriaType type) {
         switch (type) {
             case AND:
             case OR:
@@ -35,9 +35,11 @@ public class Criteria {
         }
     }
 
-    private static boolean isUnaryOperation(CriteriaType type) {
+    public static boolean isUnaryOperation(CriteriaType type) {
         switch (type) {
             case EXISTS:
+            case AFTER:
+            case BEFORE:
             case IS_EQUAL:
                 return true;
             default:

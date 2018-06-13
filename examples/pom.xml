@@ -42,6 +42,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-rest</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.microsoft.spring.data.gremlin</groupId>
             <artifactId>spring-data-gremlin</artifactId>
             <version>0.0.1-SNAPSHOT</version>
