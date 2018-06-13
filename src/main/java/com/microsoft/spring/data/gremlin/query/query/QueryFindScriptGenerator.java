@@ -21,8 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.microsoft.spring.data.gremlin.common.Constants.*;
-import static com.microsoft.spring.data.gremlin.query.criteria.CriteriaType.AND;
-import static com.microsoft.spring.data.gremlin.query.criteria.CriteriaType.OR;
 
 @NoArgsConstructor
 public class QueryFindScriptGenerator implements QueryScriptGenerator {
@@ -42,19 +40,21 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
         return String.format(GREMLIN_PRIMITIVE_WHERE, content);
     }
 
-    private String generateAfter(@NonNull Criteria criteria) {
+    private String generateUnaryScript(@NonNull Criteria criteria, CriteriaType type) {
+        Assert.isTrue(Criteria.isUnaryOperation(type), "should be unary type of CriteriaType");
+
         final String subject = criteria.getSubject();
         final long milliSeconds = GremlinUtils.timeToMilliSeconds(criteria.getSubValues().get(0));
 
         final String values = String.format(GREMLIN_PRIMITIVE_VALUES, subject);
-        final String isGreatThan = String.format(GREMLIN_PRIMITIVE_IS_GT, milliSeconds);
-        final String content = String.join(GREMLIN_PRIMITIVE_INVOKE, values, isGreatThan);
+        final String query = String.format(CriteriaType.criteriaTypeToGremlin(type), milliSeconds);
+        final String content = String.join(GREMLIN_PRIMITIVE_INVOKE, values, query);
 
         return String.format(GREMLIN_PRIMITIVE_WHERE, content);
     }
 
-    private String generateComplexScript(@NonNull String left, @NonNull String right, CriteriaType type) {
-        Assert.isTrue(type == AND || type == OR, "type should be AND or OR.");
+    private String generateBinaryScript(@NonNull String left, @NonNull String right, CriteriaType type) {
+        Assert.isTrue(Criteria.isBinaryOperation(type), "should be binary type of CriteriaType");
 
         final String operation = CriteriaType.criteriaTypeToGremlin(type);
         final String content = String.join(GREMLIN_PRIMITIVE_INVOKE, left, operation, right);
@@ -73,9 +73,10 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
                 final String left = this.generateScriptTraversal(criteria.getSubCriteria().get(0));
                 final String right = this.generateScriptTraversal(criteria.getSubCriteria().get(1));
 
-                return this.generateComplexScript(left, right, type);
+                return this.generateBinaryScript(left, right, type);
             case AFTER:
-                return this.generateAfter(criteria);
+            case BEFORE:
+                return this.generateUnaryScript(criteria, type);
             default:
                 throw new UnsupportedOperationException("unsupported Criteria type");
         }
