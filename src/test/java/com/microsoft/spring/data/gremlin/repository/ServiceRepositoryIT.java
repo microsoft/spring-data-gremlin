@@ -30,21 +30,27 @@ public class ServiceRepositoryIT {
 
     private static Service serviceA;
     private static Service serviceB;
+    private static Service serviceC;
 
     private static Date createDateA;
     private static Date createDateB;
+    private static Date createDateC;
 
     private static final Map<String, Object> PROPERTIES_A = new HashMap<>();
     private static final Map<String, Object> PROPERTIES_B = new HashMap<>();
+    private static final Map<String, Object> PROPERTIES_C = new HashMap<>();
 
     private static final String ID_A = "1234";
     private static final String ID_B = "8731";
-
-    private static final String NAME_A = "SERVICE_A-name";
-    private static final String NAME_B = "SERVICE_B-name";
+    private static final String ID_C = "5781";
 
     private static final int COUNT_A = 2;
     private static final int COUNT_B = 8;
+    private static final int COUNT_C = 2;
+
+    private static final String NAME_A = "name-A";
+    private static final String NAME_B = "name-B";
+    private static final String NAME_C = "name-A";
 
     @Autowired
     private ServiceRepository repository;
@@ -63,11 +69,17 @@ public class ServiceRepositoryIT {
         PROPERTIES_A.put("serviceB-port", 8761);
         PROPERTIES_A.put("priority", "highest");
 
+        PROPERTIES_C.put("serviceC-port", 8090);
+        PROPERTIES_C.put("serviceB-port", 8761);
+        PROPERTIES_C.put("priority", "medium");
+
         createDateA = new SimpleDateFormat("yyyyMMdd").parse("20180601");
         createDateB = new SimpleDateFormat("yyyyMMdd").parse("20180603");
+        createDateC = new SimpleDateFormat("yyyyMMdd").parse("20180503");
 
         serviceA = new Service(ID_A, COUNT_A, true, NAME_A, FRONT_END, createDateA, PROPERTIES_A);
         serviceB = new Service(ID_B, COUNT_B, false, NAME_B, BACK_END, createDateB, PROPERTIES_B);
+        serviceC = new Service(ID_C, COUNT_C, false, NAME_C, BACK_END, createDateC, PROPERTIES_C);
     }
 
     @Before
@@ -156,14 +168,14 @@ public class ServiceRepositoryIT {
         this.repository.save(serviceA);
         this.repository.save(serviceB);
 
-        final List<Service> services = this.repository.findByIsActive(serviceB.isActive());
+        final List<Service> services = this.repository.findByActive(serviceB.isActive());
 
         Assert.assertEquals(services.size(), 1);
         Assert.assertEquals(services.get(0), serviceB);
 
         this.repository.deleteAll();
 
-        Assert.assertTrue(this.repository.findByIsActive(serviceB.isActive()).isEmpty());
+        Assert.assertTrue(this.repository.findByActive(serviceB.isActive()).isEmpty());
     }
 
     @Test
@@ -259,7 +271,7 @@ public class ServiceRepositoryIT {
         final List<Service> services = Arrays.asList(serviceA, serviceB);
         this.repository.saveAll(services);
 
-        List<Service> foundServices = repository.findByNameAndIsActiveOrProperties(NAME_A, true, PROPERTIES_B);
+        List<Service> foundServices = repository.findByNameAndActiveOrProperties(NAME_A, true, PROPERTIES_B);
 
         services.sort(Comparator.comparing(Service::getId));
         foundServices.sort(Comparator.comparing(Service::getId));
@@ -267,7 +279,7 @@ public class ServiceRepositoryIT {
         Assert.assertEquals(foundServices.size(), 2);
         Assert.assertEquals(foundServices, services);
 
-        foundServices = repository.findByNameAndIsActiveOrProperties(NAME_B, false, new HashMap<>());
+        foundServices = repository.findByNameAndActiveOrProperties(NAME_B, false, new HashMap<>());
         Assert.assertEquals(foundServices.size(), 1);
         Assert.assertEquals(foundServices.get(0), serviceB);
     }
@@ -306,6 +318,21 @@ public class ServiceRepositoryIT {
         foundServices = repository.findByNameAndInstanceCountOrType(NAME_A, COUNT_B, BACK_END);
         Assert.assertEquals(foundServices.size(), 1);
         Assert.assertEquals(foundServices.get(0), serviceB);
+    }
+
+    @Test
+    public void testExistsByName() {
+        final List<Service> services = Arrays.asList(serviceA, serviceB, serviceC);
+        this.repository.saveAll(services);
+
+        final List<Service> foundServices = repository.findByActiveExists();
+
+        Assert.assertEquals(foundServices.size(), 1);
+        Assert.assertEquals(foundServices.get(0), serviceA);
+
+        this.repository.deleteAll();
+
+        Assert.assertTrue(repository.findByActiveExists().isEmpty());
     }
 
     @Test

@@ -13,4 +13,6 @@ import java.util.List;
 public interface UserDomainRepository extends GremlinRepository<UserDomain, String> {
 
     List<UserDomain> findByName(String name);
+
+    List<UserDomain> findByEnabledExists();
 }

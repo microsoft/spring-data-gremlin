@@ -37,6 +37,7 @@ public class Criteria {
 
     public static boolean isUnaryOperation(CriteriaType type) {
         switch (type) {
+            case EXISTS:
             case AFTER:
             case BEFORE:
             case IS_EQUAL:

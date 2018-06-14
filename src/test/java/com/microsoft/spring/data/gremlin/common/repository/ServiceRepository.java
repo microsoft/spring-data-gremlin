@@ -21,7 +21,7 @@ public interface ServiceRepository extends GremlinRepository<Service, String> {
 
     List<Service> findByInstanceCount(int instanceCount);
 
-    List<Service> findByIsActive(boolean isActive);
+    List<Service> findByActive(boolean isActive);
 
     List<Service> findByCreateAt(Date createAt);
 
@@ -33,11 +33,13 @@ public interface ServiceRepository extends GremlinRepository<Service, String> {
 
     List<Service> findByNameAndInstanceCountAndType(String name, int instanceCount, ServiceType type);
 
-    List<Service> findByNameAndIsActiveOrProperties(String name, boolean isActive, Map<String, Object> properties);
+    List<Service> findByNameAndActiveOrProperties(String name, boolean isActive, Map<String, Object> properties);
 
     List<Service> findByNameOrInstanceCountAndType(String name, int instanceCount, ServiceType type);
 
     List<Service> findByNameAndInstanceCountOrType(String name, int instanceCount, ServiceType type);
+
+    List<Service> findByActiveExists();
 
     List<Service> findByCreateAtAfter(Date expiryDate);
 

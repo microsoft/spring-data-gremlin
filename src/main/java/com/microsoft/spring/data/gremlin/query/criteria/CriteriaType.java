@@ -11,6 +11,7 @@ public enum CriteriaType {
     IS_EQUAL,
     OR,
     AND,
+    EXISTS,
     AFTER,
     BEFORE;
 
