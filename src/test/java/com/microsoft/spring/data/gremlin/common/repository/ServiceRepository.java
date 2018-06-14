@@ -49,4 +49,6 @@ public interface ServiceRepository extends GremlinRepository<Service, String> {
     List<Service> findByCreateAtBefore(Date expiryDate);
 
     List<Service> findByCreateAtAfterAndCreateAtBefore(Date startDate, Date endDate);
+
+    List<Service> findByCreateAtBetween(Date start, Date end);
 }
