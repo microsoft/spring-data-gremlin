@@ -14,14 +14,12 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static com.microsoft.spring.data.gremlin.common.Constants.*;
-import static com.microsoft.spring.data.gremlin.query.criteria.CriteriaType.*;
 
 @NoArgsConstructor
 public class QueryFindScriptGenerator implements QueryScriptGenerator {
@@ -53,9 +51,6 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
      * @return simple script with keyword from criteria type
      */
     private String generateEmptyScript(@NonNull Criteria criteria) {
-        Assert.isTrue(criteria.getType() == EXISTS, "should be EXISTS CriteriaType");
-        Assert.isTrue(criteria.getSubValues().size() == 0, "should contain no sub-values");
-
         final String subject = this.getCriteriaSubject(criteria);
         final String has = AbstractGremlinScriptLiteral.generateHas(subject, true);
 
@@ -70,10 +65,6 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
      */
     private String generateSingleScript(@NonNull Criteria criteria) {
         final CriteriaType type = criteria.getType();
-
-        Assert.isTrue(type == AFTER || type == BEFORE, "should be AFTER/BEFORE CriteriaType");
-        Assert.isTrue(criteria.getSubValues().size() == 1, "should contain 1 sub-values");
-
         final String subject = this.getCriteriaSubject(criteria);
         final long milliSeconds = GremlinUtils.timeToMilliSeconds(criteria.getSubValues().get(0));
 
@@ -92,10 +83,6 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
      */
     private String generateDoubleScript(Criteria criteria) {
         final CriteriaType type = criteria.getType();
-
-        Assert.isTrue(type == BETWEEN, "should be BETWEEN type");
-        Assert.isTrue(criteria.getSubValues().size() == 2, "should contain 2 sub-values");
-
         final String subject = this.getCriteriaSubject(criteria);
         final long start = GremlinUtils.toPrimitiveLong(criteria.getSubValues().get(0));
         final long end = GremlinUtils.toPrimitiveLong(criteria.getSubValues().get(1));
@@ -116,8 +103,6 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
      * @return combined script with AND/OR
      */
     private String generateCombinedScript(@NonNull String left, @NonNull String right, CriteriaType type) {
-        Assert.isTrue(type == AND || type == OR, "should be AND/OR CriteriaType");
-
         final String operation = CriteriaType.criteriaTypeToGremlin(type);
         final String content = String.join(GREMLIN_PRIMITIVE_INVOKE, left, operation, right);
 
@@ -133,8 +118,6 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
                 return this.generateIsEqual(criteria);
             case AND:
             case OR:
-                Assert.isTrue(criteria.getSubCriteria().size() == 2, "should contain 2 sub-criteria");
-
                 final String left = this.generateScriptTraversal(criteria.getSubCriteria().get(0));
                 final String right = this.generateScriptTraversal(criteria.getSubCriteria().get(1));
 
