@@ -10,7 +10,29 @@
 
     <name>Spring Data Gremlin</name>
     <description>Gremlin support for Spring Data</description>
-    <url></url>
+    <url>https://github.com/Microsoft/spring-data-gremlin</url>
+
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://github.com/Microsoft/spring-data-gremlin/blob/master/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com:Microsoft/spring-data-gremlin.git</connection>
+        <developerConnection>scm:git:ssh://github.com:Microsoft/spring-data-gremlin.git</developerConnection>
+        <url>https://github.com/Microsoft/spring-data-gremlin/tree/master</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>incarnation-p-lee</id>
+            <name>Pan Li</name>
+            <email>panli@microsoft.com</email>
+        </developer>
+    </developers>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
