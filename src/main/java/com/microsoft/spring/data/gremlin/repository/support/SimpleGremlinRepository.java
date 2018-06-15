@@ -8,7 +8,6 @@ package com.microsoft.spring.data.gremlin.repository.support;
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.query.GremlinOperations;
 import com.microsoft.spring.data.gremlin.repository.GremlinRepository;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.NonNull;
 
@@ -52,7 +51,13 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
 
     @Override
     public Iterable<T> findAll() {
-        throw new NotImplementedException("findAll of Repository is not implemented yet");
+        if (this.information.isEntityVertex()) {
+            return this.operations.findAll(this.information.getJavaType());
+        } else if (this.information.isEntityEdge()) {
+            return this.operations.findAll(this.information.getJavaType());
+        }
+
+        throw new UnsupportedOperationException("findAll of Graph is not supported");
     }
 
     @Override
@@ -88,6 +93,7 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
 
     /**
      * The total number of vertex and edge, vertexCount and edgeCount is also available.
+     *
      * @return
      */
     @Override

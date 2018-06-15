@@ -5,13 +5,14 @@
  */
 package com.microsoft.spring.data.gremlin.repository.config;
 
-import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinRepositoryFactoryBean;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.repository.config.DefaultRepositoryBaseClass;
 
 import java.lang.annotation.*;
+
+import static com.microsoft.spring.data.gremlin.common.Constants.DEFAULT_REPOSITORY_IMPLEMENT_POSTFIX;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -48,7 +49,7 @@ public @interface EnableGremlinRepositories {
     /**
      * Specifics the postfix to be used for custom repository implementation class name.
      */
-    String repositoryImplementationPostfix() default Constants.DEFAULT_REPOSITORY_IMPLEMENT_POSTFIX;
+    String repositoryImplementationPostfix() default DEFAULT_REPOSITORY_IMPLEMENT_POSTFIX;
 
     /**
      * Configures the repository base class to be used to create repository.

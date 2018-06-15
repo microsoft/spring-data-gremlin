@@ -15,4 +15,8 @@ import java.util.List;
 public interface RelationshipRepository extends GremlinRepository<Relationship, String> {
 
     List<Relationship> findByLocation(String location);
+
+    List<Relationship> findByNameAndLocation(String name, String location);
+
+    List<Relationship> findByNameOrId(String name, String id);
 }

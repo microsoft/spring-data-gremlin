@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
+import java.util.Date;
 import java.util.Map;
 
 @AllArgsConstructor
@@ -24,9 +25,13 @@ public class Service {
 
     private int instanceCount;
 
-    private boolean isActive;
+    private boolean active;
 
     private String name;
+
+    private ServiceType type;
+
+    private Date createAt;
 
     private Map<String, Object> properties;
 }

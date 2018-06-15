@@ -77,7 +77,5 @@ public class Application {
         this.network.getVertexes().add(this.person1);
 
         this.networkRepo.save(this.network);
-
-        this.factory.getGremlinCluster().close();
     }
 }
