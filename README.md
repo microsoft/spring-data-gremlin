@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/Microsoft/spring-data-gremlin.svg?branch=master)](https://travis-ci.org/Microsoft/spring-data-gremlin)
 [![codecov](https://codecov.io/gh/Microsoft/spring-data-gremlin/branch/master/graph/badge.svg)](https://codecov.io/gh/Microsoft/spring-data-gremlin) 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6186678890024d8cb61acd3118b980d1)](https://www.codacy.com/app/Incarnation-p-lee/spring-data-gremlin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Microsoft/spring-data-gremlin&amp;utm_campaign=Badge_Grade)
-
+[![Maven Central](https://img.shields.io/maven-central/v/com.microsoft.spring.data.gremlin/spring-data-gremlin.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.microsoft.spring.data.gremlin%22%20AND%20a%3A%22spring-data-gremlin%22)
 
 
 # Spring Data Gremlin 
