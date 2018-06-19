@@ -105,6 +105,14 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         this.executeQuery(queryList);
     }
 
+    public <T> void deleteAll(@NonNull Class<T> domainClass) {
+        @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        final GremlinSource source = info.getGremlinSource();
+        final List<String> queryList = source.getGremlinScriptLiteral().generateDeleteAllByClassScript(source);
+
+        this.executeQuery(queryList);
+    }
+
     @Override
     public <T> T insert(@NonNull T object) {
         final Class domainClass = object.getClass();

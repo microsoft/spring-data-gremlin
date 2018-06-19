@@ -127,6 +127,11 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
     }
 
     @Override
+    public void deleteAll(@NonNull Class<T> domainClass) {
+        this.operations.deleteAll(domainClass);
+    }
+
+    @Override
     public boolean existsById(@NonNull ID id) {
         return this.findById(id).isPresent();
     }
