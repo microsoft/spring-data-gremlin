@@ -232,6 +232,9 @@ public class RelationshipRepositoryIT {
 
     @Test
     public void testDeleteAllByClass() {
+        this.personRepo.save(this.person0);
+        this.personRepo.save(this.person);
+        this.projectRepo.save(this.project);
         this.relationshipRepo.deleteAll(Relationship.class);
 
         Assert.assertFalse(this.relationshipRepo.findById(this.relationship.getId()).isPresent());
