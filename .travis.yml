@@ -10,7 +10,7 @@ before_script:
 script:
   - set -o pipefail
   - mvn clean -P full-test install | grep "INFO"
-  - mvn clean -P full-test cobertura:cobertura-integration-test | grep "INFO"
+  - mvn clean -P full-test cobertura:cobertura-integration-test | grep -v "DEBUG"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
