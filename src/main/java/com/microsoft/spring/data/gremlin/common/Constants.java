@@ -61,9 +61,14 @@ public class Constants {
     public static final String GREMLIN_PRIMITIVE_IS = "is(%s)";
     public static final String GREMLIN_PRIMITIVE_GT = "gt(%d)";
     public static final String GREMLIN_PRIMITIVE_LT = "lt(%d)";
+    public static final String GREMLIN_PRIMITIVE_BETWEEN = "between(%d, %d)";
 
     public static final String GREMLIN_PRIMITIVE_IS_GT = String.format(GREMLIN_PRIMITIVE_IS, GREMLIN_PRIMITIVE_GT);
     public static final String GREMLIN_PRIMITIVE_IS_LT = String.format(GREMLIN_PRIMITIVE_IS, GREMLIN_PRIMITIVE_LT);
+    public static final String GREMLIN_PRIMITIVE_IS_BETWEEN = String.format(
+            GREMLIN_PRIMITIVE_IS,
+            GREMLIN_PRIMITIVE_BETWEEN
+    );
 
     public static final String GREMLIN_SCRIPT_EDGE_ALL = String.join(GREMLIN_PRIMITIVE_INVOKE,
             GREMLIN_PRIMITIVE_GRAPH,

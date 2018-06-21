@@ -14,7 +14,6 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,10 +44,28 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
         return String.format(GREMLIN_PRIMITIVE_WHERE, content);
     }
 
-    private String generateUnaryScript(@NonNull Criteria criteria, CriteriaType type) {
-        Assert.isTrue(Criteria.isUnaryOperation(type), "should be unary type of CriteriaType");
+    /**
+     * Generate script with only one subject and no subValue, like findByActiveExists().
+     *
+     * @param criteria given query represent a query subject
+     * @return simple script with keyword from criteria type
+     */
+    private String generateEmptyScript(@NonNull Criteria criteria) {
+        final String subject = this.getCriteriaSubject(criteria);
+        final String has = AbstractGremlinScriptLiteral.generateHas(subject, true);
 
-        final String subject = criteria.getSubject();
+        return String.format(GREMLIN_PRIMITIVE_WHERE, has);
+    }
+
+    /**
+     * Generate script with only one subject and only one subValue, like findByCreateAtBefore(Date start).
+     *
+     * @param criteria given query represent a query subject
+     * @return simple script with keyword from criteria type
+     */
+    private String generateSingleScript(@NonNull Criteria criteria) {
+        final CriteriaType type = criteria.getType();
+        final String subject = this.getCriteriaSubject(criteria);
         final long milliSeconds = GremlinUtils.timeToMilliSeconds(criteria.getSubValues().get(0));
 
         final String values = String.format(GREMLIN_PRIMITIVE_VALUES, subject);
@@ -58,21 +75,40 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
         return String.format(GREMLIN_PRIMITIVE_WHERE, content);
     }
 
-    private String generateExists(@NonNull Criteria criteria) {
+    /**
+     * Generate script with only one subject and two subValue, like findByCreateAtBetween(Date start, Date end).
+     *
+     * @param criteria given query represent a query subject
+     * @return simple script with keyword from criteria type
+     */
+    private String generateDoubleScript(Criteria criteria) {
+        final CriteriaType type = criteria.getType();
         final String subject = this.getCriteriaSubject(criteria);
-        final String has = AbstractGremlinScriptLiteral.generateHas(subject, true);
+        final long start = GremlinUtils.toPrimitiveLong(criteria.getSubValues().get(0));
+        final long end = GremlinUtils.toPrimitiveLong(criteria.getSubValues().get(1));
 
-        return String.format(GREMLIN_PRIMITIVE_WHERE, has);
+        final String values = String.format(GREMLIN_PRIMITIVE_VALUES, subject);
+        final String query = String.format(CriteriaType.criteriaTypeToGremlin(type), start, end);
+        final String content = String.join(GREMLIN_PRIMITIVE_INVOKE, values, query);
+
+        return String.format(GREMLIN_PRIMITIVE_WHERE, content);
     }
 
-    private String generateBinaryScript(@NonNull String left, @NonNull String right, CriteriaType type) {
-        Assert.isTrue(Criteria.isBinaryOperation(type), "should be binary type of CriteriaType");
-
+    /**
+     * Generate script combined by AND/OR keyword.
+     *
+     * @param left  sub script on left
+     * @param right sub script on right
+     * @param type  should be AND/OR
+     * @return combined script with AND/OR
+     */
+    private String generateCombinedScript(@NonNull String left, @NonNull String right, CriteriaType type) {
         final String operation = CriteriaType.criteriaTypeToGremlin(type);
         final String content = String.join(GREMLIN_PRIMITIVE_INVOKE, left, operation, right);
 
         return String.format(GREMLIN_PRIMITIVE_WHERE, content);
     }
+
 
     private String generateScriptTraversal(@NonNull Criteria criteria) {
         final CriteriaType type = criteria.getType();
@@ -80,17 +116,19 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
         switch (type) {
             case IS_EQUAL:
                 return this.generateIsEqual(criteria);
-            case EXISTS:
-                return this.generateExists(criteria);
             case AND:
             case OR:
                 final String left = this.generateScriptTraversal(criteria.getSubCriteria().get(0));
                 final String right = this.generateScriptTraversal(criteria.getSubCriteria().get(1));
 
-                return this.generateBinaryScript(left, right, type);
+                return this.generateCombinedScript(left, right, type);
             case AFTER:
             case BEFORE:
-                return this.generateUnaryScript(criteria, type);
+                return this.generateSingleScript(criteria);
+            case BETWEEN:
+                return this.generateDoubleScript(criteria);
+            case EXISTS:
+                return this.generateEmptyScript(criteria);
             default:
                 throw new UnsupportedOperationException("unsupported Criteria type");
         }

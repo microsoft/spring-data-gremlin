@@ -5,13 +5,13 @@
  */
 package com.microsoft.spring.data.gremlin.query.criteria;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.microsoft.spring.data.gremlin.query.criteria.CriteriaType.*;
+import static com.microsoft.spring.data.gremlin.query.criteria.CriteriaType.IS_EQUAL;
+import static com.microsoft.spring.data.gremlin.query.criteria.CriteriaType.OR;
 
 public class CriteriaUnitTest {
 
@@ -34,14 +34,5 @@ public class CriteriaUnitTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testCriteriaTypeToGremlinException() {
         CriteriaType.criteriaTypeToGremlin(IS_EQUAL);
-    }
-
-    @Test
-    public void testCriteriaOperationType() {
-        Assert.assertTrue(Criteria.isBinaryOperation(AND));
-        Assert.assertFalse(Criteria.isBinaryOperation(AFTER));
-
-        Assert.assertTrue(Criteria.isUnaryOperation(AFTER));
-        Assert.assertFalse(Criteria.isUnaryOperation(OR));
     }
 }

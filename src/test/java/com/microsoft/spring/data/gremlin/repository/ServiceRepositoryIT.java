@@ -430,5 +430,31 @@ public class ServiceRepositoryIT {
         foundServices = repository.findByCreateAtAfterAndCreateAtBefore(startDate, endDate);
         Assert.assertTrue(foundServices.isEmpty());
     }
+
+    @Test
+    @SneakyThrows
+    public void testFindByCreateAtBetween() {
+        final List<Service> services = Arrays.asList(serviceA, serviceB);
+        this.repository.saveAll(services);
+
+        Date startDate = new SimpleDateFormat("yyyyMMdd").parse("20180602");
+        Date endDate = new SimpleDateFormat("yyyyMMdd").parse("20180606");
+        List<Service> foundServices = repository.findByCreateAtBetween(startDate, endDate);
+        Assert.assertEquals(foundServices.size(), 1);
+        Assert.assertEquals(foundServices.get(0), serviceB);
+
+        startDate = new SimpleDateFormat("yyyyMMdd").parse("20180601");
+        endDate = new SimpleDateFormat("yyyyMMdd").parse("20180604");
+        foundServices = repository.findByCreateAtBetween(startDate, endDate);
+        services.sort(Comparator.comparing(Service::getId));
+        foundServices.sort(Comparator.comparing(Service::getId));
+        Assert.assertEquals(foundServices.size(), 2);
+        Assert.assertEquals(foundServices, services);
+
+        startDate = new SimpleDateFormat("yyyyMMdd").parse("20180606");
+        endDate = new SimpleDateFormat("yyyyMMdd").parse("20180607");
+        foundServices = repository.findByCreateAtBetween(startDate, endDate);
+        Assert.assertTrue(foundServices.isEmpty());
+    }
 }
 
