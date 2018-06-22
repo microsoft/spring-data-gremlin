@@ -70,9 +70,9 @@ If you are using Maven, add the following dependency.
 
 ```xml
 <dependency>
-    <groupId>com.microsoft.azure</groupId>
+    <groupId>com.microsoft.spring.data.gremlin</groupId>
     <artifactId>spring-data-gremlin</artifactId>
-    <version>2.x.x</version>
+    <version>2.0.0</version>
 </dependency>
 ```
 
