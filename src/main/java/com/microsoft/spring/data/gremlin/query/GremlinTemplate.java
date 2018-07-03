@@ -14,7 +14,10 @@ import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralEdge;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralVertex;
-import com.microsoft.spring.data.gremlin.conversion.source.*;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
@@ -43,12 +46,14 @@ import java.util.concurrent.CompletionException;
 
 public class GremlinTemplate implements GremlinOperations, ApplicationContextAware {
 
-    private final Client gremlinClient;
+    private final GremlinFactory factory;
     private final MappingGremlinConverter mappingConverter;
+
+    private Client gremlinClient;
     private ApplicationContext context;
 
     public GremlinTemplate(@NonNull GremlinFactory factory, @NonNull MappingGremlinConverter converter) {
-        this.gremlinClient = factory.getGremlinClient();
+        this.factory = factory;
         this.mappingConverter = converter;
     }
 
@@ -61,6 +66,14 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         return this.context;
     }
 
+    public Client getGremlinClient() {
+        if (this.gremlinClient == null) {
+            this.gremlinClient = this.factory.getGremlinClient();
+        }
+
+        return this.gremlinClient;
+    }
+
     @Override
     public void setApplicationContext(@NonNull ApplicationContext context) throws BeansException {
         this.context = context;
@@ -71,7 +84,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final List<Result> results = new ArrayList<>();
 
         try {
-            queryList.forEach(query -> results.addAll(this.gremlinClient.submit(query).all().join()));
+            queryList.forEach(query -> results.addAll(this.getGremlinClient().submit(query).all().join()));
             return results;
         } catch (CompletionException e) {
             throw new GremlinQueryException(String.format("unable to complete execute %s from gremlin", queryList), e);

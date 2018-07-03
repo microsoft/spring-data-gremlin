@@ -47,7 +47,7 @@ public class AbstractGremlinConfigurationIT {
     @Test
     @SneakyThrows
     public void testGremlinTemplate() {
-        Assert.assertNotNull(this.testConfig.gremlinTemplate());
+        Assert.assertNotNull(this.testConfig.gremlinTemplate(testConfig.gremlinFactory()));
     }
 
     private class TestConfig extends AbstractGremlinConfiguration {
