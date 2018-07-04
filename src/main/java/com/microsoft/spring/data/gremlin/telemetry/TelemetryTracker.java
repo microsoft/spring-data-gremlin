@@ -18,7 +18,7 @@ public class TelemetryTracker {
 
     private static final String PROJECT_VERSION = TelemetryTracker.class.getPackage().getImplementationVersion();
 
-    private static final String PROJECT_INFO = "spring-cloud-azure" + "/" + PROJECT_VERSION;
+    private static final String PROJECT_INFO = "spring-data-gremlin" + "/" + PROJECT_VERSION;
 
     private TelemetryClient client;
 
