@@ -14,6 +14,4 @@ public class TelemetryProperties {
     public static final String PROPERTY_VERSION = "version";
 
     public static final String PROPERTY_INSTALLATION_ID = "installationId";
-
-    public static final String PROPERTY_SERVICE_NAME = "serviceName";
 }

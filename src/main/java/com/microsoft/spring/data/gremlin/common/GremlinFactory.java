@@ -6,7 +6,6 @@
 package com.microsoft.spring.data.gremlin.common;
 
 import com.microsoft.spring.data.gremlin.exception.GremlinIllegalConfigurationException;
-import com.microsoft.spring.data.gremlin.telemetry.TelemetryProperties;
 import com.microsoft.spring.data.gremlin.telemetry.TelemetryTracker;
 import com.microsoft.spring.data.gremlin.telemetry.TelemetryUtils;
 import lombok.Getter;
@@ -16,9 +15,6 @@ import org.apache.tinkerpop.gremlin.driver.ser.Serializers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class GremlinFactory {
@@ -47,14 +43,6 @@ public class GremlinFactory {
         this.password = password;
     }
 
-    private void trackTelemetryCustomEvent() {
-        final Map<String, String> customProperties = new HashMap<>();
-
-        customProperties.put(TelemetryProperties.PROPERTY_SERVICE_NAME, "gremlin");
-
-        TelemetryUtils.telemetryTriggerEvent(telemetryTracker, getClass().getSimpleName(), customProperties);
-    }
-
     private Cluster createGremlinCluster() throws GremlinIllegalConfigurationException {
         final int port;
         final Cluster cluster;
@@ -71,7 +59,7 @@ public class GremlinFactory {
             throw new GremlinIllegalConfigurationException("Invalid configuration of Gremlin", e);
         }
 
-        this.trackTelemetryCustomEvent();
+        TelemetryUtils.telemetryTriggerEvent(telemetryTracker, getClass().getSimpleName());
 
         return cluster;
     }
