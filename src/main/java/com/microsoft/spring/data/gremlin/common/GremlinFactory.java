@@ -6,13 +6,16 @@
 package com.microsoft.spring.data.gremlin.common;
 
 import com.microsoft.spring.data.gremlin.exception.GremlinIllegalConfigurationException;
+import com.microsoft.spring.data.gremlin.telemetry.TelemetryProperties;
+import com.microsoft.spring.data.gremlin.telemetry.TelemetryTracker;
+import com.microsoft.spring.data.gremlin.telemetry.TelemetryUtils;
 import lombok.Getter;
 import org.apache.tinkerpop.gremlin.driver.Client;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.ser.Serializers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.util.ClassUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,11 +25,13 @@ public class GremlinFactory {
 
     @Getter
     private Cluster gremlinCluster;
-    private final TelemetryProxy telemetryProxy;
     private String endpoint;
     private String port;
     private String username;
     private String password;
+
+    @Autowired(required = false)
+    private TelemetryTracker telemetryTracker;
 
     public GremlinFactory(@NonNull String endpoint, @Nullable String port,
                           @NonNull String username, @NonNull String password) {
@@ -40,8 +45,6 @@ public class GremlinFactory {
         this.endpoint = endpoint;
         this.username = username;
         this.password = password;
-
-        this.telemetryProxy = new TelemetryProxy(PropertyLoader.isApplicationTelemetryAllowed());
     }
 
     private void trackTelemetryCustomEvent() {
@@ -49,7 +52,7 @@ public class GremlinFactory {
 
         customProperties.put(TelemetryProperties.PROPERTY_SERVICE_NAME, "gremlin");
 
-        this.telemetryProxy.trackEvent(ClassUtils.getUserClass(this.getClass()).getSimpleName(), customProperties);
+        TelemetryUtils.telemetryTriggerEvent(telemetryTracker, getClass().getSimpleName(), customProperties);
     }
 
     private Cluster createGremlinCluster() throws GremlinIllegalConfigurationException {
@@ -58,8 +61,12 @@ public class GremlinFactory {
 
         try {
             port = Integer.parseInt(this.port);
-            cluster = Cluster.build(this.endpoint).serializer(Serializers.DEFAULT_RESULT_SERIALIZER)
-                    .credentials(this.username, this.password).enableSsl(true).port(port).create();
+            cluster = Cluster.build(this.endpoint)
+                    .serializer(Serializers.DEFAULT_RESULT_SERIALIZER)
+                    .credentials(this.username, this.password)
+                    .enableSsl(true)
+                    .port(port)
+                    .create();
         } catch (IllegalArgumentException e) {
             throw new GremlinIllegalConfigurationException("Invalid configuration of Gremlin", e);
         }
@@ -78,4 +85,3 @@ public class GremlinFactory {
         return this.gremlinCluster.connect();
     }
 }
-

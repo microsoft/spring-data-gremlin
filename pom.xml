@@ -147,16 +147,20 @@
             <artifactId>applicationinsights-core</artifactId>
             <version>${azure.applicationinsights.version}</version>
         </dependency>
+
+        <!-- Spring Boot Auto Configure -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <filtering>true</filtering>
                 <includes>
                     <include>ApplicationInsights.xml</include>
-                    <include>META-INF/project.properties</include>
                 </includes>
             </resource>
         </resources>
@@ -287,6 +291,21 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- Write Pom Version to jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
     </build>
