@@ -11,6 +11,7 @@ import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
@@ -33,7 +34,7 @@ public class GremlinSourceVertexReader extends AbstractGremlinSourceReader imple
         final ConvertingPropertyAccessor accessor = converter.getPropertyAccessor(domain);
         final GremlinPersistentEntity persistentEntity = converter.getPersistentEntity(type);
 
-        for (final Field field : type.getDeclaredFields()) {
+        for (final Field field : FieldUtils.getAllFields(type)) {
             final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
             Assert.notNull(property, "persistence property should not be null");
 
