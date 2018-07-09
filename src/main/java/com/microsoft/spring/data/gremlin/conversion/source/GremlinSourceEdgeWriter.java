@@ -13,6 +13,7 @@ import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeEx
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mapping.PersistentProperty;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
@@ -47,7 +48,7 @@ public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
         final GremlinPersistentEntity<?> persistentEntity = converter.getPersistentEntity(domain.getClass());
         final ConvertingPropertyAccessor accessor = converter.getPropertyAccessor(domain);
 
-        for (final Field field : domain.getClass().getDeclaredFields()) {
+        for (final Field field : FieldUtils.getAllFields(domain.getClass())) {
             final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
             Assert.notNull(property, "persistence property should not be null");
 

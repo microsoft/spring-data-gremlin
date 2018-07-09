@@ -12,6 +12,7 @@ import com.microsoft.spring.data.gremlin.common.domain.Relationship;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +49,7 @@ public class MappingGremlinConverterUnitTest {
         Assert.assertNotNull(this.converter.getConversionService());
 
         final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
-        final Field[] fields = Person.class.getDeclaredFields();
+        final Field[] fields = FieldUtils.getAllFields(Person.class);
 
         Assert.assertNotNull(this.converter.getPropertyAccessor(person));
         Assert.assertEquals(fields.length, 2);
