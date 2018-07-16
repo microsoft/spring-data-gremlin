@@ -7,7 +7,7 @@ traversals on (or queries of) their application's property graph. It hides the d
 database implementation (like azure cosmosdb support Graph API).
 
 Apache Tinkerpop gremlin java driver allows you to launch gremlin query, but it is not easy to
-get familiar with gremlin syntax. You have to generate all gremlin queries by your self as following.
+get familiar with gremlin syntax. You have to generate all gremlin queries by yourself as following.
 
 ```java
     static final String[] gremlinQueries = new String[] {
@@ -48,8 +48,8 @@ element in graph. Simply we add some annotations to reach this.
 The `@GremlinRepository` extends `@CrudReposiotry` is providing basic queries, like insert,
 save, find, delete and count. Let's take insert as example to the details of implementation.
 
-##### Some Constriction
-* Gremlin describe the `Vertex` and `Edge` in a flat layout, with fixed property `id`, `label`,
+##### Some Constrictions
+* Gremlin describes the `Vertex` and `Edge` in a flat layout, with fixed property `id`, `label`,
 and any other properties organized as key-value pair.
 * Gremlin properties name must be `String`, and values can be `Number`, `Boolean` and `String`.
 * No nested structure in `Vertex` and `Edge`.
@@ -62,23 +62,13 @@ represent all instance stored in database. This class not only needs to hold all
 instance object, but also has the flat structure like entity in database. It is the bridge between
 instance in java and persistent entity in database. Here we call it `GremlinSource`.
 
-With the above constriction from gremlin, `GremlinSource` has field `id` and `label` for mapping,
+With the above constriction of gremlin, `GremlinSource` has field `id` and `label` for mapping,
 and keep all other fields into one `Map<String, Object>`. When we try to insert a instance from
 java to `GremlinSource`, we perform a **WRITE** operation and convert the instance to a `GremlinSource`.
 Operation **WRITE** will convert all the data of one instance to `GremlinSource`, and take care of 
 `id` or `@Id` field.
 
 The `GremlinSourceWriter` converts Java instance to `GremlinSource`.
-
-##### GremlinScript
-GremlinScript will generate the query based on `GremlinSource`. It converts the data like
-`id`, `label` and `properites` into gremlin query literal Strings. For type `String`, `Number`
-and `Boolean`, the query will store them as primitive types (supported by gremlin). And any
-other type of instance field will be converted to Json-like `String` except type `Date`, it will
-be converted to milliSeconds and stored as `Number`. Then the gremlin client will execute the query
-to access database.
-
-The `GremlinScriptLiteral` generates literal query based on `GremlinSource`.
 
 ##### GremlinResult
 There must be one **READ** operation for retrieving instance from database entity. For example,
@@ -92,3 +82,12 @@ we do in **WRITE** operation.
 The `GremlinResultReader` converts `Result` to `GremlinSource`.   
 The `GremlinSourceReader` converts `GremlinSource` to Java instance.
 
+##### GremlinScript
+GremlinScript will generate the query based on `GremlinSource`. It converts the data like
+`id`, `label` and `properites` into gremlin query literal Strings. For type `String`, `Number`
+and `Boolean`, the query will store them as primitive types (supported by gremlin). And any
+other type of instance field will be converted to Json-like `String` except type `Date`, it will
+be converted to milliSeconds and stored as `Number`. Then the gremlin client will execute the query
+to access database.
+
+The `GremlinScriptLiteral` generates literal query based on `GremlinSource`.
