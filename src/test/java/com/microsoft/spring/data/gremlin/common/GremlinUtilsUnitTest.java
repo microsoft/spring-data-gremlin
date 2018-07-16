@@ -7,6 +7,7 @@ package com.microsoft.spring.data.gremlin.common;
 
 import com.microsoft.spring.data.gremlin.common.domain.Service;
 import com.microsoft.spring.data.gremlin.conversion.source.AbstractGremlinSource;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class GremlinUtilsUnitTest {
@@ -29,5 +30,15 @@ public class GremlinUtilsUnitTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testTimeToMilliSecondsException() {
         GremlinUtils.timeToMilliSeconds(new Service());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testToPrimitiveLongException() {
+        GremlinUtils.toPrimitiveLong((short) 2);
+    }
+
+    @Test
+    public void testToPrimitiveLong() {
+        Assert.assertEquals((long) 3, GremlinUtils.toPrimitiveLong(new Long(3)));
     }
 }

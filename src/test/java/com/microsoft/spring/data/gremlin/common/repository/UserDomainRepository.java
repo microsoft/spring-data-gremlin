@@ -15,4 +15,6 @@ public interface UserDomainRepository extends GremlinRepository<UserDomain, Stri
     List<UserDomain> findByName(String name);
 
     List<UserDomain> findByEnabledExists();
+
+    List<UserDomain> findByLevelBetween(int low, int high);
 }

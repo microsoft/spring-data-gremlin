@@ -11,10 +11,12 @@ import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @NoArgsConstructor
 public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral implements GremlinScriptLiteral {
@@ -46,12 +48,33 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
     }
 
     @Override
-    public List<String> generateDeleteAllScript(@Nullable GremlinSource source) {
+    public List<String> generateDeleteAllScript(@NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceVertex)) {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
         }
 
         return Collections.singletonList(Constants.GREMLIN_SCRIPT_VERTEX_DROP_ALL);
+    }
+
+    @Override
+    public List<String> generateDeleteAllByClassScript(@NonNull GremlinSource source) {
+        if (!(source instanceof GremlinSourceVertex)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
+        }
+
+        final List<String> scriptList = new ArrayList<>();
+        final String label = source.getLabel();
+
+        Assert.notNull(label, "label should not be null");
+
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_VERTEX_ALL);
+        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_HAS_STRING, Constants.PROPERTY_LABEL, label));
+        scriptList.add(Constants.GREMLIN_PRIMITIVE_DROP);
+
+        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
+
+        return Collections.singletonList(query);
     }
 
     @Override

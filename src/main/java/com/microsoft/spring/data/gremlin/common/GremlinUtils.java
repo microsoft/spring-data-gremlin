@@ -74,4 +74,16 @@ public class GremlinUtils {
             throw new UnsupportedOperationException("Unsupported time type");
         }
     }
+
+    public static long toPrimitiveLong(@NonNull Object object) {
+        if (object instanceof Date) {
+            return timeToMilliSeconds(object);
+        } else if (object instanceof Integer) {
+            return (long) (int) object;
+        } else if (object instanceof Long) {
+            return (long) object;
+        } else {
+            throw new UnsupportedOperationException("Unsupported object type to long");
+        }
+    }
 }

@@ -124,4 +124,21 @@ public class NetworkRepositoryIT {
         Assert.assertFalse(this.projectRepository.findById(this.project.getId()).isPresent());
         Assert.assertFalse(this.relationshipRepository.findById(this.relationship.getId()).isPresent());
     }
+
+    @Test
+    public void testDeleteAllByClass() {
+        final Network network = new Network();
+
+        network.setId("fake-id");
+        network.vertexAdd(this.person);
+        network.vertexAdd(this.project);
+        network.edgeAdd(this.relationship);
+
+        this.networkRepository.save(network);
+        this.networkRepository.deleteAll(Network.class);
+
+        Assert.assertFalse(this.relationshipRepository.findById(this.relationship.getId()).isPresent());
+        Assert.assertFalse(this.personRepository.findById(this.person.getId()).isPresent());
+        Assert.assertFalse(this.projectRepository.findById(this.project.getId()).isPresent());
+    }
 }

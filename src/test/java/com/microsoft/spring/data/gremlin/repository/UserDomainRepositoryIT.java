@@ -92,4 +92,29 @@ public class UserDomainRepositoryIT {
 
         Assert.assertTrue(this.repository.findByEnabledExists().isEmpty());
     }
+
+    @Test
+    public void testFindByLevelBetween() {
+        final List<UserDomain> domains = Arrays.asList(DOMAIN_0, DOMAIN_1);
+
+        this.repository.saveAll(domains);
+
+        List<UserDomain> foundDomains = this.repository.findByLevelBetween(8, 9);
+        Assert.assertTrue(foundDomains.isEmpty());
+
+        foundDomains = this.repository.findByLevelBetween(7, 8);
+        Assert.assertEquals(foundDomains.size(), 1);
+        Assert.assertEquals(foundDomains.get(0), DOMAIN_1);
+
+        foundDomains = this.repository.findByLevelBetween(0, 8);
+        domains.sort(Comparator.comparing(UserDomain::getName));
+        foundDomains.sort(Comparator.comparing(UserDomain::getName));
+
+        Assert.assertEquals(foundDomains.size(), domains.size());
+        Assert.assertEquals(foundDomains, domains);
+
+        this.repository.deleteAll(domains);
+
+        Assert.assertTrue(this.repository.findByLevelBetween(0, 8).isEmpty());
+    }
 }

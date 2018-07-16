@@ -21,4 +21,6 @@ public class GremlinConfiguration {
     private String username;
 
     private String password;
+
+    private boolean telemetryAllowed = true;
 }

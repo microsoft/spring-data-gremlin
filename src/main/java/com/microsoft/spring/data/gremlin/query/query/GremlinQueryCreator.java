@@ -29,6 +29,7 @@ public class GremlinQueryCreator extends AbstractQueryCreator<GremlinQuery, Crit
 
         map.put(Part.Type.AFTER, CriteriaType.AFTER);
         map.put(Part.Type.BEFORE, CriteriaType.BEFORE);
+        map.put(Part.Type.BETWEEN, CriteriaType.BETWEEN);
         map.put(Part.Type.SIMPLE_PROPERTY, CriteriaType.IS_EQUAL);
         map.put(Part.Type.EXISTS, CriteriaType.EXISTS);
 
