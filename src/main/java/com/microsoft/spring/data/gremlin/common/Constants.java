@@ -48,10 +48,12 @@ public class Constants {
     public static final String GREMLIN_PRIMITIVE_HAS_STRING = "has('%s', '%s')";
     public static final String GREMLIN_PRIMITIVE_HAS_NUMBER = "has('%s', %d)";
     public static final String GREMLIN_PRIMITIVE_HAS_BOOLEAN = "has('%s', %b)";
+    public static final String GREMLIN_PRIMITIVE_HAS_KEYWORD = "has(%s, '%s')";
 
     public static final String GREMLIN_PRIMITIVE_PROPERTY_STRING = "property('%s', '%s')";
     public static final String GREMLIN_PRIMITIVE_PROPERTY_NUMBER = "property('%s', %d)";
     public static final String GREMLIN_PRIMITIVE_PROPERTY_BOOLEAN = "property('%s', %b)";
+    public static final String GREMLIN_PRIMITIVE_PROPERTY_KEYWORD = "property(%s, '%s')";
 
     public static final String GREMLIN_PRIMITIVE_AND = "and()";
     public static final String GREMLIN_PRIMITIVE_OR = "or()";

@@ -49,7 +49,7 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_VERTEX, vertexIdFrom));
         scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_ADD_EDGE, label));
         scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_TO_VERTEX, vertexIdTo));
-        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_PROPERTY_STRING, Constants.PROPERTY_ID, id));
+        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_PROPERTY_KEYWORD, Constants.PROPERTY_ID, id));
 
         scriptList.addAll(generateProperties(properties));
 
@@ -80,7 +80,7 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
 
         scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
         scriptList.add(Constants.GREMLIN_PRIMITIVE_EDGE_ALL);
-        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_HAS_STRING, Constants.PROPERTY_LABEL, label));
+        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_HAS_KEYWORD, Constants.PROPERTY_LABEL, label));
         scriptList.add(Constants.GREMLIN_PRIMITIVE_DROP);
 
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
@@ -139,7 +139,7 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
 
         scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
         scriptList.add(Constants.GREMLIN_PRIMITIVE_EDGE_ALL);
-        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_HAS_STRING, Constants.PROPERTY_LABEL, label));
+        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_HAS_KEYWORD, Constants.PROPERTY_LABEL, label));
 
         final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
 
