@@ -31,7 +31,6 @@ public class GremlinScriptLiteralVertexUnitTest {
     @Mock
     private ApplicationContext applicationContext;
 
-
     @Before
     public void setup() {
         this.mappingContext = new GremlinMappingContext();
