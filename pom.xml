@@ -97,7 +97,7 @@
             <version>${org.apache.tinkerpop.gremlin.driver.version}</version>
         </dependency>
 
-        <!-- -->
+        <!-- Apache Commons Lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
