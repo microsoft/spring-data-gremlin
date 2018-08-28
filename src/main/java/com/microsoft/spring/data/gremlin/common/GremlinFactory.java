@@ -13,6 +13,7 @@ import lombok.Getter;
 import org.apache.tinkerpop.gremlin.driver.Client;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.ser.Serializers;
+import org.apache.tinkerpop.gremlin.util.Gremlin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -25,26 +26,19 @@ public class GremlinFactory {
 
     @Getter
     private Cluster gremlinCluster;
-    private String endpoint;
-    private String port;
-    private String username;
-    private String password;
+
+    private GremlinConfig gremlinConfig;
 
     @Autowired(required = false)
     private TelemetryTracker telemetryTracker;
 
-    public GremlinFactory(@NonNull String endpoint, @Nullable String port,
-                          @NonNull String username, @NonNull String password) {
-
-        if (port == null || port.isEmpty()) {
-            this.port = Constants.DEFAULT_ENDPOINT_PORT;
-        } else {
-            this.port = port;
+    public GremlinFactory(@NonNull GremlinConfig gremlinConfig) {
+        final int port = gremlinConfig.getPort();
+        if (port <= 0 || port > 65535) {
+            gremlinConfig.setPort(Constants.DEFAULT_ENDPOINT_PORT);
         }
 
-        this.endpoint = endpoint;
-        this.username = username;
-        this.password = password;
+        this.gremlinConfig = gremlinConfig;
     }
 
     private void trackTelemetryCustomEvent() {
@@ -56,16 +50,14 @@ public class GremlinFactory {
     }
 
     private Cluster createGremlinCluster() throws GremlinIllegalConfigurationException {
-        final int port;
         final Cluster cluster;
 
         try {
-            port = Integer.parseInt(this.port);
-            cluster = Cluster.build(this.endpoint)
+            cluster = Cluster.build(this.gremlinConfig.getEndpoint())
                     .serializer(Serializers.DEFAULT_RESULT_SERIALIZER)
-                    .credentials(this.username, this.password)
+                    .credentials(this.gremlinConfig.getUsername(), this.gremlinConfig.getPassword())
                     .enableSsl(true)
-                    .port(port)
+                    .port(this.gremlinConfig.getPort())
                     .create();
         } catch (IllegalArgumentException e) {
             throw new GremlinIllegalConfigurationException("Invalid configuration of Gremlin", e);
