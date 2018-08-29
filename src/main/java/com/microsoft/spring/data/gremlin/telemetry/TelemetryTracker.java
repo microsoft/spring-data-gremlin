@@ -31,20 +31,16 @@ public class TelemetryTracker {
 
     private static final String UNKNOWN_MAC = "unknown-Mac-Address";
 
-    private TelemetryClient client;
-    private boolean isAllowTelemetry;
+    protected TelemetryClient client;
 
-    public TelemetryTracker(boolean isAllowTelemetry) {
+    public TelemetryTracker() {
         this.client = new TelemetryClient();
-        this.isAllowTelemetry = isAllowTelemetry;
     }
 
     public void trackEvent(@NonNull String name) {
         final Map<String, String> properties = this.getDefaultProperties();
 
-        if (isAllowTelemetry) {
-            properties.put(PROPERTY_INSTALLATION_ID, getHashMac());
-        }
+        properties.put(PROPERTY_INSTALLATION_ID, getHashMac());
 
         client.trackEvent(name, properties, null);
         client.flush();

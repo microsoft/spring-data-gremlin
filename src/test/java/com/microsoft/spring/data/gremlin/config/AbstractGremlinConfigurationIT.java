@@ -8,6 +8,7 @@ package com.microsoft.spring.data.gremlin.config;
 import com.microsoft.spring.data.gremlin.common.GremlinConfig;
 import com.microsoft.spring.data.gremlin.common.TestGremlinProperties;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
+import com.microsoft.spring.data.gremlin.telemetry.EmptyTracker;
 import com.microsoft.spring.data.gremlin.telemetry.TelemetryTracker;
 import lombok.SneakyThrows;
 import org.junit.Assert;
@@ -84,10 +85,10 @@ public class AbstractGremlinConfigurationIT {
     }
 
     @Test
-    public void testDefaultTelemetryTracker() {
+    public void testDisabledTelemetry() {
         this.contextRunner
                 .withPropertyValues("gremlin.telemetry-allowed=false")
-                .run(context -> Assert.assertNotNull(context.getBean(TelemetryTracker.class)));
+                .run(context -> Assert.assertTrue(context.getBean(TelemetryTracker.class) instanceof EmptyTracker));
     }
 }
 
