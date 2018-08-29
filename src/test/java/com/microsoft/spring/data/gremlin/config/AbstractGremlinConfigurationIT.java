@@ -8,14 +8,12 @@ package com.microsoft.spring.data.gremlin.config;
 import com.microsoft.spring.data.gremlin.common.GremlinConfig;
 import com.microsoft.spring.data.gremlin.common.TestGremlinProperties;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
-import com.microsoft.spring.data.gremlin.telemetry.EmptyTracker;
 import com.microsoft.spring.data.gremlin.telemetry.TelemetryTracker;
 import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -86,10 +84,10 @@ public class AbstractGremlinConfigurationIT {
     }
 
     @Test
-    public void testEmptyTelemetryTracker() {
+    public void testDefaultTelemetryTracker() {
         this.contextRunner
                 .withPropertyValues("gremlin.telemetry-allowed=false")
-                .run(context -> Assert.assertTrue(context.getBean(TelemetryTracker.class) instanceof EmptyTracker));
+                .run(context -> Assert.assertNotNull(context.getBean(TelemetryTracker.class)));
     }
 }
 

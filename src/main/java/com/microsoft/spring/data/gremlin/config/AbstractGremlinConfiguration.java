@@ -9,7 +9,6 @@ import com.microsoft.spring.data.gremlin.common.GremlinConfig;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.query.GremlinTemplate;
-import com.microsoft.spring.data.gremlin.telemetry.EmptyTracker;
 import com.microsoft.spring.data.gremlin.telemetry.TelemetryTracker;
 import org.springframework.context.annotation.Bean;
 
@@ -19,11 +18,7 @@ public abstract class AbstractGremlinConfiguration extends GremlinConfigurationS
 
     @Bean
     public TelemetryTracker getTelemetryTracker() {
-        if (getGremlinConfig().isTelemetryAllowed()) {
-            return new TelemetryTracker();
-        }
-
-        return new EmptyTracker();
+        return new TelemetryTracker(getGremlinConfig().isTelemetryAllowed());
     }
 
     @Bean
