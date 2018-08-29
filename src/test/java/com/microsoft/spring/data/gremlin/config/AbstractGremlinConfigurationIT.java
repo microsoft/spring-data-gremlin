@@ -61,15 +61,15 @@ public class AbstractGremlinConfigurationIT {
 
     private class TestConfig extends AbstractGremlinConfiguration {
 
-        private GremlinConfig props;
+        private GremlinConfig gremlinConfig;
 
-        public TestConfig(@NonNull GremlinConfig props) {
-            this.props = props;
+        public TestConfig(@NonNull GremlinConfig gremlinConfig) {
+            this.gremlinConfig = gremlinConfig;
         }
 
         @Override
         public GremlinConfig getGremlinConfig() {
-            return this.props;
+            return this.gremlinConfig;
         }
     }
 
