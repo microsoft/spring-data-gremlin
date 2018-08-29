@@ -40,9 +40,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <spring.springframework.version>5.0.1.RELEASE</spring.springframework.version>
-        <spring.boot.version>2.0.0.RELEASE</spring.boot.version>
+        <spring.data.version>2.0.1.RELEASE</spring.data.version>
+        <spring.boot.test.version>2.0.4.RELEASE</spring.boot.test.version>
 
         <org.apache.tinkerpop.gremlin.driver.version>3.2.4</org.apache.tinkerpop.gremlin.driver.version>
+        <apache.commons.lang3.version>3.7</apache.commons.lang3.version>
         <org.projectlombok.version>1.16.18</org.projectlombok.version>
         <mockito.core.version>2.8.9</mockito.core.version>
         <azure.applicationinsights.version>2.0.1</azure.applicationinsights.version>
@@ -56,13 +58,6 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-framework-bom</artifactId>
                 <version>${spring.springframework.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -92,6 +87,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-commons</artifactId>
+            <version>${spring.data.version}</version>
         </dependency>
 
         <!-- Apache Tinkerpop Gremlin Driver -->
@@ -99,6 +95,13 @@
             <groupId>org.apache.tinkerpop</groupId>
             <artifactId>gremlin-driver</artifactId>
             <version>${org.apache.tinkerpop.gremlin.driver.version}</version>
+        </dependency>
+
+        <!-- Apache Commons Lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${apache.commons.lang3.version}</version>
         </dependency>
 
         <!-- Spring context -->
@@ -119,6 +122,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring.boot.test.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -129,29 +133,11 @@
             <version>${org.projectlombok.version}</version>
         </dependency>
 
-        <!-- Spring Boot Configuration Processor -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-        </dependency>
-
-        <!-- Spring Boot -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
-        </dependency>
-
         <!-- Application Insights -->
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>applicationinsights-core</artifactId>
             <version>${azure.applicationinsights.version}</version>
-        </dependency>
-
-        <!-- Spring Boot Auto Configure -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
     </dependencies>
 

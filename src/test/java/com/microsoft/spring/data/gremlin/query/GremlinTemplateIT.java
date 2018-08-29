@@ -5,10 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.query;
 
-import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
-import com.microsoft.spring.data.gremlin.common.GremlinFactory;
-import com.microsoft.spring.data.gremlin.common.GremlinConfiguration;
-import com.microsoft.spring.data.gremlin.common.TestConstants;
+import com.microsoft.spring.data.gremlin.common.*;
 import com.microsoft.spring.data.gremlin.common.domain.*;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
@@ -32,7 +29,7 @@ import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @PropertySource(value = {"classpath:application.properties"})
-@EnableConfigurationProperties(GremlinConfiguration.class)
+@EnableConfigurationProperties(TestGremlinProperties.class)
 public class GremlinTemplateIT {
 
     private static GremlinFactory factory;
@@ -56,8 +53,12 @@ public class GremlinTemplateIT {
             TestConstants.EDGE_RELATIONSHIP_2_NAME, TestConstants.EDGE_RELATIONSHIP_2_LOCATION,
             this.person, this.project0);
     private Network network;
+
+    private GremlinConfig gremlinConfig;
+
     @Autowired
-    private GremlinConfiguration config;
+    private TestGremlinProperties properties;
+
     @Autowired
     private ApplicationContext context;
     private GremlinTemplate template;
@@ -71,8 +72,10 @@ public class GremlinTemplateIT {
     @SneakyThrows
     public void setup() {
         final GremlinMappingContext mappingContext = new GremlinMappingContext();
-        factory = new GremlinFactory(this.config.getEndpoint(), this.config.getPort(),
-                this.config.getUsername(), this.config.getPassword());
+        gremlinConfig = GremlinConfig.builder(this.properties.getEndpoint(), this.properties.getUsername(),
+                this.properties.getPassword()).port(this.properties.getPort()).build();
+
+        factory = new GremlinFactory(gremlinConfig);
 
         mappingContext.setInitialEntitySet(new EntityScanner(this.context).scan(Persistent.class));
 
@@ -498,7 +501,7 @@ public class GremlinTemplateIT {
 
     @Test
     public void testGraphDeleteById() {
-        this.network.setId(this.config.getUsername());
+        this.network.setId(this.properties.getUsername());
         this.template.deleteById(this.network.getId(), Relationship.class);
 
         final Relationship foundRelationship = this.template.findById(this.relationship, Relationship.class);

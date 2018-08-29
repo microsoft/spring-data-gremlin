@@ -13,13 +13,15 @@ import org.springframework.context.annotation.PropertySource;
 
 @EnableGremlinRepositories
 @PropertySource(value = {"classpath:application.properties"})
-@EnableConfigurationProperties(GremlinConfiguration.class)
+@EnableConfigurationProperties(TestGremlinProperties.class)
 public class TestRepositoryConfiguration extends AbstractGremlinConfiguration {
 
     @Autowired
-    private GremlinConfiguration config;
+    private TestGremlinProperties testProps;
 
-    public GremlinConfiguration getGremlinConfiguration() {
-        return this.config;
+    @Override
+    public GremlinConfig getGremlinConfig() {
+        return new GremlinConfig(testProps.getEndpoint(), testProps.getPort(), testProps.getUsername(),
+                testProps.getPassword(), testProps.isTelemetryAllowed());
     }
 }
