@@ -6,8 +6,9 @@
 package com.microsoft.spring.data.gremlin.conversion.source;
 
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultReader;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
+import lombok.NonNull;
 import org.apache.tinkerpop.gremlin.driver.Result;
 
 import java.lang.reflect.Field;
@@ -20,10 +21,11 @@ import java.util.Map;
  * The property key should be String, and value can be one of String, number and boolean.
  */
 public interface GremlinSource {
+
     /**
      * Set the id of domain
      */
-    void setId(String id);
+    void setId(Object id);
 
     /**
      * Set the label of domain
@@ -40,7 +42,8 @@ public interface GremlinSource {
      *
      * @return will never be null
      */
-    String getId();
+    @NonNull
+    Object getId();
 
     /**
      * Get the id Field of domain
@@ -54,6 +57,7 @@ public interface GremlinSource {
      *
      * @return will never be null
      */
+    @NonNull
     String getLabel();
 
     /**

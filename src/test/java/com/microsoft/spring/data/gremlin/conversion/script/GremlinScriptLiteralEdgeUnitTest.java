@@ -41,9 +41,9 @@ public class GremlinScriptLiteralEdgeUnitTest {
         this.mappingContext.getPersistentEntity(Person.class);
         this.converter = new MappingGremlinConverter(this.mappingContext);
 
-        final Relationship relationship = new Relationship("456", "rel-name", null,
+        final Relationship relationship = new Relationship("456", "rel-name", "china",
                 new Person("123", "bill"), // from
-                new Project("321", "ms-project", null) // to
+                new Project("321", "ms-project", "http") // to
         );
         @SuppressWarnings("unchecked") final GremlinEntityInformation info =
                 new GremlinEntityInformation(Relationship.class);
@@ -72,14 +72,15 @@ public class GremlinScriptLiteralEdgeUnitTest {
     @Test
     public void testGenerateInsertScript() {
         final List<String> queryList = new GremlinScriptLiteralEdge().generateInsertScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.V('123').addE('label-relationship').to(g.V('321'))" +
-                ".property(id, '456').property('name', 'rel-name').property('location', 'null')");
+        assertEquals(queryList.get(0), "g.V('123').as('from').V('321').as('to')"
+                + ".addE('label-relationship').from('from').to('to')"
+                + ".property(id, '456').property('name', 'rel-name').property('location', 'china')");
     }
 
     @Test
     public void testGenerateUpdateScript() {
         final List<String> queryList = new GremlinScriptLiteralEdge().generateUpdateScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.E('456').property('name', 'rel-name').property('location', 'null')");
+        assertEquals(queryList.get(0), "g.E('456').property('name', 'rel-name').property('location', 'china')");
     }
 
     @Test

@@ -29,7 +29,7 @@ public class GremlinSourceVertexWriter implements GremlinSourceWriter {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
         }
 
-        source.setId(converter.getFieldValue(domain, source.getIdField().getName()).toString());
+        source.setId(converter.getIdFieldValue(domain));
 
         final GremlinPersistentEntity<?> persistentEntity = converter.getPersistentEntity(domain.getClass());
         final ConvertingPropertyAccessor accessor = converter.getPropertyAccessor(domain);
