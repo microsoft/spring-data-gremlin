@@ -10,17 +10,27 @@ import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.NonNull;
+import lombok.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+
+import static com.microsoft.spring.data.gremlin.common.Constants.*;
+import static com.microsoft.spring.data.gremlin.common.GremlinEntityType.EDGE;
+import static com.microsoft.spring.data.gremlin.common.GremlinEntityType.VERTEX;
 
 @NoArgsConstructor
 public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral implements GremlinScriptLiteral {
+
+    private static final String FROM_ALIAS = "from";
+    private static final String TO_ALIAS = "to";
+
+    private String generateEdgeDirection(@NonNull String from, @NonNull String to) {
+        return String.format("from('%s').to('%s')", from, to);
+    }
 
     @Override
     public List<String> generateInsertScript(@NonNull GremlinSource source) {
@@ -28,34 +38,21 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 
-        final List<String> scriptList = new ArrayList<>();
-        final String label = source.getLabel();
-        final String id = source.getId();
-        final Map<String, Object> properties = source.getProperties();
-
-        Assert.notNull(label, "label should not be null");
-        Assert.notNull(id, "id should not be null");
-        Assert.notNull(properties, "properties should not be null");
-
         final GremlinSourceEdge sourceEdge = (GremlinSourceEdge) source;
-        final String vertexIdFrom = sourceEdge.getVertexIdFrom();
-        final String vertexIdTo = sourceEdge.getVertexIdTo();
+        final List<String> scriptList = new ArrayList<>();
 
-        Assert.notNull(vertexIdFrom, "vertexIdFrom should not be null");
-        Assert.notNull(vertexIdTo, "vertexIdTo should not be null");
+        scriptList.add(GREMLIN_PRIMITIVE_GRAPH);                                            // g
+        scriptList.add(generateEntityWithRequiredId(sourceEdge.getVertexIdFrom(), VERTEX)); // V(id)
+        scriptList.add(generateAsWithAlias(FROM_ALIAS));                                    // from('from')
+        scriptList.add(generateEntityWithRequiredId(sourceEdge.getVertexIdTo(), VERTEX));   // V(id)
+        scriptList.add(generateAsWithAlias(TO_ALIAS));                                      // to('to')
+        scriptList.add(generateAddEntityWithLabel(sourceEdge.getLabel(), EDGE));            // addE(label)
+        scriptList.add(generateEdgeDirection(FROM_ALIAS, TO_ALIAS));                        // from('from').to('to')
+        scriptList.add(generatePropertyWithRequiredId(source.getId()));                     // property(id, xxx)
 
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
+        scriptList.addAll(generateProperties(source.getProperties()));
 
-        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_VERTEX, vertexIdFrom));
-        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_ADD_EDGE, label));
-        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_TO_VERTEX, vertexIdTo));
-        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_PROPERTY_KEYWORD, Constants.PROPERTY_ID, id));
-
-        scriptList.addAll(generateProperties(properties));
-
-        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
-
-        return Collections.singletonList(query);
+        return completeScript(scriptList);
     }
 
     @Override
@@ -73,19 +70,14 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 
-        final List<String> scriptList = new ArrayList<>();
-        final String label = source.getLabel();
+        final List<String> scriptList = Arrays.asList(
+                GREMLIN_PRIMITIVE_GRAPH,             // g
+                GREMLIN_PRIMITIVE_EDGE_ALL,          // E()
+                generateHasLabel(source.getLabel()), // has(label, 'label')
+                GREMLIN_PRIMITIVE_DROP               // drop()
+        );
 
-        Assert.notNull(label, "label should not be null");
-
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_EDGE_ALL);
-        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_HAS_KEYWORD, Constants.PROPERTY_LABEL, label));
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_DROP);
-
-        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
-
-        return Collections.singletonList(query);
+        return completeScript(scriptList);
     }
 
     @Override
@@ -94,17 +86,12 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 
-        final List<String> scriptList = new ArrayList<>();
-        final String id = source.getId();
+        final List<String> scriptList = Arrays.asList(
+                GREMLIN_PRIMITIVE_GRAPH,                           // g
+                generateEntityWithRequiredId(source.getId(), EDGE) // E(id)
+        );
 
-        Assert.notNull(id, "id should not be null");
-
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
-        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_EDGE, id));
-
-        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
-
-        return Collections.singletonList(query);
+        return completeScript(scriptList);
     }
 
     @Override
@@ -114,36 +101,28 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         }
 
         final List<String> scriptList = new ArrayList<>();
-        final String id = source.getId();
-        final Map<String, Object> properties = source.getProperties();
 
-        Assert.notNull(id, "id should not be null");
-        Assert.notNull(properties, "properties should not be null");
+        scriptList.add(GREMLIN_PRIMITIVE_GRAPH);                            // g
+        scriptList.add(generateEntityWithRequiredId(source.getId(), EDGE)); // E(id)
 
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
-        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_EDGE, id));
+        scriptList.addAll(generateProperties(source.getProperties()));
 
-        scriptList.addAll(generateProperties(properties));
-
-        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
-
-        return Collections.singletonList(query);
+        return completeScript(scriptList);
     }
 
     @Override
     public List<String> generateFindAllScript(@NonNull GremlinSource source) {
-        final String label = source.getLabel();
-        final List<String> scriptList = new ArrayList<>();
+        if (!(source instanceof GremlinSourceEdge)) {
+            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
+        }
 
-        Assert.notNull(label, "label should not be null");
+        final List<String> scriptList = Arrays.asList(
+                GREMLIN_PRIMITIVE_GRAPH,            // g
+                GREMLIN_PRIMITIVE_EDGE_ALL,         // E()
+                generateHasLabel(source.getLabel()) // has(label, 'label')
+        );
 
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_EDGE_ALL);
-        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_HAS_KEYWORD, Constants.PROPERTY_LABEL, label));
-
-        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
-
-        return Collections.singletonList(query);
+        return completeScript(scriptList);
     }
 
     @Override
@@ -152,18 +131,13 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 
-        final List<String> scriptList = new ArrayList<>();
-        final String id = source.getId();
+        final List<String> scriptList = Arrays.asList(
+                GREMLIN_PRIMITIVE_GRAPH,                            // g
+                generateEntityWithRequiredId(source.getId(), EDGE), // E(id)
+                GREMLIN_PRIMITIVE_DROP                              // drop()
+        );
 
-        Assert.notNull(id, "id should not be null");
-
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
-        scriptList.add(String.format(Constants.GREMLIN_PRIMITIVE_EDGE, id));
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_DROP);
-
-        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
-
-        return Collections.singletonList(query);
+        return completeScript(scriptList);
     }
 
     @Override

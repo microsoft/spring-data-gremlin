@@ -53,8 +53,7 @@ public class MappingGremlinConverterUnitTest {
 
         Assert.assertNotNull(this.converter.getPropertyAccessor(person));
         Assert.assertEquals(fields.length, 2);
-        Assert.assertEquals(converter.getFieldValue(person, fields[0].getName()), TestConstants.VERTEX_PERSON_ID);
-        Assert.assertEquals(converter.getFieldValue(person, fields[1].getName()), TestConstants.VERTEX_PERSON_NAME);
+        Assert.assertEquals(converter.getIdFieldValue(person), TestConstants.VERTEX_PERSON_ID);
     }
 
     @Test

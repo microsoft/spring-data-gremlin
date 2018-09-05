@@ -42,7 +42,7 @@ public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 
-        source.setId(converter.getFieldValue(domain, source.getIdField().getName()).toString());
+        source.setId(converter.getIdFieldValue(domain));
 
         final GremlinSourceEdge sourceEdge = (GremlinSourceEdge) source;
         final GremlinPersistentEntity<?> persistentEntity = converter.getPersistentEntity(domain.getClass());
