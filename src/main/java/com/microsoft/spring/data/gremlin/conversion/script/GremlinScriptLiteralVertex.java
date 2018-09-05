@@ -32,11 +32,11 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
 
         final List<String> scriptList = new ArrayList<>();
 
-        scriptList.add(GREMLIN_PRIMITIVE_GRAPH);
-        scriptList.add(generateAddWithLabel(source.getLabel(), VERTEX));
-        scriptList.add(generateRequiredId(source.getId()));
+        scriptList.add(GREMLIN_PRIMITIVE_GRAPH);                               // g
+        scriptList.add(generateAddEntityWithLabel(source.getLabel(), VERTEX)); // addV('label')
+        scriptList.add(generatePropertyWithRequiredId(source.getId()));        // property(id, xxx)
 
-        scriptList.addAll(super.generateProperties(source.getProperties()));
+        scriptList.addAll(generateProperties(source.getProperties()));
 
         return completeScript(scriptList);
     }
@@ -57,10 +57,10 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
         }
 
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,
-                GREMLIN_PRIMITIVE_VERTEX_ALL,
-                generateHasLabelScript(source.getLabel()),
-                GREMLIN_PRIMITIVE_DROP
+                GREMLIN_PRIMITIVE_GRAPH,             // g
+                GREMLIN_PRIMITIVE_VERTEX_ALL,        // V()
+                generateHasLabel(source.getLabel()), // has(label, 'label')
+                GREMLIN_PRIMITIVE_DROP               // drop()
         );
 
         return completeScript(scriptList);
@@ -73,8 +73,8 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
         }
 
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,
-                generateIdQueryScript(source.getId(), VERTEX)
+                GREMLIN_PRIMITIVE_GRAPH,                             // g
+                generateEntityWithRequiredId(source.getId(), VERTEX) // V(id)
         );
 
         return completeScript(scriptList);
@@ -88,8 +88,8 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
 
         final List<String> scriptList = new ArrayList<>();
 
-        scriptList.add(GREMLIN_PRIMITIVE_GRAPH);
-        scriptList.add(generateIdQueryScript(source.getId(), VERTEX));
+        scriptList.add(GREMLIN_PRIMITIVE_GRAPH);                              // g
+        scriptList.add(generateEntityWithRequiredId(source.getId(), VERTEX)); // V(id)
 
         scriptList.addAll(generateProperties(source.getProperties()));
 
@@ -103,9 +103,9 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
         }
 
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,
-                GREMLIN_PRIMITIVE_VERTEX_ALL,
-                generateHasLabelScript(source.getLabel())
+                GREMLIN_PRIMITIVE_GRAPH,            // g
+                GREMLIN_PRIMITIVE_VERTEX_ALL,       // V()
+                generateHasLabel(source.getLabel()) // has(label, 'label')
         );
 
         return completeScript(scriptList);
@@ -118,9 +118,9 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
         }
 
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,
-                generateIdQueryScript(source.getId(), VERTEX),
-                GREMLIN_PRIMITIVE_DROP
+                GREMLIN_PRIMITIVE_GRAPH,                              // g
+                generateEntityWithRequiredId(source.getId(), VERTEX), // V(id)
+                GREMLIN_PRIMITIVE_DROP                                // drop()
         );
 
         return completeScript(scriptList);

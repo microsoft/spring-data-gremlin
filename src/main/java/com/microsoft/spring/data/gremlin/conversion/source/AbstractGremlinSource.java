@@ -8,7 +8,6 @@ package com.microsoft.spring.data.gremlin.conversion.source;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultReader;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
-import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +22,7 @@ import java.util.Map;
 public abstract class AbstractGremlinSource implements GremlinSource {
 
     @Getter
+    @Setter
     private Object id;
 
     @Getter
@@ -51,15 +51,6 @@ public abstract class AbstractGremlinSource implements GremlinSource {
 
     protected AbstractGremlinSource() {
         this.properties = new HashMap<>();
-    }
-
-    @Override
-    public void setId(Object id) {
-        if (id instanceof String || id instanceof Long || id instanceof Integer) {
-            this.id = id;
-        } else {
-            throw new GremlinInvalidEntityIdFieldException("Only String/Long/Integer of Id type is supported");
-        }
     }
 
     @Override
@@ -95,8 +86,7 @@ public abstract class AbstractGremlinSource implements GremlinSource {
     }
 
     @Override
-    public <T extends Object> T doGremlinSourceRead(@NonNull Class<T> type,
-                                                    @NonNull MappingGremlinConverter converter) {
+    public <T> T doGremlinSourceRead(@NonNull Class<T> type, @NonNull MappingGremlinConverter converter) {
         Assert.notNull(this.sourceReader, "the sourceReader must be set before do reading");
 
         return this.sourceReader.read(type, converter, this);

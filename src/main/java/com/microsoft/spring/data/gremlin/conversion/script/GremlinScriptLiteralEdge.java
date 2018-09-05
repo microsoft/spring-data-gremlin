@@ -28,7 +28,7 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
     private static final String FROM_ALIAS = "from";
     private static final String TO_ALIAS = "to";
 
-    private String generateDirection(@NonNull String from, @NonNull String to) {
+    private String generateEdgeDirection(@NonNull String from, @NonNull String to) {
         return String.format("from('%s').to('%s')", from, to);
     }
 
@@ -41,14 +41,14 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         final GremlinSourceEdge sourceEdge = (GremlinSourceEdge) source;
         final List<String> scriptList = new ArrayList<>();
 
-        scriptList.add(GREMLIN_PRIMITIVE_GRAPH);
-        scriptList.add(generateIdQueryScript(sourceEdge.getVertexIdFrom(), VERTEX));
-        scriptList.add(generateAs(FROM_ALIAS));
-        scriptList.add(generateIdQueryScript(sourceEdge.getVertexIdTo(), VERTEX));
-        scriptList.add(generateAs(TO_ALIAS));
-        scriptList.add(generateAddWithLabel(sourceEdge.getLabel(), EDGE));
-        scriptList.add(generateDirection(FROM_ALIAS, TO_ALIAS));
-        scriptList.add(generateRequiredId(source.getId()));
+        scriptList.add(GREMLIN_PRIMITIVE_GRAPH);                                            // g
+        scriptList.add(generateEntityWithRequiredId(sourceEdge.getVertexIdFrom(), VERTEX)); // V(id)
+        scriptList.add(generateAsWithAlias(FROM_ALIAS));                                    // from('from')
+        scriptList.add(generateEntityWithRequiredId(sourceEdge.getVertexIdTo(), VERTEX));   // V(id)
+        scriptList.add(generateAsWithAlias(TO_ALIAS));                                      // to('to')
+        scriptList.add(generateAddEntityWithLabel(sourceEdge.getLabel(), EDGE));            // addE(label)
+        scriptList.add(generateEdgeDirection(FROM_ALIAS, TO_ALIAS));                        // from('from').to('to')
+        scriptList.add(generatePropertyWithRequiredId(source.getId()));                     // property(id, xxx)
 
         scriptList.addAll(generateProperties(source.getProperties()));
 
@@ -71,10 +71,10 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         }
 
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,
-                GREMLIN_PRIMITIVE_EDGE_ALL,
-                generateHasLabelScript(source.getLabel()),
-                GREMLIN_PRIMITIVE_DROP
+                GREMLIN_PRIMITIVE_GRAPH,             // g
+                GREMLIN_PRIMITIVE_EDGE_ALL,          // E()
+                generateHasLabel(source.getLabel()), // has(label, 'label')
+                GREMLIN_PRIMITIVE_DROP               // drop()
         );
 
         return completeScript(scriptList);
@@ -87,8 +87,8 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         }
 
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,
-                generateIdQueryScript(source.getId(), EDGE)
+                GREMLIN_PRIMITIVE_GRAPH,                           // g
+                generateEntityWithRequiredId(source.getId(), EDGE) // E(id)
         );
 
         return completeScript(scriptList);
@@ -102,8 +102,8 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
 
         final List<String> scriptList = new ArrayList<>();
 
-        scriptList.add(GREMLIN_PRIMITIVE_GRAPH);
-        scriptList.add(generateIdQueryScript(source.getId(), EDGE));
+        scriptList.add(GREMLIN_PRIMITIVE_GRAPH);                            // g
+        scriptList.add(generateEntityWithRequiredId(source.getId(), EDGE)); // E(id)
 
         scriptList.addAll(generateProperties(source.getProperties()));
 
@@ -117,9 +117,9 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         }
 
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,
-                GREMLIN_PRIMITIVE_EDGE_ALL,
-                generateHasLabelScript(source.getLabel())
+                GREMLIN_PRIMITIVE_GRAPH,            // g
+                GREMLIN_PRIMITIVE_EDGE_ALL,         // E()
+                generateHasLabel(source.getLabel()) // has(label, 'label')
         );
 
         return completeScript(scriptList);
@@ -132,9 +132,9 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         }
 
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,
-                generateIdQueryScript(source.getId(), EDGE),
-                GREMLIN_PRIMITIVE_DROP
+                GREMLIN_PRIMITIVE_GRAPH,                            // g
+                generateEntityWithRequiredId(source.getId(), EDGE), // E(id)
+                GREMLIN_PRIMITIVE_DROP                              // drop()
         );
 
         return completeScript(scriptList);

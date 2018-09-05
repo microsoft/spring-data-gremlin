@@ -19,7 +19,7 @@ import static com.microsoft.spring.data.gremlin.common.Constants.*;
 
 public abstract class AbstractGremlinScriptLiteral {
 
-    protected static String generateIdQueryScript(@NonNull Object id, GremlinEntityType type) {
+    protected static String generateEntityWithRequiredId(@NonNull Object id, GremlinEntityType type) {
         Assert.isTrue(type == GremlinEntityType.EDGE || type == GremlinEntityType.VERTEX, "should be edge/vertex type");
 
         final String prefix = (type == GremlinEntityType.VERTEX) ? "V" : "E";
@@ -35,7 +35,7 @@ public abstract class AbstractGremlinScriptLiteral {
         throw new GremlinInvalidEntityIdFieldException("Only String/Integer/Long of id is supported");
     }
 
-    protected static String generateRequiredId(@NonNull Object id) {
+    protected static String generatePropertyWithRequiredId(@NonNull Object id) {
         if (id instanceof String) {
             return String.format("property(id, '%s')", (String) id);
         } else if (id instanceof Integer) {
@@ -47,11 +47,11 @@ public abstract class AbstractGremlinScriptLiteral {
         throw new GremlinInvalidEntityIdFieldException("Only String/Integer/Long of id is supported");
     }
 
-    protected static String generateAs(@NonNull String alias) {
+    protected static String generateAsWithAlias(@NonNull String alias) {
         return String.format("as('%s')", alias);
     }
 
-    protected static String generateAddWithLabel(@NonNull String label, GremlinEntityType type) {
+    protected static String generateAddEntityWithLabel(@NonNull String label, GremlinEntityType type) {
         Assert.isTrue(type == GremlinEntityType.EDGE || type == GremlinEntityType.VERTEX, "should be edge/vertex type");
 
         final String prefix = (type == GremlinEntityType.VERTEX) ? "addV" : "addE";
@@ -63,7 +63,7 @@ public abstract class AbstractGremlinScriptLiteral {
         return Collections.singletonList(String.join(GREMLIN_PRIMITIVE_INVOKE, scriptList));
     }
 
-    protected static String generateHasLabelScript(@NonNull String label) {
+    protected static String generateHasLabel(@NonNull String label) {
         return String.format("has(label, '%s')", label);
     }
 
@@ -105,7 +105,7 @@ public abstract class AbstractGremlinScriptLiteral {
         }
     }
 
-    protected List<String> generateProperties(@NonNull final Map<String, Object> properties) {
+    protected static List<String> generateProperties(@NonNull final Map<String, Object> properties) {
         final List<String> scripts = new ArrayList<>();
 
         properties.forEach((name, value) -> scripts.add(generateProperty(name, value)));
