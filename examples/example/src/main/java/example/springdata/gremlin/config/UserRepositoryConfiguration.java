@@ -15,28 +15,28 @@
  */
 package example.springdata.gremlin.config;
 
-import com.microsoft.spring.data.gremlin.common.GremlinConfiguration;
-import com.microsoft.spring.data.gremlin.common.GremlinFactory;
-import com.microsoft.spring.data.gremlin.config.AbstractGremlinConfiguration;
-import com.microsoft.spring.data.gremlin.repository.config.EnableGremlinRepositories;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+
+import com.microsoft.spring.data.gremlin.common.GremlinConfig;
+import com.microsoft.spring.data.gremlin.config.AbstractGremlinConfiguration;
+import com.microsoft.spring.data.gremlin.repository.config.EnableGremlinRepositories;
 
 
 @Configuration
 @EnableGremlinRepositories(basePackages = "example.springdata.gremlin.repository")
-@EnableConfigurationProperties(GremlinConfiguration.class)
+@EnableConfigurationProperties(GremlinProperties.class)
 @PropertySource("classpath:application.yml")
 public class UserRepositoryConfiguration extends AbstractGremlinConfiguration {
 
     @Autowired
-    private GremlinConfiguration config;
+    private GremlinProperties gremlinProps;
 
     @Override
-    public GremlinConfiguration getGremlinConfiguration() {
-        return this.config;
+    public GremlinConfig getGremlinConfig() {
+    	return new GremlinConfig(gremlinProps.getEndpoint(), gremlinProps.getPort(), gremlinProps.getUsername(),
+    			gremlinProps.getPassword(), gremlinProps.isTelemetryAllowed());
     }
 }

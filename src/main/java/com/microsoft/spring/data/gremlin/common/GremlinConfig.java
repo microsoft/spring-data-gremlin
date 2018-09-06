@@ -5,6 +5,8 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder(builderMethodName = "defaultBuilder")
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
 public class GremlinConfig {
     private String endpoint;
 
