@@ -6,7 +6,6 @@
 package com.microsoft.spring.data.gremlin.query.query;
 
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
-import com.microsoft.spring.data.gremlin.conversion.script.AbstractGremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.query.criteria.Criteria;
 import com.microsoft.spring.data.gremlin.query.criteria.CriteriaType;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
@@ -20,8 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.microsoft.spring.data.gremlin.common.Constants.*;
-import static com.microsoft.spring.data.gremlin.conversion.script.AbstractGremlinScriptLiteral.generateHas;
-import static com.microsoft.spring.data.gremlin.conversion.script.AbstractGremlinScriptLiteral.generateHasId;
+import static com.microsoft.spring.data.gremlin.conversion.script.AbstractGremlinScriptLiteral.*;
 
 @NoArgsConstructor
 public class QueryFindScriptGenerator implements QueryScriptGenerator {
@@ -153,7 +151,7 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
             throw new UnsupportedOperationException("Cannot generate script from graph entity");
         }
 
-        AbstractGremlinScriptLiteral.generateHasLabel(information.getEntityLabel());
+        scriptList.add(generateHasLabel(information.getEntityLabel()));
         scriptList.add(this.generateScriptTraversal(criteria));
 
         return scriptList;
