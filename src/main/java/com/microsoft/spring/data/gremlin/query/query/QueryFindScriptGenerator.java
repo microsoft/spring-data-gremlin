@@ -6,7 +6,6 @@
 package com.microsoft.spring.data.gremlin.query.query;
 
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
-import com.microsoft.spring.data.gremlin.conversion.script.AbstractGremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.query.criteria.Criteria;
 import com.microsoft.spring.data.gremlin.query.criteria.CriteriaType;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
@@ -20,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.microsoft.spring.data.gremlin.common.Constants.*;
+import static com.microsoft.spring.data.gremlin.conversion.script.AbstractGremlinScriptLiteral.*;
 
 @NoArgsConstructor
 public class QueryFindScriptGenerator implements QueryScriptGenerator {
@@ -38,10 +38,13 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
     }
 
     private String generateIsEqual(@NonNull Criteria criteria) {
-        final String subject = this.getCriteriaSubject(criteria);
-        final String content = AbstractGremlinScriptLiteral.generateHas(subject, criteria.getSubValues().get(0));
+        final String subject = getCriteriaSubject(criteria);
 
-        return String.format(GREMLIN_PRIMITIVE_WHERE, content);
+        if (subject.equals(PROPERTY_ID)) {
+            return String.format(GREMLIN_PRIMITIVE_WHERE, generateHasId(criteria.getSubValues().get(0).toString()));
+        } else {
+            return String.format(GREMLIN_PRIMITIVE_WHERE, generateHas(subject, criteria.getSubValues().get(0)));
+        }
     }
 
     /**
@@ -52,7 +55,7 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
      */
     private String generateEmptyScript(@NonNull Criteria criteria) {
         final String subject = this.getCriteriaSubject(criteria);
-        final String has = AbstractGremlinScriptLiteral.generateHas(subject, true);
+        final String has = generateHas(subject, true);
 
         return String.format(GREMLIN_PRIMITIVE_WHERE, has);
     }
@@ -148,7 +151,7 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
             throw new UnsupportedOperationException("Cannot generate script from graph entity");
         }
 
-        scriptList.add(String.format(GREMLIN_PRIMITIVE_HAS_STRING, PROPERTY_LABEL, this.information.getEntityLabel()));
+        scriptList.add(generateHasLabel(information.getEntityLabel()));
         scriptList.add(this.generateScriptTraversal(criteria));
 
         return scriptList;
