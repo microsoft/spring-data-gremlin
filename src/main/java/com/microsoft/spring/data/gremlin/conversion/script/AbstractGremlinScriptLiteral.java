@@ -63,8 +63,12 @@ public abstract class AbstractGremlinScriptLiteral {
         return Collections.singletonList(String.join(GREMLIN_PRIMITIVE_INVOKE, scriptList));
     }
 
-    protected static String generateHasLabel(@NonNull String label) {
+    public static String generateHasLabel(@NonNull String label) {
         return String.format("has(label, '%s')", label);
+    }
+
+    public static String generateHasId(@NonNull String label) {
+        return String.format("has(id, '%s')", label);
     }
 
     private static String generateProperty(@NonNull String name, @NonNull String value) {
