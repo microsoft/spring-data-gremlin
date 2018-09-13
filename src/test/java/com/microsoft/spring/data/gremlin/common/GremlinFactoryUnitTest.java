@@ -47,7 +47,7 @@ public class GremlinFactoryUnitTest {
 
     @Configuration
     @NoArgsConstructor
-    public static class TestConfiguration {
+    static class TestConfiguration {
 
         @Bean
         public TelemetryTracker getTelemetryTracker() {
