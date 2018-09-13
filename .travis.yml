@@ -6,11 +6,17 @@ before_script:
   - chmod +x ./script/integration-test-setup.sh
   - ./script/integration-test-setup.sh > src/test/resources/application.properties
   - cat src/test/resources/application.properties
+  - wget http://www-us.apache.org/dist/tinkerpop/3.3.3/apache-tinkerpop-gremlin-server-3.3.3-bin.zip
+  - unzip apache-tinkerpop-gremlin-server-3.3.3-bin.zip > /dev/null
+  - cp -v config/gremlin-server-ci.yaml apache-tinkerpop-gremlin-server-3.3.3/conf/
+  - cp -v config/gremlin-server-ci.properties apache-tinkerpop-gremlin-server-3.3.3/conf/
+  - apache-tinkerpop-gremlin-server-3.3.3/bin/gremlin-server.sh conf/gremlin-server-ci.yaml &
+  - sleep 10
 
 script:
   - set -o pipefail
-  - mvn clean -P full-test install | grep "INFO"
   - mvn clean -P full-test cobertura:cobertura-integration-test | grep -v "DEBUG"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+
