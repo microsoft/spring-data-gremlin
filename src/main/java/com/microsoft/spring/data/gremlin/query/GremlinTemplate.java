@@ -314,7 +314,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         final GremlinSource source = info.getGremlinSource();
         final GremlinScriptLiteralGraph literalGraph = (GremlinScriptLiteralGraph) source.getGremlinScriptLiteral();
-        final List<String> queryList = literalGraph.generateIsEmptyScript(source);
+        final List<String> queryList = literalGraph.generateIsEmptyScript();
         final List<Result> results = this.executeQuery(queryList);
 
         return results.size() == 0;

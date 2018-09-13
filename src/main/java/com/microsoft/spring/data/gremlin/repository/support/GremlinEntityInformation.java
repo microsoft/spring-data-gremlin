@@ -13,6 +13,7 @@ import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceSimpleFactory;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
+import lombok.Getter;
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -22,28 +23,27 @@ import java.lang.reflect.Field;
 
 public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T, ID> {
 
-    private Field id;
+    @Getter
+    private Field idField;
+
+    @Getter
     private String entityLabel;
+
+    @Getter
     private GremlinEntityType entityType;
+
+    @Getter
     private GremlinSource gremlinSource;
 
     public GremlinEntityInformation(@NonNull Class<T> domainClass) {
         super(domainClass);
 
-        this.id = this.getIdField(domainClass);
-        ReflectionUtils.makeAccessible(this.id);
+        this.idField = this.getIdField(domainClass);
+        ReflectionUtils.makeAccessible(this.idField);
 
         this.entityType = this.getGremlinEntityType(domainClass); // The other fields getter may depend on type
         this.entityLabel = this.getEntityLabel(domainClass);
         this.gremlinSource = this.createGremlinSource();
-    }
-
-    public GremlinEntityType getEntityType() {
-        return this.entityType;
-    }
-
-    public GremlinSource getGremlinSource() {
-        return this.gremlinSource;
     }
 
     public boolean isEntityEdge() {
@@ -58,16 +58,6 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
         return this.getEntityType() == GremlinEntityType.GRAPH;
     }
 
-    @NonNull
-    public String getEntityLabel() {
-        return this.entityLabel;
-    }
-
-    @NonNull
-    public Field getIdField() {
-        return this.id;
-    }
-
     @Override
     @Nullable
     public ID getId(T entity) {
@@ -78,7 +68,7 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
 
     @Override
     public Class<ID> getIdType() {
-        @SuppressWarnings("unchecked") final Class<ID> idClass = (Class<ID>) this.id.getType();
+        @SuppressWarnings("unchecked") final Class<ID> idClass = (Class<ID>) this.idField.getType();
 
         return idClass;
     }

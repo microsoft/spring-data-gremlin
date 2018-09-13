@@ -5,7 +5,6 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.script;
 
-import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
@@ -17,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import static com.microsoft.spring.data.gremlin.common.Constants.*;
 
 @NoArgsConstructor
 public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
@@ -44,7 +45,7 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceGraph");
         }
 
-        return Arrays.asList(Constants.GREMLIN_SCRIPT_EDGE_DROP_ALL, Constants.GREMLIN_SCRIPT_VERTEX_DROP_ALL);
+        return Arrays.asList(GREMLIN_SCRIPT_EDGE_DROP_ALL, GREMLIN_SCRIPT_VERTEX_DROP_ALL);
     }
 
     @Override
@@ -88,13 +89,9 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
         throw new UnsupportedOperationException("Gremlin graph cannot be findAll.");
     }
 
-    public List<String> generateIsEmptyScript(@NonNull GremlinSource source) {
-        final List<String> scriptList = new ArrayList<>();
-
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_GRAPH);
-        scriptList.add(Constants.GREMLIN_PRIMITIVE_VERTEX_ALL);
-
-        final String query = String.join(Constants.GREMLIN_PRIMITIVE_INVOKE, scriptList);
+    public List<String> generateIsEmptyScript() {
+        final List<String> scriptList = Arrays.asList(GREMLIN_PRIMITIVE_GRAPH, GREMLIN_PRIMITIVE_VERTEX_ALL);
+        final String query = String.join(GREMLIN_PRIMITIVE_INVOKE, scriptList);
 
         return Collections.singletonList(query);
     }

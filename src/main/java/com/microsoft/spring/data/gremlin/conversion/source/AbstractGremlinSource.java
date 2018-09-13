@@ -23,7 +23,7 @@ public abstract class AbstractGremlinSource implements GremlinSource {
 
     @Getter
     @Setter
-    private String id;
+    private Object id;
 
     @Getter
     @Setter
@@ -49,7 +49,7 @@ public abstract class AbstractGremlinSource implements GremlinSource {
     @Setter(AccessLevel.PRIVATE)
     private GremlinResultReader resultReader;
 
-    public AbstractGremlinSource() {
+    protected AbstractGremlinSource() {
         this.properties = new HashMap<>();
     }
 
@@ -86,8 +86,7 @@ public abstract class AbstractGremlinSource implements GremlinSource {
     }
 
     @Override
-    public <T extends Object> T doGremlinSourceRead(@NonNull Class<T> type,
-                                                    @NonNull MappingGremlinConverter converter) {
+    public <T> T doGremlinSourceRead(@NonNull Class<T> type, @NonNull MappingGremlinConverter converter) {
         Assert.notNull(this.sourceReader, "the sourceReader must be set before do reading");
 
         return this.sourceReader.read(type, converter, this);

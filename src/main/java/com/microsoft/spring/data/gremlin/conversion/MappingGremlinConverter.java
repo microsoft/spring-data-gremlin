@@ -82,7 +82,7 @@ public class MappingGremlinConverter
         return GremlinUtils.getIdField(domain.getClass()).getName();
     }
 
-    public Object getFieldValue(@NonNull Object domain, @NonNull String fieldName) {
+    private Object getFieldValue(@NonNull Object domain, @NonNull String fieldName) {
         final ConvertingPropertyAccessor accessor = this.getPropertyAccessor(domain);
         final GremlinPersistentEntity<?> persistentEntity = this.getPersistentEntity(domain.getClass());
         final PersistentProperty property = persistentEntity.getPersistentProperty(fieldName);

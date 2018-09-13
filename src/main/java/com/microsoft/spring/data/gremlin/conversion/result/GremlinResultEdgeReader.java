@@ -40,7 +40,7 @@ public class GremlinResultEdgeReader extends AbstractGremlinResultReader impleme
 
         final GremlinSourceEdge sourceEdge = (GremlinSourceEdge) source;
 
-        sourceEdge.setId(map.get(Constants.PROPERTY_ID).toString());
+        sourceEdge.setId(map.get(Constants.PROPERTY_ID));
         sourceEdge.setLabel(map.get(Constants.PROPERTY_LABEL).toString());
         sourceEdge.setVertexIdFrom(map.get(Constants.PROPERTY_OUTV).toString());
         sourceEdge.setVertexIdTo(map.get(Constants.PROPERTY_INV).toString());

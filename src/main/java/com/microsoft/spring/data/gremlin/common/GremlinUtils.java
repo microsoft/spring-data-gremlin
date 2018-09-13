@@ -60,8 +60,9 @@ public class GremlinUtils {
 
         if (idField == null) {
             throw new GremlinInvalidEntityIdFieldException("no field named id in class");
-        } else if (idField.getType() != String.class) {
-            throw new GremlinInvalidEntityIdFieldException("the type of @Id/id field should be String");
+        } else if (idField.getType() != String.class
+                && idField.getType() != Long.class && idField.getType() != Integer.class) {
+            throw new GremlinInvalidEntityIdFieldException("the type of @Id/id field should be String/Integer/Long");
         }
 
         return idField;

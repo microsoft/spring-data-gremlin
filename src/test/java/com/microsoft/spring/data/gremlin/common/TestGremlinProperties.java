@@ -5,18 +5,21 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
-@ConfigurationProperties(prefix = "gremlin")
-public class GremlinConfiguration {
-
+@ConfigurationProperties("gremlin")
+public class TestGremlinProperties {
     private String endpoint;
 
-    private String port;
+    private int port;
 
     private String username;
 

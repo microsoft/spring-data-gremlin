@@ -7,59 +7,51 @@ package com.microsoft.spring.data.gremlin.common;
 
 import com.microsoft.spring.data.gremlin.exception.GremlinIllegalConfigurationException;
 import com.microsoft.spring.data.gremlin.telemetry.TelemetryTracker;
-import com.microsoft.spring.data.gremlin.telemetry.TelemetryUtils;
 import lombok.Getter;
 import org.apache.tinkerpop.gremlin.driver.Client;
 import org.apache.tinkerpop.gremlin.driver.Cluster;
 import org.apache.tinkerpop.gremlin.driver.ser.Serializers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
-
 
 public class GremlinFactory {
 
     @Getter
     private Cluster gremlinCluster;
-    private String endpoint;
-    private String port;
-    private String username;
-    private String password;
 
-    @Autowired(required = false)
+    private GremlinConfig gremlinConfig;
+
+    @Autowired
     private TelemetryTracker telemetryTracker;
 
-    public GremlinFactory(@NonNull String endpoint, @Nullable String port,
-                          @NonNull String username, @NonNull String password) {
-
-        if (port == null || port.isEmpty()) {
-            this.port = Constants.DEFAULT_ENDPOINT_PORT;
-        } else {
-            this.port = port;
+    public GremlinFactory(@NonNull GremlinConfig gremlinConfig) {
+        final int port = gremlinConfig.getPort();
+        if (port <= 0 || port > 65535) {
+            gremlinConfig.setPort(Constants.DEFAULT_ENDPOINT_PORT);
         }
 
-        this.endpoint = endpoint;
-        this.username = username;
-        this.password = password;
+        this.gremlinConfig = gremlinConfig;
+    }
+
+    private void trackTelemetryCustomEvent() {
+        this.telemetryTracker.trackEvent(getClass().getSimpleName());
     }
 
     private Cluster createGremlinCluster() throws GremlinIllegalConfigurationException {
-        final int port;
         final Cluster cluster;
 
         try {
-            port = Integer.parseInt(this.port);
-            cluster = Cluster.build(this.endpoint)
+            cluster = Cluster.build(this.gremlinConfig.getEndpoint())
                     .serializer(Serializers.DEFAULT_RESULT_SERIALIZER)
-                    .credentials(this.username, this.password)
+                    .credentials(this.gremlinConfig.getUsername(), this.gremlinConfig.getPassword())
                     .enableSsl(true)
-                    .port(port)
+                    .port(this.gremlinConfig.getPort())
                     .create();
         } catch (IllegalArgumentException e) {
             throw new GremlinIllegalConfigurationException("Invalid configuration of Gremlin", e);
         }
 
-        TelemetryUtils.telemetryTriggerEvent(telemetryTracker, getClass().getSimpleName());
+        trackTelemetryCustomEvent();
 
         return cluster;
     }

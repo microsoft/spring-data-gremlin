@@ -5,29 +5,30 @@
  */
 package com.microsoft.spring.data.gremlin.config;
 
-import com.microsoft.spring.data.gremlin.common.GremlinConfiguration;
+import com.microsoft.spring.data.gremlin.common.GremlinConfig;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.query.GremlinTemplate;
+import com.microsoft.spring.data.gremlin.telemetry.EmptyTracker;
 import com.microsoft.spring.data.gremlin.telemetry.TelemetryTracker;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 
 public abstract class AbstractGremlinConfiguration extends GremlinConfigurationSupport {
 
-    public abstract GremlinConfiguration getGremlinConfiguration();
+    public abstract GremlinConfig getGremlinConfig();
 
     @Bean
-    @ConditionalOnProperty(name = "gremlin.telemetryAllowed", havingValue = "true", matchIfMissing = true)
     public TelemetryTracker getTelemetryTracker() {
-        return new TelemetryTracker();
+        if (getGremlinConfig().isTelemetryAllowed()) {
+            return new TelemetryTracker();
+        }
+
+        return new EmptyTracker();
     }
 
     @Bean
     public GremlinFactory gremlinFactory() {
-        final GremlinConfiguration config = getGremlinConfiguration();
-
-        return new GremlinFactory(config.getEndpoint(), config.getPort(), config.getUsername(), config.getPassword());
+        return new GremlinFactory(getGremlinConfig());
     }
 
     @Bean
@@ -39,5 +40,4 @@ public abstract class AbstractGremlinConfiguration extends GremlinConfigurationS
     public GremlinTemplate gremlinTemplate(GremlinFactory factory) throws ClassNotFoundException {
         return new GremlinTemplate(factory, mappingGremlinConverter());
     }
-
 }

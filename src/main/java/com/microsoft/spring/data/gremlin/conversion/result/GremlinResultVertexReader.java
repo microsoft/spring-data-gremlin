@@ -36,7 +36,7 @@ public class GremlinResultVertexReader extends AbstractGremlinResultReader imple
         Assert.isTrue(map.containsKey(Constants.PROPERTY_PROPERTIES), "should contain properties property");
         Assert.isTrue(map.get(Constants.PROPERTY_TYPE).equals(Constants.RESULT_TYPE_VERTEX), "must be vertex type");
 
-        source.setId(map.get(Constants.PROPERTY_ID).toString());
+        source.setId(map.get(Constants.PROPERTY_ID));
         source.setLabel(map.get(Constants.PROPERTY_LABEL).toString());
 
         Assert.isInstanceOf(Map.class, map.get(Constants.PROPERTY_PROPERTIES), "should be one instance of Map");
