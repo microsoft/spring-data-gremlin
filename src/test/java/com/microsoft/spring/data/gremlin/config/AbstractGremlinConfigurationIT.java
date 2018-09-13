@@ -5,47 +5,32 @@
  */
 package com.microsoft.spring.data.gremlin.config;
 
-import com.microsoft.spring.data.gremlin.common.GremlinConfig;
-import com.microsoft.spring.data.gremlin.common.TestGremlinProperties;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.telemetry.EmptyTracker;
 import com.microsoft.spring.data.gremlin.telemetry.TelemetryTracker;
 import lombok.SneakyThrows;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.lang.NonNull;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@PropertySource(value = {"classpath:application.properties"})
-@EnableConfigurationProperties(TestGremlinProperties.class)
+@ContextConfiguration(classes = TestRepositoryConfiguration.class)
 public class AbstractGremlinConfigurationIT {
-
-    private TestConfig testConfig;
-
-    @Autowired
-    private TestGremlinProperties testProps;
 
     private ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withConfiguration(AutoConfigurations.of(TestRepositoryConfiguration.class));
 
-    @Before
-    public void setup() {
-        this.testConfig = new TestConfig(GremlinConfig.builder(testProps.getEndpoint(), testProps.getUsername(),
-                testProps.getPassword()).build());
-    }
+    @Autowired
+    private TestRepositoryConfiguration testConfig;
 
     @Test
     public void testGremlinFactory() {
         Assert.assertNotNull(this.testConfig.gremlinFactory());
-        Assert.assertNotNull(this.testConfig.gremlinFactory().getGremlinClient());
     }
 
     @Test
@@ -58,20 +43,6 @@ public class AbstractGremlinConfigurationIT {
     @SneakyThrows
     public void testGremlinTemplate() {
         Assert.assertNotNull(this.testConfig.gremlinTemplate(testConfig.gremlinFactory()));
-    }
-
-    private class TestConfig extends AbstractGremlinConfiguration {
-
-        private GremlinConfig gremlinConfig;
-
-        public TestConfig(@NonNull GremlinConfig gremlinConfig) {
-            this.gremlinConfig = gremlinConfig;
-        }
-
-        @Override
-        public GremlinConfig getGremlinConfig() {
-            return this.gremlinConfig;
-        }
     }
 
     @Test

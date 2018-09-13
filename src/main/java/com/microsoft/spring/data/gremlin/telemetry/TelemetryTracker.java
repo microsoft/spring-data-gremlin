@@ -18,7 +18,6 @@ import java.util.Map;
 
 import static com.microsoft.applicationinsights.core.dependencies.apachecommons.codec.digest.DigestUtils.sha256Hex;
 import static com.microsoft.spring.data.gremlin.telemetry.TelemetryProperties.PROPERTY_INSTALLATION_ID;
-import static com.microsoft.spring.data.gremlin.telemetry.TelemetryProperties.PROPERTY_SERVICE_NAME;
 import static com.microsoft.spring.data.gremlin.telemetry.TelemetryProperties.PROPERTY_VERSION;
 
 public class TelemetryTracker {
@@ -27,48 +26,34 @@ public class TelemetryTracker {
 
     private static final String PROJECT_INFO = "spring-data-gremlin" + "/" + PROJECT_VERSION;
 
-    private static final String SERVICE_NAME = "gremlin";
-
     private static final String UNKNOWN_MAC = "unknown-Mac-Address";
+
+    private final Map<String, String> properties;
 
     protected TelemetryClient client;
 
     public TelemetryTracker() {
         this.client = new TelemetryClient();
+        this.properties = new HashMap<>();
+
+        this.properties.put(PROPERTY_VERSION, PROJECT_INFO);
+        this.properties.put(PROPERTY_INSTALLATION_ID, getHashMac());
     }
 
-    public void trackEvent(@NonNull String name) {
-        final Map<String, String> properties = this.getDefaultProperties();
-
-        properties.put(PROPERTY_INSTALLATION_ID, getHashMac());
-
-        client.trackEvent(name, properties, null);
-        client.flush();
-    }
-
-    private Map<String, String> getDefaultProperties() {
-        final Map<String, String> properties = new HashMap<>();
-
-        properties.put(PROPERTY_VERSION, PROJECT_INFO);
-        properties.put(PROPERTY_SERVICE_NAME, SERVICE_NAME);
-
-        return properties;
+    public void trackEvent(@NonNull String eventName) {
+        this.client.trackEvent(eventName, this.properties, null);
+        this.client.flush();
     }
 
     private static String getMacAddress() {
-        final InetAddress ip;
-        final NetworkInterface network;
-        final byte[] macBytes;
-
         try {
-            ip = InetAddress.getLocalHost();
-            network = NetworkInterface.getByInetAddress(ip);
-            macBytes = network.getHardwareAddress();
-        } catch (UnknownHostException | SocketException e) { // Omit
+            final InetAddress host = InetAddress.getLocalHost();
+            final byte[] macBytes = NetworkInterface.getByInetAddress(host).getHardwareAddress();
+
+            return Arrays.toString(macBytes);
+        } catch (UnknownHostException | SocketException | NullPointerException e) { // Omit
             return UNKNOWN_MAC;
         }
-
-        return Arrays.toString(macBytes);
     }
 
     private static String getHashMac() {

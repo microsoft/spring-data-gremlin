@@ -21,7 +21,7 @@ public class GremlinFactory {
 
     private GremlinConfig gremlinConfig;
 
-    @Autowired(required = false)
+    @Autowired
     private TelemetryTracker telemetryTracker;
 
     public GremlinFactory(@NonNull GremlinConfig gremlinConfig) {
@@ -34,9 +34,7 @@ public class GremlinFactory {
     }
 
     private void trackTelemetryCustomEvent() {
-        if (telemetryTracker != null) {
-            telemetryTracker.trackEvent(getClass().getSimpleName());
-        }
+        this.telemetryTracker.trackEvent(getClass().getSimpleName());
     }
 
     private Cluster createGremlinCluster() throws GremlinIllegalConfigurationException {
@@ -53,7 +51,7 @@ public class GremlinFactory {
             throw new GremlinIllegalConfigurationException("Invalid configuration of Gremlin", e);
         }
 
-        this.trackTelemetryCustomEvent();
+        trackTelemetryCustomEvent();
 
         return cluster;
     }
