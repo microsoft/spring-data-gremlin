@@ -217,7 +217,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         Assert.isTrue(info.isEntityEdge() || info.isEntityVertex(), "only accept vertex or edge");
 
-        source.setId(id.toString());
+        source.setId(id);
 
         final List<String> queryList = source.getGremlinScriptLiteral().generateFindByIdScript(source);
         final List<Result> results = this.executeQuery(queryList);
@@ -227,7 +227,6 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         }
 
         Assert.isTrue(results.size() == 1, "should be only one domain with given id");
-        Assert.isTrue(id.toString().equals(source.getId()), "should be the same id");
 
         return this.recoverDomain(source, results.get(0), domainClass, info.isEntityEdge());
     }
@@ -296,7 +295,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
         final GremlinSource source = info.getGremlinSource();
 
-        source.setId(id.toString());
+        source.setId(id);
 
         final List<String> queryList = source.getGremlinScriptLiteral().generateDeleteByIdScript(source);
 

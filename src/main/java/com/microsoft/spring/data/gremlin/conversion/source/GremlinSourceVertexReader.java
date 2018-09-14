@@ -39,7 +39,7 @@ public class GremlinSourceVertexReader extends AbstractGremlinSourceReader imple
             Assert.notNull(property, "persistence property should not be null");
 
             if (field.getName().equals(Constants.PROPERTY_ID) || field.getAnnotation(Id.class) != null) {
-                accessor.setProperty(property, source.getId());
+                accessor.setProperty(property, super.getGremlinSourceId(source));
             } else {
                 final Object value = super.readProperty(property, source.getProperties().get(field.getName()));
                 accessor.setProperty(property, value);

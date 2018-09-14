@@ -6,14 +6,16 @@
 package com.microsoft.spring.data.gremlin.conversion.source;
 
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
+import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
+import lombok.NonNull;
 import org.apache.tinkerpop.shaded.jackson.databind.JavaType;
 import org.apache.tinkerpop.shaded.jackson.databind.type.TypeFactory;
 import org.springframework.data.mapping.PersistentProperty;
-import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Date;
 
 public abstract class AbstractGremlinSourceReader {
@@ -40,6 +42,24 @@ public abstract class AbstractGremlinSourceReader {
 
             return object;
         }
+    }
+
+    protected Object getGremlinSourceId(@NonNull GremlinSource source) {
+        final Field idField = source.getIdField();
+        final Object id = source.getId();
+
+        if (idField.getType() == String.class) {
+            return id.toString();
+        } else if (idField.getType() == Integer.class) {
+            Assert.isTrue(id instanceof Integer, "source Id should be Integer.");
+            return id;
+        } else if (idField.getType() == Long.class && id instanceof Integer) {
+            return Long.valueOf((Integer) id);
+        } else if (idField.getType() == Long.class && id instanceof Long) {
+            return id;
+        }
+
+        throw new GremlinEntityInformationException("unsupported id field type: " + id.getClass().getSimpleName());
     }
 }
 
