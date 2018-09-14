@@ -35,7 +35,7 @@ public abstract class AbstractGremlinScriptLiteral {
         throw new GremlinInvalidEntityIdFieldException("Only String/Integer/Long of id is supported");
     }
 
-    protected static String generatePropertyWithRequiredId(@NonNull Object id) {
+    protected static String generatePropertyWithRequiredId(Object id) {
         if (id instanceof String) {
             return String.format("property(id, '%s')", (String) id);
         } else if (id instanceof Integer) {

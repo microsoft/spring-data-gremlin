@@ -49,20 +49,20 @@ public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
         final ConvertingPropertyAccessor accessor = converter.getPropertyAccessor(domain);
 
         for (final Field field : FieldUtils.getAllFields(domain.getClass())) {
-            final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
-            Assert.notNull(property, "persistence property should not be null");
+        		final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
+        		Assert.notNull(property, "persistence property should not be null");
 
-            final Object object = accessor.getProperty(property);
+        		final Object object = accessor.getProperty(property);
 
-            if (field.getName().equals(Constants.PROPERTY_ID) || field.getAnnotation(Id.class) != null) {
-                continue;
-            } else if (field.getAnnotation(EdgeFrom.class) != null) {
-                sourceEdge.setVertexIdFrom(this.getIdValue(object, converter));
-            } else if (field.getAnnotation(EdgeTo.class) != null) {
-                sourceEdge.setVertexIdTo(this.getIdValue(object, converter));
-            } else if (!field.getName().equals(Constants.PROPERTY_ID)) {
-                source.setProperty(field.getName(), accessor.getProperty(property));
-            }
+        		if (field.getName().equals(Constants.PROPERTY_ID) || field.getAnnotation(Id.class) != null) {
+        			continue;
+        		} else if (field.getAnnotation(EdgeFrom.class) != null) {
+        			sourceEdge.setVertexIdFrom(this.getIdValue(object, converter));
+        		} else if (field.getAnnotation(EdgeTo.class) != null) {
+        			sourceEdge.setVertexIdTo(this.getIdValue(object, converter));
+        		} else if (!field.getName().equals(Constants.PROPERTY_ID)) {
+        			source.setProperty(field.getName(), accessor.getProperty(property));
+        		}
         }
     }
 }
