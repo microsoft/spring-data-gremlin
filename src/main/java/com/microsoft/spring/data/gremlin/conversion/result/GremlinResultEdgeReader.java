@@ -25,8 +25,7 @@ public class GremlinResultEdgeReader extends AbstractGremlinResultReader impleme
 
     private void readProperties(@NonNull GremlinSource source, @Nullable Map map) {
         if (map != null) {
-            @SuppressWarnings("unchecked") final Map<String, Object> properties =
-                    (Map<String, Object>) map.get(PROPERTY_PROPERTIES);
+            @SuppressWarnings("unchecked") final Map<String, Object> properties = (Map<String, Object>) map;
 
             properties.forEach(source::setProperty);
         }
