@@ -55,7 +55,7 @@ public class BookRepositoryIT {
     }
 
     private void assertDomainListEquals(@NonNull List<Book> found, @NonNull List<Book> expected) {
-        found.sort(Comparator.comparing(Book::getName));
+        found.sort(Comparator.comparing(Book::getSerialNumber));
         expected.sort(Comparator.comparing(Book::getSerialNumber));
 
         Assert.assertEquals(found.size(), expected.size());

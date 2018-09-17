@@ -152,8 +152,8 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         return this.findById(id, domainClass);
     }
 
-    private Object getEdgeAnnotatedFieldValue(@NonNull Field field, @NonNull String vertexId) {
-        if (field.getType() == String.class) {
+    private Object getEdgeAnnotatedFieldValue(@NonNull Field field, @NonNull Object vertexId) {
+        if (field.getType() == String.class || field.getType() == Long.class || field.getType() == Integer.class) {
             return vertexId;
         } else if (field.getType().isPrimitive()) {
             throw new GremlinUnexpectedEntityTypeException("only String type of primitive is allowed");

@@ -25,13 +25,13 @@ import java.lang.reflect.Field;
 @NoArgsConstructor
 public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
 
-    private String getIdValue(@NonNull Object object, @NonNull MappingGremlinConverter converter) {
-        if (object instanceof String) {
-            return object.toString();
+    private Object getIdValue(@NonNull Object object, @NonNull MappingGremlinConverter converter) {
+        if (object instanceof String || object instanceof Long || object instanceof Integer) {
+            return object;
         } else if (object.getClass().isPrimitive()) {
             throw new GremlinUnexpectedEntityTypeException("only String type of primitive is allowed");
         } else {
-            return converter.getIdFieldValue(object).toString();
+            return converter.getIdFieldValue(object);
         }
     }
 
