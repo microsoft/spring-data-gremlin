@@ -34,7 +34,9 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
 
         scriptList.add(GREMLIN_PRIMITIVE_GRAPH);                               // g
         scriptList.add(generateAddEntityWithLabel(source.getLabel(), VERTEX)); // addV('label')
-        if (source.getId() != null) scriptList.add(generatePropertyWithRequiredId(source.getId()));        // property(id, xxx)
+        if (source.getId() != null) {
+             scriptList.add(generatePropertyWithRequiredId(source.getId()));        // property(id, xxx)
+        }
 
         scriptList.addAll(generateProperties(source.getProperties()));
 

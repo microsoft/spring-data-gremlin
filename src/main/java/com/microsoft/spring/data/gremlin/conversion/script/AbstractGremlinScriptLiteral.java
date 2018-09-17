@@ -24,15 +24,15 @@ public abstract class AbstractGremlinScriptLiteral {
 
         final String prefix = (type == GremlinEntityType.VERTEX) ? "V" : "E";
         if (id != null) {
-        	if (id instanceof String) {
-        		return prefix + String.format("('%s')", (String) id);
-        	} else if (id instanceof Integer) {
-        		return prefix + String.format("(%d)", (Integer) id);
-        	} else if (id instanceof Long) {
-        		return prefix + String.format("(%d)", (Long) id);
-        	}
+            if (id instanceof String) {
+                return prefix + String.format("('%s')", (String) id);
+            } else if (id instanceof Integer) {
+                return prefix + String.format("(%d)", (Integer) id);
+            } else if (id instanceof Long) {
+                return prefix + String.format("(%d)", (Long) id);
+            }
 
-        	throw new GremlinInvalidEntityIdFieldException("Only String/Integer/Long of id is supported");
+            throw new GremlinInvalidEntityIdFieldException("Only String/Integer/Long of id is supported");
         }
         return null;
     }

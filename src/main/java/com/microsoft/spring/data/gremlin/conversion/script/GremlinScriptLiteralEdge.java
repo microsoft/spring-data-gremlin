@@ -48,7 +48,9 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         scriptList.add(generateAsWithAlias(TO_ALIAS));                                      // to('to')
         scriptList.add(generateAddEntityWithLabel(sourceEdge.getLabel(), EDGE));            // addE(label)
         scriptList.add(generateEdgeDirection(FROM_ALIAS, TO_ALIAS));                        // from('from').to('to')
-        if (source.getId() != null) scriptList.add(generatePropertyWithRequiredId(source.getId()));                     // property(id, xxx)
+        if (source.getId() != null) {
+              scriptList.add(generatePropertyWithRequiredId(source.getId()));                     // property(id, xxx)
+        }
 
         scriptList.addAll(generateProperties(source.getProperties()));
 
