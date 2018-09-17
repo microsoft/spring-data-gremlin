@@ -499,7 +499,7 @@ public class GremlinTemplateIT {
         this.network.setId("fake-id");
         this.template.deleteById(this.network.getId(), Relationship.class);
 
-        final Relationship foundRelationship = this.template.findById(this.relationship, Relationship.class);
+        final Relationship foundRelationship = this.template.findById(this.relationship.getId(), Relationship.class);
         Assert.assertNull(foundRelationship);
 
         final Person foundPerson = this.template.findById(this.person.getId(), Person.class);

@@ -24,7 +24,7 @@ import java.lang.reflect.Field;
 import static com.microsoft.spring.data.gremlin.common.Constants.PROPERTY_ID;
 
 @NoArgsConstructor
-public class GremlinSourceEdgeReader implements GremlinSourceReader {
+public class GremlinSourceEdgeReader extends AbstractGremlinSourceReader implements GremlinSourceReader {
 
     @Override
     public <T extends Object> T read(@NonNull Class<T> type, @NonNull MappingGremlinConverter converter,
@@ -42,7 +42,7 @@ public class GremlinSourceEdgeReader implements GremlinSourceReader {
            Assert.notNull(property, "persistence property should not be null");
 
            if (field.getName().equals(PROPERTY_ID) || field.getAnnotation(Id.class) != null) {
-               accessor.setProperty(property, source.getId());
+               accessor.setProperty(property, super.getGremlinSourceId(source));
                continue;
            } else if (field.getAnnotation(EdgeFrom.class) != null || field.getAnnotation(EdgeTo.class) != null) {
                // We cannot do that here as the gremlin will not tell more information about vertex except Id. After the
