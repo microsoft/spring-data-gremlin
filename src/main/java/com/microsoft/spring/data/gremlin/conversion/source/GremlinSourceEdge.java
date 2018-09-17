@@ -17,11 +17,11 @@ public class GremlinSourceEdge extends AbstractGremlinSource {
 
     @Getter
     @Setter
-    private String vertexIdFrom;
+    private Object vertexIdFrom;
 
     @Getter
     @Setter
-    private String vertexIdTo;
+    private Object vertexIdTo;
 
     public GremlinSourceEdge() {
         super();

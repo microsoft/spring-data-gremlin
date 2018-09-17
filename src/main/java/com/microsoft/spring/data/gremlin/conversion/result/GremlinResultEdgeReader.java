@@ -5,21 +5,33 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.result;
 
-import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
+import lombok.NonNull;
 import org.apache.tinkerpop.gremlin.driver.Result;
-import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import java.util.Map;
+
+import static com.microsoft.spring.data.gremlin.common.Constants.*;
 
 public class GremlinResultEdgeReader extends AbstractGremlinResultReader implements GremlinResultReader {
 
     public GremlinResultEdgeReader() {
         super();
     }
+
+    private void readProperties(@NonNull GremlinSource source, @Nullable Map map) {
+        if (map != null) {
+            @SuppressWarnings("unchecked") final Map<String, Object> properties =
+                    (Map<String, Object>) map.get(PROPERTY_PROPERTIES);
+
+            properties.forEach(source::setProperty);
+        }
+    }
+
 
     @Override
     public void read(@NonNull Result result, @NonNull GremlinSource source) {
@@ -30,26 +42,20 @@ public class GremlinResultEdgeReader extends AbstractGremlinResultReader impleme
         Assert.isInstanceOf(Map.class, result.getObject(), "should be one instance of Map");
         @SuppressWarnings("unchecked") final Map<String, Object> map = (Map<String, Object>) result.getObject();
 
-        Assert.isTrue(map.containsKey(Constants.PROPERTY_ID), "should contain id property");
-        Assert.isTrue(map.containsKey(Constants.PROPERTY_LABEL), "should contain label property");
-        Assert.isTrue(map.containsKey(Constants.PROPERTY_TYPE), "should contain type property");
-        Assert.isTrue(map.containsKey(Constants.PROPERTY_PROPERTIES), "should contain properties property");
-        Assert.isTrue(map.containsKey(Constants.PROPERTY_INV), "should contain inV property");
-        Assert.isTrue(map.containsKey(Constants.PROPERTY_OUTV), "should contain outV property");
-        Assert.isTrue(map.get(Constants.PROPERTY_TYPE).equals(Constants.RESULT_TYPE_EDGE), "must be vertex type");
+        Assert.isTrue(map.containsKey(PROPERTY_ID), "should contain id property");
+        Assert.isTrue(map.containsKey(PROPERTY_LABEL), "should contain label property");
+        Assert.isTrue(map.containsKey(PROPERTY_TYPE), "should contain type property");
+        Assert.isTrue(map.containsKey(PROPERTY_INV), "should contain inV property");
+        Assert.isTrue(map.containsKey(PROPERTY_OUTV), "should contain outV property");
+        Assert.isTrue(map.get(PROPERTY_TYPE).equals(RESULT_TYPE_EDGE), "must be vertex type");
 
         final GremlinSourceEdge sourceEdge = (GremlinSourceEdge) source;
 
-        sourceEdge.setId(map.get(Constants.PROPERTY_ID));
-        sourceEdge.setLabel(map.get(Constants.PROPERTY_LABEL).toString());
-        sourceEdge.setVertexIdFrom(map.get(Constants.PROPERTY_OUTV).toString());
-        sourceEdge.setVertexIdTo(map.get(Constants.PROPERTY_INV).toString());
+        sourceEdge.setId(map.get(PROPERTY_ID));
+        sourceEdge.setLabel(map.get(PROPERTY_LABEL).toString());
+        sourceEdge.setVertexIdFrom(map.get(PROPERTY_OUTV));
+        sourceEdge.setVertexIdTo(map.get(PROPERTY_INV));
 
-        Assert.isInstanceOf(Map.class, map.get(Constants.PROPERTY_PROPERTIES), "should be one instance of Map");
-        @SuppressWarnings("unchecked") final Map<String, Object> properties =
-                (Map<String, Object>) map.get(Constants.PROPERTY_PROPERTIES);
-
-        properties.forEach(source::setProperty);
+        this.readProperties(source, (Map) map.get(PROPERTY_PROPERTIES));
     }
 }
-
