@@ -12,6 +12,7 @@ import com.microsoft.spring.data.gremlin.common.domain.Book;
 import com.microsoft.spring.data.gremlin.common.repository.BookRepository;
 import lombok.NonNull;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,7 @@ public class BookRepositoryIT {
     @Autowired
     private BookRepository repository;
 
+    @Before
     public void setup() {
         this.repository.deleteAll();
     }
