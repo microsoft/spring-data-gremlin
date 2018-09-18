@@ -8,6 +8,8 @@ package com.microsoft.spring.data.gremlin.conversion.script;
 import com.microsoft.spring.data.gremlin.common.domain.Person;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import org.junit.Before;
@@ -91,5 +93,20 @@ public class GremlinScriptLiteralVertexUnitTest {
     public void testGenerateDeleteAllByClassScript() {
         final List<String> queryList = new GremlinScriptLiteralVertex().generateDeleteAllByClassScript(gremlinSource);
         assertEquals(queryList.get(0), "g.V().has(label, 'label-person').drop()");
+    }
+
+    @Test(expected = GremlinUnexpectedSourceTypeException.class)
+    public void testInvalidDeleteAllByClassScript() {
+        new GremlinScriptLiteralVertex().generateDeleteAllByClassScript(new GremlinSourceEdge());
+    }
+
+    @Test(expected = GremlinUnexpectedSourceTypeException.class)
+    public void testInvalidFindAllScript() {
+        new GremlinScriptLiteralVertex().generateFindAllScript(new GremlinSourceEdge());
+    }
+
+    @Test(expected = GremlinUnexpectedSourceTypeException.class)
+    public void testInvalidDeleteById() {
+        new GremlinScriptLiteralVertex().generateDeleteByIdScript(new GremlinSourceEdge());
     }
 }

@@ -10,6 +10,8 @@ import com.microsoft.spring.data.gremlin.common.domain.Project;
 import com.microsoft.spring.data.gremlin.common.domain.Relationship;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import org.junit.Before;
@@ -99,5 +101,15 @@ public class GremlinScriptLiteralEdgeUnitTest {
     public void testGenerateDeleteAllByClassScript() {
         final List<String> queryList = new GremlinScriptLiteralEdge().generateDeleteAllByClassScript(gremlinSource);
         assertEquals(queryList.get(0), "g.E().has(label, 'label-relationship').drop()");
+    }
+
+    @Test(expected = GremlinUnexpectedSourceTypeException.class)
+    public void testInvalidDeleteAllByClassScript() {
+        new GremlinScriptLiteralEdge().generateDeleteAllByClassScript(new GremlinSourceVertex());
+    }
+
+    @Test(expected = GremlinUnexpectedSourceTypeException.class)
+    public void testInvalidFindAllScript() {
+        new GremlinScriptLiteralEdge().generateFindAllScript(new GremlinSourceVertex());
     }
 }

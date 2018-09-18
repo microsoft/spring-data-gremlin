@@ -70,7 +70,6 @@ public class BookReferenceRepositoryIT {
 
         Assert.assertEquals(found.size(), expected.size());
         Assert.assertEquals(found, expected);
-
     }
 
     @Test

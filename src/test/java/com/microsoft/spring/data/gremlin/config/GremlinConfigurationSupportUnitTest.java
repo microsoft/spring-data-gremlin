@@ -54,7 +54,8 @@ public class GremlinConfigurationSupportUnitTest {
         final Set<Class<?>> references = new HashSet<>(Arrays.asList(
                 Dependency.class, Library.class, Network.class, Person.class, Project.class,
                 Relationship.class, Roadmap.class, Service.class, SimpleDependency.class, InvalidDependency.class,
-                UserDomain.class, AdvancedUser.class, Student.class, Book.class, BookReference.class)
+                UserDomain.class, AdvancedUser.class, Student.class, Book.class, BookReference.class,
+                Neighbor.class)
         );
 
         Assert.assertNotNull(entities);

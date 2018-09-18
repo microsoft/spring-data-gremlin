@@ -52,7 +52,8 @@ public class GremlinSourceEdgeReader extends AbstractGremlinSourceReader impleme
                continue;
            }
 
-           accessor.setProperty(property, source.getProperties().get(field.getName()));
+           final Object value = super.readProperty(property, source.getProperties().get(field.getName()));
+           accessor.setProperty(property, value);
        }
 
        return domain;
