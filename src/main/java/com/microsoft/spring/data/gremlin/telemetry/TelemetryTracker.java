@@ -17,8 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.microsoft.applicationinsights.core.dependencies.apachecommons.codec.digest.DigestUtils.sha256Hex;
-import static com.microsoft.spring.data.gremlin.telemetry.TelemetryProperties.PROPERTY_INSTALLATION_ID;
-import static com.microsoft.spring.data.gremlin.telemetry.TelemetryProperties.PROPERTY_VERSION;
 
 public class TelemetryTracker {
 
@@ -27,6 +25,10 @@ public class TelemetryTracker {
     private static final String PROJECT_INFO = "spring-data-gremlin" + "/" + PROJECT_VERSION;
 
     private static final String UNKNOWN_MAC = "unknown-Mac-Address";
+
+    private static final String PROPERTY_VERSION = "version";
+
+    private static final String PROPERTY_INSTALLATION_ID = "installationId";
 
     private final Map<String, String> properties;
 

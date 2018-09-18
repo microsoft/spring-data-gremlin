@@ -30,11 +30,6 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
         this.operations = operations;
     }
 
-    @Deprecated
-    public GremlinEntityInformation getGremlinEntityInformation() {
-        return this.information;
-    }
-
     @Override
     public <S extends T> S save(@NonNull S domain) {
         this.operations.save(domain);
