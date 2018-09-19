@@ -34,6 +34,7 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
         final GremlinScriptLiteralEdge scriptEdge = new GremlinScriptLiteralEdge();
 
         sourceGraph.getVertexSet().forEach(vertex -> scriptList.addAll(scriptVertex.generateInsertScript(vertex)));
+        scriptList.add(GREMLIN_QUERY_BARRIER);
         sourceGraph.getEdgeSet().forEach(edge -> scriptList.addAll(scriptEdge.generateInsertScript(edge)));
 
         return scriptList;
@@ -45,7 +46,7 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceGraph");
         }
 
-        return Arrays.asList(GREMLIN_SCRIPT_EDGE_DROP_ALL, GREMLIN_SCRIPT_VERTEX_DROP_ALL);
+        return Arrays.asList(GREMLIN_SCRIPT_EDGE_DROP_ALL, GREMLIN_QUERY_BARRIER, GREMLIN_SCRIPT_VERTEX_DROP_ALL);
     }
 
     @Override
@@ -70,6 +71,7 @@ public class GremlinScriptLiteralGraph implements GremlinScriptLiteral {
         final GremlinScriptLiteralEdge scriptEdge = new GremlinScriptLiteralEdge();
 
         sourceGraph.getVertexSet().forEach(vertex -> scriptList.addAll(scriptVertex.generateUpdateScript(vertex)));
+        scriptList.add(GREMLIN_QUERY_BARRIER);
         sourceGraph.getEdgeSet().forEach(edge -> scriptList.addAll(scriptEdge.generateUpdateScript(edge)));
 
         return scriptList;
