@@ -17,6 +17,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 
+import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
+import com.microsoft.spring.data.gremlin.exception.GremlinIllegalConfigurationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 
 import lombok.AccessLevel;
@@ -51,12 +53,19 @@ public class GremlinUtils {
 
     public static <T> Field getIdField(@NonNull Class<T> domainClass) {
         final Field idField;
-        final List<Field> fields = FieldUtils.getFieldsListWithAnnotation(domainClass, Id.class);
+        final List<Field> idFields = FieldUtils.getFieldsListWithAnnotation(domainClass, Id.class);
+        final List<Field> generatedValueFields = 
+                FieldUtils.getFieldsListWithAnnotation(domainClass, GeneratedValue.class);
+        
+        if (generatedValueFields.size() > 1) {
+            throw new GremlinIllegalConfigurationException("Only one field, the id field, can have the optional "
+                    + "@GeneratedValue annotation!");
+        }
 
-        if (fields.isEmpty()) {
+        if (idFields.isEmpty()) {
             idField = ReflectionUtils.findField(domainClass, Constants.PROPERTY_ID);
-        } else if (fields.size() == 1) {
-            idField = fields.get(0);
+        } else if (idFields.size() == 1) {
+            idField = idFields.get(0);
         } else {
             throw new GremlinInvalidEntityIdFieldException("only one @Id field is allowed");
         }
@@ -67,6 +76,11 @@ public class GremlinUtils {
                 && idField.getType() != Long.class && idField.getType() != Integer.class) {
             throw new GremlinInvalidEntityIdFieldException("the type of @Id/id field should be String/Integer/Long");
         }
+        
+        if (!generatedValueFields.isEmpty() && !generatedValueFields.get(0).equals(idField)) {
+            throw new GremlinIllegalConfigurationException("Only the id field can have the optional "
+                    + "@GeneratedValue annotation!");
+        }
 
         return idField;
     }
@@ -74,7 +88,9 @@ public class GremlinUtils {
     public static <T, U extends Annotation> boolean checkIfFieldBearsAnnotation(@NonNull Class<T> domainClass, 
             @NonNull Class<U> annotationClass, @NonNull String fieldName) {
         final Field namedField = ReflectionUtils.findField(domainClass, fieldName);
-        if (namedField == null) { return false; }
+        if (namedField == null) {
+            return false;
+            }
         return namedField.isAnnotationPresent(annotationClass);
     }
 
