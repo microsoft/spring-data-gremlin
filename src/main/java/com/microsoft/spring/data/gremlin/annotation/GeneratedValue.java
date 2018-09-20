@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 
 /**
  * Specifies that a field's value is to be generated (and not explicitly specified in the domain object).
- * This annotation should only be used on a field that is marked as {@link Id}.
+ * This annotation should only be used on an id field.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
