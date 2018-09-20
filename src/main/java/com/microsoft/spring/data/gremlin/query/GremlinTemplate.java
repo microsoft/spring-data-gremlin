@@ -264,7 +264,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         if (info.isEntityGraph() && this.isEmptyGraph(object)) {
             return this.insert(object);
-        } else if (!info.isEntityGraph() && this.findById(id, domainClass) == null) {
+        } else if (!info.isEntityGraph() && (id == null || this.findById(id, domainClass) == null)) {
             return this.insert(object);
         } else {
             return this.updateInternal(object, info);
