@@ -19,25 +19,23 @@ import static com.microsoft.spring.data.gremlin.common.Constants.*;
 
 public abstract class AbstractGremlinScriptLiteral {
 
-    protected static String generateEntityWithRequiredId(Object id, GremlinEntityType type) {
+    protected static String generateEntityWithRequiredId(@NonNull Object id, GremlinEntityType type) {
         Assert.isTrue(type == GremlinEntityType.EDGE || type == GremlinEntityType.VERTEX, "should be edge/vertex type");
 
         final String prefix = (type == GremlinEntityType.VERTEX) ? "V" : "E";
-        if (id != null) {
-            if (id instanceof String) {
-                return prefix + String.format("('%s')", (String) id);
-            } else if (id instanceof Integer) {
-                return prefix + String.format("(%d)", (Integer) id);
-            } else if (id instanceof Long) {
-                return prefix + String.format("(%d)", (Long) id);
-            }
 
-            throw new GremlinInvalidEntityIdFieldException("Only String/Integer/Long of id is supported");
+        if (id instanceof String) {
+            return prefix + String.format("('%s')", (String) id);
+        } else if (id instanceof Integer) {
+            return prefix + String.format("(%d)", (Integer) id);
+        } else if (id instanceof Long) {
+            return prefix + String.format("(%d)", (Long) id);
         }
-        return null;
+
+        throw new GremlinInvalidEntityIdFieldException("Only String/Integer/Long of id is supported");
     }
 
-    protected static String generatePropertyWithRequiredId(Object id) {
+    protected static String generatePropertyWithRequiredId(@NonNull Object id) {
         if (id instanceof String) {
             return String.format("property(id, '%s')", (String) id);
         } else if (id instanceof Integer) {

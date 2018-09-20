@@ -5,9 +5,11 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
-import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.tinkerpop.shaded.jackson.databind.MapperFeature;
 import org.apache.tinkerpop.shaded.jackson.databind.ObjectMapper;
@@ -15,9 +17,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
-import java.util.Date;
-import java.util.List;
+import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GremlinUtils {
@@ -66,6 +69,13 @@ public class GremlinUtils {
         }
 
         return idField;
+    }
+    
+    public static <T, U extends Annotation> boolean checkIfFieldBearsAnnotation(@NonNull Class<T> domainClass, 
+            @NonNull Class<U> annotationClass, @NonNull String fieldName) {
+        final Field namedField = ReflectionUtils.findField(domainClass, fieldName);
+        if (namedField == null) { return false; }
+        return namedField.isAnnotationPresent(annotationClass);
     }
 
     public static long timeToMilliSeconds(@NonNull Object time) {
