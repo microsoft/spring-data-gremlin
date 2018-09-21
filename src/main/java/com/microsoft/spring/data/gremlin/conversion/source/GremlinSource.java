@@ -28,6 +28,11 @@ public interface GremlinSource {
     void setId(Object id);
 
     /**
+     * Set the id of domain
+     */
+    void setIdField(Field id);
+
+    /**
      * Set the label of domain
      */
     void setLabel(String label);

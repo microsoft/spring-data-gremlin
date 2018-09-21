@@ -6,12 +6,14 @@
 package com.microsoft.spring.data.gremlin.query.query;
 
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.query.criteria.Criteria;
 import com.microsoft.spring.data.gremlin.query.criteria.CriteriaType;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.tinkerpop.gremlin.structure.T;
 import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
@@ -21,11 +23,13 @@ import java.util.List;
 import static com.microsoft.spring.data.gremlin.common.Constants.*;
 import static com.microsoft.spring.data.gremlin.conversion.script.AbstractGremlinScriptLiteral.*;
 
-@NoArgsConstructor
 public class QueryFindScriptGenerator implements QueryScriptGenerator {
 
-    @Setter(AccessLevel.PRIVATE)
-    private GremlinEntityInformation information;
+    private final GremlinSource source;
+
+    public QueryFindScriptGenerator(@NonNull Class<?> domainClass) {
+        source = new GremlinEntityInformation<>(domainClass).getGremlinSource();
+    }
 
     private String getCriteriaSubject(@NonNull Criteria criteria) {
         String subject = criteria.getSubject();

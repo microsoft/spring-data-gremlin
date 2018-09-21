@@ -21,6 +21,7 @@ public interface GremlinQueryExecution {
 
         @Override
         public Object execute(@NonNull GremlinQuery query, @NonNull Class<?> type) {
+            final Gremlin
             return this.operations.find(query, type);
         }
     }

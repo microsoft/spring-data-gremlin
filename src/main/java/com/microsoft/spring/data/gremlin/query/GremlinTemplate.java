@@ -101,21 +101,14 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public void deleteAll(GremlinEntityType type) {
-        if (type == GremlinEntityType.UNKNOWN) {
-            throw new GremlinUnexpectedEntityTypeException("must be explicit entity type");
-        }
-
         if (type != GremlinEntityType.EDGE) {
             this.deleteAll();
+        } else {
+            final GremlinSource source = type.createGremlinSource();
+            final List<String> queryList = source.getGremlinScriptLiteral().generateDeleteAllScript(source);
+
+            this.executeQuery(queryList);
         }
-
-        final GremlinSource source = new GremlinSourceEdge();
-
-        source.setGremlinScriptStrategy(new GremlinScriptLiteralEdge());
-
-        final List<String> queryList = source.getGremlinScriptLiteral().generateDeleteAllScript(source);
-
-        this.executeQuery(queryList);
     }
 
     public <T> void deleteAll(@NonNull Class<T> domainClass) {
