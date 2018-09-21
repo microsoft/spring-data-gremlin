@@ -5,8 +5,27 @@
  */
 package com.microsoft.spring.data.gremlin.query;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CompletionException;
+
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.tinkerpop.gremlin.driver.Client;
+import org.apache.tinkerpop.gremlin.driver.Result;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.mapping.PersistentProperty;
+import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
+import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
+
 import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
 import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
+import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
@@ -19,29 +38,13 @@ import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
+import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.query.query.GremlinQuery;
 import com.microsoft.spring.data.gremlin.query.query.QueryFindScriptGenerator;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.tinkerpop.gremlin.driver.Client;
-import org.apache.tinkerpop.gremlin.driver.Result;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.data.mapping.PersistentProperty;
-import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
-import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CompletionException;
 
 
 public class GremlinTemplate implements GremlinOperations, ApplicationContextAware {
@@ -130,6 +133,13 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     public <T> T insert(@NonNull T object) {
         final Class domainClass = object.getClass();
         @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
+        
+        if (!info.isEntityGraph() && info.getIdField().isAnnotationPresent(GeneratedValue.class) 
+                && info.getId(object) != null) {
+            throw new GremlinInvalidEntityIdFieldException("The entity meant to be created has a non-null id "
+                    + "that is marked as @GeneratedValue");
+        }
+        
         final GremlinSource source = info.getGremlinSource();
 
         this.mappingConverter.write(object, source);
