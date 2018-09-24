@@ -11,9 +11,6 @@ import com.microsoft.spring.data.gremlin.annotation.Vertex;
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import lombok.Getter;
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
@@ -65,20 +62,9 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
 
         source.setLabel(label);
         source.setIdField(idField);
+        source.setDomainClass(domainClass);
 
         return source;
-    }
-
-    public boolean isEntityVertex() {
-        return this.gremlinSource instanceof GremlinSourceVertex;
-    }
-
-    public boolean isEntityEdge() {
-        return this.gremlinSource instanceof GremlinSourceEdge;
-    }
-
-    public boolean isEntityGraph() {
-        return this.gremlinSource instanceof GremlinSourceGraph;
     }
 
     @Override

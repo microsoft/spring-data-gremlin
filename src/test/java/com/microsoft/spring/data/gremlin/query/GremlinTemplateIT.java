@@ -252,11 +252,6 @@ public class GremlinTemplateIT {
         this.template.update(this.person);
     }
 
-    @Test(expected = GremlinUnexpectedEntityTypeException.class)
-    public void testDeleteAllByTypeException() {
-        this.template.deleteAll(GremlinEntityType.UNKNOWN);
-    }
-
     @Test
     public void testUpdateVertex() {
         this.template.insert(this.person);

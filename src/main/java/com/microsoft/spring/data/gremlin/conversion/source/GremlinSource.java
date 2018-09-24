@@ -43,6 +43,11 @@ public interface GremlinSource {
     void setProperty(String key, Object value);
 
     /**
+     * Set the Class Type of domain
+     */
+    void setDomainClass(Class<?> domainClass);
+
+    /**
      * Get the id of domain
      *
      * @return will never be null
@@ -66,6 +71,14 @@ public interface GremlinSource {
     String getLabel();
 
     /**
+     * Get the Class type of domain
+     *
+     * @return will never be null
+     */
+    @NonNull
+    Class<?> getDomainClass();
+
+    /**
      * Get the properties of domain
      *
      * @return will never be null
@@ -85,7 +98,7 @@ public interface GremlinSource {
     /**
      * do the real reading from GremlinSource to domain
      */
-    <T extends Object> T doGremlinSourceRead(Class<T> type, MappingGremlinConverter converter);
+    <T extends Object> T doGremlinSourceRead(Class<T> domainClass, MappingGremlinConverter converter);
 
     /**
      * return the GremlinScriptLiteral
