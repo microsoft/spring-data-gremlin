@@ -53,7 +53,7 @@ public class GremlinResultsGraphReader extends AbstractGremlinResultReader imple
         if (type.equals(Constants.RESULT_TYPE_VERTEX)) {
             resultSource = new GremlinSourceVertex();
             vertexResultReader.read(result, resultSource);
-        } else if (type.equalsIgnoreCase(Constants.RESULT_TYPE_EDGE)) {
+        } else if (type.equals(Constants.RESULT_TYPE_EDGE)) {
             resultSource = new GremlinSourceEdge();
             edgeResultReader.read(result, resultSource);
         } else {
