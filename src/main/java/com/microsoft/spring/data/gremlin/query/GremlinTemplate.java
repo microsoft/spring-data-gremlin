@@ -131,7 +131,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T insert(@NonNull T object) {
-        final Class domainClass = object.getClass();
+        final Class<T> domainClass = (Class<T>) object.getClass();
         @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(domainClass);
         
         if (!info.isEntityGraph() && info.getIdField().isAnnotationPresent(GeneratedValue.class) 
@@ -146,7 +146,15 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         final List<String> queryList = source.getGremlinScriptLiteral().generateInsertScript(source);
 
-        this.executeQuery(queryList);
+        final List<Result> results = this.executeQuery(queryList);
+        
+        if (!results.isEmpty()) {
+            if (info.isEntityGraph()) {
+                return recoverGraphDomain((GremlinSourceGraph) source, results, domainClass);
+            } else {
+                return recoverDomain(source, results.get(0), domainClass, info.isEntityEdge());
+            }
+        }
 
         return object;
     }
@@ -369,6 +377,16 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         return domainList;
     }
+
+    private <T> T recoverGraphDomain(@NonNull GremlinSourceGraph source, @NonNull List<Result> results,
+            @NonNull Class<T> domainClass) {
+        final T domain;
+
+        source.getResultsReader().read(results, source);
+        domain = source.doGremlinSourceRead(domainClass, mappingConverter);
+        return domain;
+    }
+    
 
     @Override
     public <T> List<T> find(@NonNull GremlinQuery query, @NonNull Class<T> domainClass) {
