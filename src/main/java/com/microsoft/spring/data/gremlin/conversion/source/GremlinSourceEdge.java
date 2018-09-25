@@ -30,10 +30,4 @@ public class GremlinSourceEdge extends AbstractGremlinSource {
         this.setGremlinSourceReader(new GremlinSourceEdgeReader());
         this.setGremlinSourceWriter(new GremlinSourceEdgeWriter());
     }
-
-    public GremlinSourceEdge(@NonNull Field idField, @NonNull String label) {
-        this();
-        super.setIdField(idField);
-        super.setLabel(label);
-    }
 }
