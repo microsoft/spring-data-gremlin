@@ -52,6 +52,8 @@ public class Constants {
     public static final String GREMLIN_PRIMITIVE_OR = "or()";
     public static final String GREMLIN_PRIMITIVE_WHERE = "where(%s)";
 
+    public static final String GREMLIN_QUERY_BARRIER = "barrier";
+
     public static final String GREMLIN_PRIMITIVE_VALUES = "values('%s')";
     public static final String GREMLIN_PRIMITIVE_IS = "is(%s)";
     public static final String GREMLIN_PRIMITIVE_GT = "gt(%d)";
