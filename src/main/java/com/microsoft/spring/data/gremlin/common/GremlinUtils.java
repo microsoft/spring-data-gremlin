@@ -5,8 +5,11 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
+import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_QUERY_BARRIER;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -112,5 +115,23 @@ public class GremlinUtils {
         } else {
             throw new UnsupportedOperationException("Unsupported object type to long");
         }
+    }
+    
+        public static List<List<String>> toParallelQueryList(@NonNull List<String> queries) {
+        final List<List<String>> parallelQueries = new ArrayList<>();
+        List<String> parallelQuery = new ArrayList<>();
+
+        for (final String query : queries) {
+            if (query.equals(GREMLIN_QUERY_BARRIER)) {
+                parallelQueries.add(parallelQuery);
+                parallelQuery = new ArrayList<>();
+            } else {
+                parallelQuery.add(query);
+            }
+        }
+
+        parallelQueries.add(parallelQuery);
+
+        return parallelQueries;
     }
 }

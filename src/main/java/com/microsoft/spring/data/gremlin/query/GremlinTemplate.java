@@ -5,12 +5,15 @@
  */
 package com.microsoft.spring.data.gremlin.query;
 
+import static java.util.stream.Collectors.toList;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.tinkerpop.gremlin.driver.Client;
@@ -28,6 +31,7 @@ import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
 import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
+import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralEdge;
@@ -68,6 +72,11 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     public ApplicationContext getApplicationContext() {
         return this.context;
     }
+    
+    @Override
+    public void setApplicationContext(@NonNull ApplicationContext context) throws BeansException {
+        this.context = context;
+    }
 
     public Client getGremlinClient() {
         if (this.gremlinClient == null) {
@@ -77,21 +86,24 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         return this.gremlinClient;
     }
 
-    @Override
-    public void setApplicationContext(@NonNull ApplicationContext context) throws BeansException {
-        this.context = context;
+    @NonNull
+    private List<Result> executeQuery(@NonNull List<String> queries) {
+        final List<List<String>> parallelQueries = GremlinUtils.toParallelQueryList(queries);
+
+        return parallelQueries.stream().flatMap(q -> executeQueryParallel(q).stream()).collect(Collectors.toList());
     }
 
     @NonNull
-    private List<Result> executeQuery(@NonNull List<String> queryList) {
-        final List<Result> results = new ArrayList<>();
-
-        try {
-            queryList.forEach(query -> results.addAll(this.getGremlinClient().submit(query).all().join()));
-            return results;
-        } catch (CompletionException e) {
-            throw new GremlinQueryException(String.format("unable to complete execute %s from gremlin", queryList), e);
-        }
+    private List<Result> executeQueryParallel(@NonNull List<String> queries) {
+        return queries.parallelStream()
+                .map(q -> getGremlinClient().submit(q).all())
+                .collect(toList()).parallelStream().flatMap(f -> {
+                    try {
+                        return f.get().stream();
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new GremlinQueryException("unable to complete query from gremlin", e);
+                    }
+                }).collect(toList());
     }
 
     @Override
