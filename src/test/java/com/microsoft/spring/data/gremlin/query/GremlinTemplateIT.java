@@ -16,7 +16,10 @@ import com.microsoft.spring.data.gremlin.telemetry.EmptyTracker;
 import com.microsoft.spring.data.gremlin.telemetry.TelemetryTracker;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScanner;
@@ -103,7 +106,6 @@ public class GremlinTemplateIT {
     }
 
     @Test
-    @SneakyThrows
     public void testVertexDeleteAll() {
         this.buildTestGraph();
 
