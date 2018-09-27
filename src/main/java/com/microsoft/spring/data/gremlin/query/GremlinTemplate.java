@@ -138,14 +138,14 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
             return this.findByIdInternal(source);
         }
 
-        throw new GremlinUnexpectedEntityTypeException("should be vertex domain for findEdge");
+        throw new GremlinUnexpectedEntityTypeException("should be vertex domain for findVertexById");
     }
 
     private Object getEdgeAnnotatedFieldValue(@NonNull Field field, @NonNull Object vertexId) {
         if (field.getType() == String.class || field.getType() == Long.class || field.getType() == Integer.class) {
             return vertexId;
         } else if (field.getType().isPrimitive()) {
-            throw new GremlinUnexpectedEntityTypeException("only String/Long/Integer type of primitive is allowed");
+            throw new GremlinUnexpectedEntityTypeException("only String/Long/Integer type of Id Field is allowed");
         } else {
             return this.findVertexById(vertexId, field.getType());
         }
@@ -255,11 +255,6 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> Class<T> getDomainClass(@NonNull GremlinSource source) {
-        return (Class<T>) source.getDomainClass();
-    }
-
     @Override
     public <T> List<T> findAll(@NonNull Class<T> domainClass) {
         final GremlinSource source = GremlinUtils.toGremlinSource(domainClass);
@@ -324,7 +319,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     private <T> T recoverDomain(@NonNull GremlinSource source, @NonNull Result result) {
         final T domain;
-        final Class<T> domainClass = getDomainClass(source);
+        @SuppressWarnings("unchecked") final Class<T> domainClass = (Class<T>) source.getDomainClass();
 
         source.doGremlinResultRead(result);
         domain = this.mappingConverter.read(domainClass, source);
