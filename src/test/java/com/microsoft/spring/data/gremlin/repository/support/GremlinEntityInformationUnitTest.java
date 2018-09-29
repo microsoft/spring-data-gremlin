@@ -5,7 +5,6 @@
  */
 package com.microsoft.spring.data.gremlin.repository.support;
 
-import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
 import com.microsoft.spring.data.gremlin.common.domain.Network;
 import com.microsoft.spring.data.gremlin.common.domain.Person;
@@ -32,8 +31,6 @@ public class GremlinEntityInformationUnitTest {
         Assert.assertNotNull(personInfo.getIdField());
         Assert.assertEquals(personInfo.getId(person), TestConstants.VERTEX_PERSON_ID);
         Assert.assertEquals(personInfo.getIdType(), String.class);
-        Assert.assertEquals(personInfo.getEntityLabel(), TestConstants.VERTEX_PERSON_LABEL);
-        Assert.assertEquals(personInfo.getEntityType(), GremlinEntityType.VERTEX);
         Assert.assertTrue(personInfo.getGremlinSource() instanceof GremlinSourceVertex);
     }
 
@@ -43,8 +40,6 @@ public class GremlinEntityInformationUnitTest {
                 new GremlinEntityInformation<Relationship, String>(Relationship.class);
 
         Assert.assertNotNull(relationshipInfo.getIdField());
-        Assert.assertEquals(relationshipInfo.getEntityLabel(), TestConstants.EDGE_RELATIONSHIP_LABEL);
-        Assert.assertEquals(relationshipInfo.getEntityType(), GremlinEntityType.EDGE);
         Assert.assertTrue(relationshipInfo.getGremlinSource() instanceof GremlinSourceEdge);
     }
 
@@ -53,8 +48,6 @@ public class GremlinEntityInformationUnitTest {
         final GremlinEntityInformation networkInfo = new GremlinEntityInformation<Network, String>(Network.class);
 
         Assert.assertNotNull(networkInfo.getIdField());
-        Assert.assertNull(networkInfo.getEntityLabel());
-        Assert.assertEquals(networkInfo.getEntityType(), GremlinEntityType.GRAPH);
         Assert.assertTrue(networkInfo.getGremlinSource() instanceof GremlinSourceGraph);
     }
 

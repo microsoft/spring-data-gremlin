@@ -56,8 +56,8 @@ public class MappingGremlinConverter
     }
 
     @Override
-    public <R extends Object> R read(Class<R> type, @NonNull GremlinSource source) {
-        return source.doGremlinSourceRead(type, this);
+    public <T extends Object> T read(Class<T> domainClass, @NonNull GremlinSource source) {
+        return source.doGremlinSourceRead(domainClass, this);
     }
 
     @Override

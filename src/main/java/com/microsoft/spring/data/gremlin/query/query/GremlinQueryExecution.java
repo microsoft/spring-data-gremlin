@@ -20,8 +20,8 @@ public interface GremlinQueryExecution {
         }
 
         @Override
-        public Object execute(@NonNull GremlinQuery query, @NonNull Class<?> type) {
-            return this.operations.find(query, type);
+        public Object execute(@NonNull GremlinQuery query, @NonNull Class<?> domainClass) {
+            return this.operations.find(query, domainClass);
         }
     }
 }

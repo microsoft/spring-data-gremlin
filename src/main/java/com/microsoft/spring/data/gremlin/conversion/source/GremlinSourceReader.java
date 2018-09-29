@@ -14,5 +14,5 @@ public interface GremlinSourceReader {
     /**
      * Read data from GremlinSource to domain
      */
-    <T extends Object> T read(Class<T> type, MappingGremlinConverter converter, GremlinSource source);
+    <T extends Object> T read(Class<T> domainClass, MappingGremlinConverter converter, GremlinSource source);
 }

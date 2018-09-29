@@ -7,6 +7,7 @@ package com.microsoft.spring.data.gremlin.query;
 
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.query.query.GremlinQuery;
 
 import java.util.List;
@@ -23,6 +24,8 @@ public interface GremlinOperations {
     <T> void deleteAll(Class<T> domainClass);
 
     <T> boolean isEmptyGraph(T object);
+
+    <T> boolean existsById(Object id, Class<T> domainClass);
 
     <T> void deleteById(Object id, Class<T> domainClass);
 

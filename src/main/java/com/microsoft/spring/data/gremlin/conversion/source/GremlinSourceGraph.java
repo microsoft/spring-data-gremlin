@@ -40,11 +40,5 @@ public class GremlinSourceGraph extends AbstractGremlinSource {
             throw new GremlinUnexpectedSourceTypeException("source type can only be Vertex or Edge");
         }
     }
-
-    public GremlinSourceGraph(@NonNull Field idField, @NonNull String label) {
-        this();
-        super.setIdField(idField);
-        super.setLabel(label);
-    }
 }
 

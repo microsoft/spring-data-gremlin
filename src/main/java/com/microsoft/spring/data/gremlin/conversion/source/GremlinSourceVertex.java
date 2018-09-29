@@ -20,10 +20,4 @@ public class GremlinSourceVertex extends AbstractGremlinSource {
         this.setGremlinSourceReader(new GremlinSourceVertexReader());
         this.setGremlinSourceWriter(new GremlinSourceVertexWriter());
     }
-
-    public GremlinSourceVertex(@NonNull Field idField, @NonNull String label) {
-        this();
-        super.setIdField(idField);
-        super.setLabel(label);
-    }
 }
