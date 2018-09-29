@@ -33,6 +33,7 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> generateInsertScript(@NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceEdge)) {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
@@ -95,6 +96,7 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> generateUpdateScript(@NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceEdge)) {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");

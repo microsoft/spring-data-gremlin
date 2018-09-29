@@ -57,7 +57,9 @@ public class MappingGremlinConverter
 
     @Override
     public <T extends Object> T read(Class<T> domainClass, @NonNull GremlinSource source) {
-        return source.doGremlinSourceRead(domainClass, this);
+        @SuppressWarnings("unchecked") final GremlinSource<T> gremlinSource = (GremlinSource<T>) source;
+
+        return gremlinSource.doGremlinSourceRead(domainClass, this);
     }
 
     @Override

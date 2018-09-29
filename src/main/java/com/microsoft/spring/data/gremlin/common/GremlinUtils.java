@@ -95,7 +95,7 @@ public class GremlinUtils {
         }
     }
 
-    public static GremlinSource toGremlinSource(@NonNull Class<?> domainClass) {
+    public static <T> GremlinSource<T> toGremlinSource(@NonNull Class<T> domainClass) {
         return new GremlinEntityInformation<>(domainClass).getGremlinSource();
     }
 

@@ -25,6 +25,7 @@ import static com.microsoft.spring.data.gremlin.common.GremlinEntityType.VERTEX;
 public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral implements GremlinScriptLiteral {
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> generateInsertScript(@NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceVertex)) {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
@@ -81,6 +82,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> generateUpdateScript(@NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceVertex)) {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");

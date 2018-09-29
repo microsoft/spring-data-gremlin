@@ -28,7 +28,7 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
     private final Field idField;
 
     @Getter
-    private final GremlinSource gremlinSource;
+    private final GremlinSource<T> gremlinSource;
 
     public GremlinEntityInformation(@NonNull Class<T> domainClass) {
         super(domainClass);
@@ -37,28 +37,28 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
         this.gremlinSource = this.createGremlinSource(domainClass, this.idField);
     }
 
-    private GremlinSource createGremlinSource(@NonNull Class<T> domainClass, @NonNull Field idField) {
+    private GremlinSource<T> createGremlinSource(@NonNull Class<T> domainClass, @NonNull Field idField) {
         final String label;
         final String domainClassName = domainClass.getSimpleName();
-        final GremlinEntityType entityType;
+        final GremlinEntityType type;
         final Vertex vertex = domainClass.getAnnotation(Vertex.class);
         final Edge edge = domainClass.getAnnotation(Edge.class);
         final Graph graph = domainClass.getAnnotation(Graph.class);
 
         if (vertex != null && edge == null && graph == null) {
-            entityType = VERTEX;
+            type = VERTEX;
             label = vertex.label().isEmpty() ? domainClassName : vertex.label();
         } else if (edge != null && vertex == null && graph == null) {
-            entityType = EDGE;
+            type = EDGE;
             label = edge.label().isEmpty() ? domainClassName : edge.label();
         } else if (graph != null && vertex == null && edge == null) {
-            entityType = GRAPH;
+            type = GRAPH;
             label = "";
         } else {
             throw new GremlinUnexpectedEntityTypeException("Unexpected gremlin entity type");
         }
 
-        final GremlinSource source = entityType.createGremlinSource();
+        @SuppressWarnings("unchecked") final GremlinSource<T> source = (GremlinSource<T>) type.createGremlinSource();
 
         source.setLabel(label);
         source.setIdField(idField);
