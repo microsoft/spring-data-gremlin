@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface QueryScriptGenerator {
 
-    <T> List<String> generate(GremlinQuery query, Class<T> domainClass);
+    List<String> generate(GremlinQuery query);
 }

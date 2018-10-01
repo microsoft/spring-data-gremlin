@@ -6,28 +6,38 @@
 package com.microsoft.spring.data.gremlin.repository.support;
 
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
+import com.microsoft.spring.data.gremlin.common.GremlinUtils;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
 import com.microsoft.spring.data.gremlin.query.GremlinOperations;
 import com.microsoft.spring.data.gremlin.repository.GremlinRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.NonNull;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
+
+import static java.util.stream.Collectors.toList;
 
 public class SimpleGremlinRepository<T, ID extends Serializable> implements GremlinRepository<T, ID> {
 
-    private final GremlinOperations operations;
     private final GremlinEntityInformation<T, ID> information;
+
+    private final GremlinOperations operations;
 
     public SimpleGremlinRepository(GremlinEntityInformation<T, ID> information, @NonNull ApplicationContext context) {
         this(information, context.getBean(GremlinOperations.class));
     }
 
     public SimpleGremlinRepository(GremlinEntityInformation<T, ID> information, @NonNull GremlinOperations operations) {
-        this.information = information;
         this.operations = operations;
+        this.information = information;
+    }
+
+    private Class<T> getDomainClass() {
+        return this.information.getJavaType();
     }
 
     @Override
@@ -46,27 +56,24 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
 
     @Override
     public Iterable<T> findAll() {
-        if (this.information.isEntityVertex()) {
-            return this.operations.findAll(this.information.getJavaType());
-        } else if (this.information.isEntityEdge()) {
-            return this.operations.findAll(this.information.getJavaType());
+        final GremlinSource source = GremlinUtils.toGremlinSource(getDomainClass());
+
+        if (source instanceof GremlinSourceGraph) {
+            throw new UnsupportedOperationException("findAll of Graph is not supported");
         }
 
-        throw new UnsupportedOperationException("findAll of Graph is not supported");
+        return this.operations.findAll(getDomainClass());
     }
 
     @Override
     public List<T> findAllById(@NonNull Iterable<ID> ids) {
-        final List<T> results = new ArrayList<>();
-
-        ids.forEach(id -> this.findById(id).ifPresent(results::add));
-
-        return results;
+        return StreamSupport.stream(ids.spliterator(), true).map(this::findById)
+                .filter(Optional::isPresent).map(Optional::get).collect(toList());
     }
 
     @Override
     public Optional<T> findById(@NonNull ID id) {
-        final T domain = this.operations.findById(id, this.information.getJavaType());
+        final T domain = this.operations.findById(id, getDomainClass());
 
         return domain == null ? Optional.empty() : Optional.of(domain);
     }
@@ -98,12 +105,13 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
 
     @Override
     public void delete(@NonNull T domain) {
-        this.operations.deleteById(this.information.getId(domain), domain.getClass());
+        final Object id = this.information.getId(domain);
+        this.operations.deleteById(id, domain.getClass());
     }
 
     @Override
     public void deleteById(@NonNull ID id) {
-        this.operations.deleteById(id, this.information.getJavaType());
+        this.operations.deleteById(id, getDomainClass());
     }
 
     @Override
@@ -128,7 +136,7 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
 
     @Override
     public boolean existsById(@NonNull ID id) {
-        return this.findById(id).isPresent();
+        return this.operations.existsById(id, getDomainClass());
     }
 }
 

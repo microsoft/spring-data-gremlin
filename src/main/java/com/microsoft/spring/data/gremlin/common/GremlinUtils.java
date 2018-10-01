@@ -21,8 +21,10 @@ import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 
 import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.exception.GremlinIllegalConfigurationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
+import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -59,7 +61,7 @@ public class GremlinUtils {
         final List<Field> idFields = FieldUtils.getFieldsListWithAnnotation(domainClass, Id.class);
         final List<Field> generatedValueFields = 
                 FieldUtils.getFieldsListWithAnnotation(domainClass, GeneratedValue.class);
-        
+
         if (generatedValueFields.size() > 1) {
             throw new GremlinIllegalConfigurationException("Only one field, the id field, can have the optional "
                     + "@GeneratedValue annotation!");
@@ -79,7 +81,7 @@ public class GremlinUtils {
                 && idField.getType() != Long.class && idField.getType() != Integer.class) {
             throw new GremlinInvalidEntityIdFieldException("the type of @Id/id field should be String/Integer/Long");
         }
-        
+
         if (!generatedValueFields.isEmpty() && !generatedValueFields.get(0).equals(idField)) {
             throw new GremlinIllegalConfigurationException("Only the id field can have the optional "
                     + "@GeneratedValue annotation!");
@@ -87,13 +89,13 @@ public class GremlinUtils {
 
         return idField;
     }
-    
+
     public static <T, U extends Annotation> boolean checkIfFieldBearsAnnotation(@NonNull Class<T> domainClass, 
             @NonNull Class<U> annotationClass, @NonNull String fieldName) {
         final Field namedField = ReflectionUtils.findField(domainClass, fieldName);
         if (namedField == null) {
             return false;
-            }
+        }
         return namedField.isAnnotationPresent(annotationClass);
     }
 
@@ -116,8 +118,22 @@ public class GremlinUtils {
             throw new UnsupportedOperationException("Unsupported object type to long");
         }
     }
-    
-        public static List<List<String>> toParallelQueryList(@NonNull List<String> queries) {
+
+    public static GremlinSource toGremlinSource(@NonNull Class<?> domainClass) {
+        return new GremlinEntityInformation<>(domainClass).getGremlinSource();
+    }
+
+    public static <T> GremlinSource toGremlinSource(@NonNull T domain) {
+        @SuppressWarnings("unchecked") final GremlinEntityInformation information =
+                new GremlinEntityInformation(domain.getClass());
+        final GremlinSource source = information.getGremlinSource();
+
+        source.setId(information.getId(domain));
+
+        return source;
+    }
+
+    public static List<List<String>> toParallelQueryList(@NonNull List<String> queries) {
         final List<List<String>> parallelQueries = new ArrayList<>();
         List<String> parallelQuery = new ArrayList<>();
 

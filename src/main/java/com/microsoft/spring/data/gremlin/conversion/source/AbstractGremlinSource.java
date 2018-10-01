@@ -35,6 +35,10 @@ public abstract class AbstractGremlinSource implements GremlinSource {
 
     @Getter
     @Setter
+    private Class<?> domainClass;
+
+    @Getter
+    @Setter
     private Map<String, Object> properties;
 
     @Setter(AccessLevel.PRIVATE)
@@ -86,10 +90,10 @@ public abstract class AbstractGremlinSource implements GremlinSource {
     }
 
     @Override
-    public <T> T doGremlinSourceRead(@NonNull Class<T> type, @NonNull MappingGremlinConverter converter) {
+    public <T> T doGremlinSourceRead(@NonNull Class<T> domainClass, @NonNull MappingGremlinConverter converter) {
         Assert.notNull(this.sourceReader, "the sourceReader must be set before do reading");
 
-        return this.sourceReader.read(type, converter, this);
+        return this.sourceReader.read(domainClass, converter, this);
     }
 
     @Override

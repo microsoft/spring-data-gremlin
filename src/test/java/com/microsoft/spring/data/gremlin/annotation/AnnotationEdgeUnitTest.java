@@ -5,9 +5,12 @@
  */
 package com.microsoft.spring.data.gremlin.annotation;
 
+import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
-import com.microsoft.spring.data.gremlin.common.domain.*;
-import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
+import com.microsoft.spring.data.gremlin.common.domain.Dependency;
+import com.microsoft.spring.data.gremlin.common.domain.Relationship;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,17 +18,19 @@ public class AnnotationEdgeUnitTest {
 
     @Test
     public void testAnnotationEdgeDefaultLabel() {
-        Assert.assertTrue(new GremlinEntityInformation<>(Dependency.class).isEntityEdge());
-        Assert.assertNotNull(new GremlinEntityInformation<>(Dependency.class).getEntityLabel());
-        Assert.assertEquals(new GremlinEntityInformation<>(Dependency.class).getEntityLabel(),
-                Dependency.class.getSimpleName());
+        final GremlinSource source = GremlinUtils.toGremlinSource(Dependency.class);
+
+        Assert.assertTrue(source instanceof GremlinSourceEdge);
+        Assert.assertNotNull(source.getLabel());
+        Assert.assertEquals(source.getLabel(), Dependency.class.getSimpleName());
     }
 
     @Test
     public void testAnnotationEdgeSpecifiedLabel() {
-        Assert.assertNotNull(new GremlinEntityInformation<>(Relationship.class).getEntityLabel());
-        Assert.assertTrue(new GremlinEntityInformation<>(Relationship.class).isEntityEdge());
-        Assert.assertEquals(new GremlinEntityInformation<>(Relationship.class).getEntityLabel(),
-                TestConstants.EDGE_RELATIONSHIP_LABEL);
+        final GremlinSource source = GremlinUtils.toGremlinSource(Relationship.class);
+
+        Assert.assertTrue(source instanceof GremlinSourceEdge);
+        Assert.assertNotNull(source.getLabel());
+        Assert.assertEquals(source.getLabel(), TestConstants.EDGE_RELATIONSHIP_LABEL);
     }
 }

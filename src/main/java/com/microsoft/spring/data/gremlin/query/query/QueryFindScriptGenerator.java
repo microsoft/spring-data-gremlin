@@ -6,12 +6,11 @@
 package com.microsoft.spring.data.gremlin.query.query;
 
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import com.microsoft.spring.data.gremlin.query.criteria.Criteria;
 import com.microsoft.spring.data.gremlin.query.criteria.CriteriaType;
-import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
@@ -21,16 +20,18 @@ import java.util.List;
 import static com.microsoft.spring.data.gremlin.common.Constants.*;
 import static com.microsoft.spring.data.gremlin.conversion.script.AbstractGremlinScriptLiteral.*;
 
-@NoArgsConstructor
 public class QueryFindScriptGenerator implements QueryScriptGenerator {
 
-    @Setter(AccessLevel.PRIVATE)
-    private GremlinEntityInformation information;
+    private final GremlinSource source;
+
+    public QueryFindScriptGenerator(@NonNull GremlinSource source) {
+        this.source = source;
+    }
 
     private String getCriteriaSubject(@NonNull Criteria criteria) {
         String subject = criteria.getSubject();
 
-        if (subject.equals(this.information.getIdField().getName())) {
+        if (subject.equals(this.source.getIdField().getName())) {
             subject = PROPERTY_ID; // If subject is @Id/id field, use id property in database.
         }
 
@@ -143,15 +144,15 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
 
         scriptList.add(GREMLIN_PRIMITIVE_GRAPH);
 
-        if (this.information.isEntityVertex()) {
+        if (this.source instanceof GremlinSourceVertex) {
             scriptList.add(GREMLIN_PRIMITIVE_VERTEX_ALL);
-        } else if (this.information.isEntityEdge()) {
+        } else if (this.source instanceof GremlinSourceEdge) {
             scriptList.add(GREMLIN_PRIMITIVE_EDGE_ALL);
         } else {
             throw new UnsupportedOperationException("Cannot generate script from graph entity");
         }
 
-        scriptList.add(generateHasLabel(information.getEntityLabel()));
+        scriptList.add(generateHasLabel(this.source.getLabel()));
         scriptList.add(this.generateScriptTraversal(criteria));
 
         return scriptList;
@@ -159,10 +160,7 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T> List<String> generate(@NonNull GremlinQuery query, @NonNull Class<T> domainClass) {
-
-        this.setInformation(new GremlinEntityInformation(domainClass));
-
+    public List<String> generate(@NonNull GremlinQuery query) {
         final List<String> scriptList = new ArrayList<>(this.generateScript(query));
 
         return Collections.singletonList(String.join(GREMLIN_PRIMITIVE_INVOKE, scriptList));
