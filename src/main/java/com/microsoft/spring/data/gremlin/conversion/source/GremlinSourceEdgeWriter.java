@@ -62,14 +62,12 @@ public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
                 if (vertexId == null) {
                     throw new GremlinInvalidEntityIdFieldException("The vertex id for the from vertex cannot be null!");
                 }
-                //sourceEdge.setVertexIdFrom(this.getIdValue(object, converter));
                 sourceEdge.setVertexIdFrom(vertexId);
             } else if (field.getAnnotation(EdgeTo.class) != null) {
                 final Object vertexId = this.getIdValue(object, converter);
                 if (vertexId == null) {
                     throw new GremlinInvalidEntityIdFieldException("The vertex id for the to vertex cannot be null!");
                 }
-                //sourceEdge.setVertexIdTo(this.getIdValue(object, converter));
                 sourceEdge.setVertexIdTo(vertexId);
             } else if (!field.getName().equals(Constants.PROPERTY_ID)) {
                 source.setProperty(field.getName(), accessor.getProperty(property));

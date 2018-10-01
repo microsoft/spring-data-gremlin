@@ -30,10 +30,10 @@ import lombok.NoArgsConstructor;
 public class GremlinSourceGraphReader extends AbstractGremlinSourceReader implements GremlinSourceReader {
 
     @Override
-    public <T extends Object> T read(@NonNull Class<T> type, @NonNull MappingGremlinConverter converter,
-                                     @NonNull GremlinSource source) {
+    public <T> T read(@NonNull Class<T> type, @NonNull MappingGremlinConverter converter,
+            @NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceGraph)) {
-            throw new GremlinUnexpectedSourceTypeException("should be instance of GremlinSourceGraph");
+            throw new GremlinUnexpectedSourceTypeException("Should be instance of GremlinSourceGraph");
         }
         final GremlinSourceGraph graphSource = (GremlinSourceGraph) source;
         final T domain = GremlinUtils.createInstance(type);
@@ -49,22 +49,26 @@ public class GremlinSourceGraphReader extends AbstractGremlinSourceReader implem
             if ((field.getName().equals(Constants.PROPERTY_ID) || field.getAnnotation(Id.class) != null) 
                     && source.getId() != null) {
                 accessor.setProperty(property, super.getGremlinSourceId(graphSource));
-            } else if (field.isAnnotationPresent(VertexSet.class)) {
-                final List<Object> vertexObjects = buildDomainObjects(vertexSources, false);
+            } else if (field.isAnnotationPresent(VertexSet.class) && vertexSources != null) {
+                final List<Object> vertexObjects = buildDomainObjects(vertexSources, converter);
                 accessor.setProperty(property, vertexObjects);
-            } else if (field.isAnnotationPresent(EdgeSet.class)) {
-                final List<Object> edgeObjects = buildDomainObjects(edgeSources, true);
+            } else if (field.isAnnotationPresent(EdgeSet.class) && edgeSources != null) {
+                final List<Object> edgeObjects = buildDomainObjects(edgeSources, converter);
                 accessor.setProperty(property, edgeObjects);
             }
         }
-
         return domain;
     }
-    
-    private List<Object> buildDomainObjects(List<GremlinSource> sources, boolean edges) {
-        // Once PR# 160 is merged, we will be able to obtain the domain class from the GremlinSource
-        return new ArrayList<>(); //TODO(ASAP) Implement
+
+    private List<Object> buildDomainObjects(List<GremlinSource> sources, MappingGremlinConverter converter) {
+        final List<Object> domainObjects = new ArrayList<>();
+        for (final GremlinSource source : sources) {
+            final Class<?> domainClass = source.getDomainClass();
+            final Object domainObject = source.doGremlinSourceRead(domainClass, converter);
+            domainObjects.add(domainObject);
+        }
+        return domainObjects;
     }
-    
+
 }
 
