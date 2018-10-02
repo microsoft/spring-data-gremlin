@@ -5,11 +5,8 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.springframework.lang.NonNull;
 
 import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultsGraphReader;
 import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultsReader;

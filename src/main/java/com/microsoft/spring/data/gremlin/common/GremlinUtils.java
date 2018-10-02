@@ -9,9 +9,14 @@ import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_QUERY_B
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.tinkerpop.shaded.jackson.databind.MapperFeature;
@@ -20,8 +25,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 
+import com.microsoft.spring.data.gremlin.annotation.EdgeSet;
 import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
+import com.microsoft.spring.data.gremlin.annotation.VertexSet;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinIllegalConfigurationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
@@ -33,6 +41,7 @@ import lombok.NoArgsConstructor;
 public class GremlinUtils {
 
     private static final ObjectMapper mapper = new ObjectMapper();
+    private static final String GETTER_PREFIX = "get";
 
     static {
         mapper.configure(MapperFeature.AUTO_DETECT_FIELDS, false);
@@ -149,5 +158,44 @@ public class GremlinUtils {
         parallelQueries.add(parallelQuery);
 
         return parallelQueries;
+    }
+    
+    public static Class<?> determineGraphVertexType(@NonNull Class<?> graphType) {
+        for (final Field field : FieldUtils.getAllFields(graphType)) {
+            if (field.isAnnotationPresent(VertexSet.class)) {
+                return extractGenericTypeFromCollection(field, graphType);
+            }
+        }
+        return null;
+    }
+
+    public static Class<?> determineGraphEdgeType(@NonNull Class<?> graphType) {
+        for (final Field field : FieldUtils.getAllFields(graphType)) {
+            if (field.isAnnotationPresent(EdgeSet.class)) {
+                return extractGenericTypeFromCollection(field, graphType);
+            }
+        }
+        return null;
+    }
+
+    private static Class<?> extractGenericTypeFromCollection(Field field, Class<?> clazz) {
+        final String getterName = GETTER_PREFIX + capitalizeFirstLetter(field.getName());
+        final Method getterMethod = ReflectionUtils.findMethod(clazz, getterName);
+        if (getterMethod == null) {
+            throw new GremlinEntityInformationException("No getter method found for field " + field.getName());
+        }
+        if (!(Collection.class.isAssignableFrom(getterMethod.getReturnType()))) {
+            throw new GremlinEntityInformationException("THe current implementation only supports collections "
+                    + "of vertices in Graph objects");
+        }
+        final ParameterizedType returnType = (ParameterizedType) getterMethod.getGenericReturnType();
+        final Type genericType = returnType.getActualTypeArguments()[0];
+        return (Class<?>) genericType;
+    }
+
+    private static String capitalizeFirstLetter(String str) {
+        final StringBuilder capitalizedString = new StringBuilder();
+        capitalizedString.append(str.substring(0, 1).toUpperCase(Locale.ROOT)).append(str.substring(1));
+        return capitalizedString.toString();
     }
 }

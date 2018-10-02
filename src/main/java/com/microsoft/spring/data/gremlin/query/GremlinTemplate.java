@@ -147,17 +147,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         // The current implementation doesn't support creating graphs that contain edges
         // and vertices with null (generated) ids. In this case, vertex and edge creation 
         // need to be performed in two consecutive steps.
-        if (entityGraph) {
-            final GremlinSourceGraph sourceGraph = (GremlinSourceGraph) source;
-            if (sourceGraph.getEdgeSet() != null && !sourceGraph.getEdgeSet().isEmpty() 
-                    && sourceGraph.getVertexSet() != null && !sourceGraph.getVertexSet().isEmpty()) {
-                for (final GremlinSource vertexSource : sourceGraph.getVertexSet()) {
-                    if (vertexSource.getId() == null) {
-                        throw new GremlinInvalidEntityIdFieldException("");
-                    }
-                }
-            }
-        }
+        // TODO(ASAP) Add condition
 
         final List<Result> results = insertInternal(object, source);
 

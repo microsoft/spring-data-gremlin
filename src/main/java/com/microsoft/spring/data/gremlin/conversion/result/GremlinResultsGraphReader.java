@@ -37,6 +37,18 @@ public class GremlinResultsGraphReader extends AbstractGremlinResultReader imple
         }
         final GremlinSourceGraph graphSource = (GremlinSourceGraph) source;
         
+        if (results.isEmpty()) {
+            return;
+        }
+        
+        // Need to clear out the edge and vertex sets on the source before processing the results
+        if (graphSource.getVertexSet() != null) {
+            graphSource.getVertexSet().clear();
+        }
+        if (graphSource.getEdgeSet() != null) {
+            graphSource.getEdgeSet().clear();
+        }
+        
         for (final Result result : results) {
             processResult(result, graphSource);
         }
