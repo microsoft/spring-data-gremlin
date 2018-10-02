@@ -49,7 +49,6 @@ import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.query.query.GremlinQuery;
 import com.microsoft.spring.data.gremlin.query.query.QueryFindScriptGenerator;
 import com.microsoft.spring.data.gremlin.query.query.QueryScriptGenerator;
-import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 
 public class GremlinTemplate implements GremlinOperations, ApplicationContextAware {
 
@@ -143,6 +142,21 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
                 && source.getId() != null) {
             throw new GremlinInvalidEntityIdFieldException("The entity meant to be created has a non-null id "
                     + "that is marked as @GeneratedValue");
+        }
+        
+        // The current implementation doesn't support creating graphs that contain edges
+        // and vertices with null (generated) ids. In this case, vertex and edge creation 
+        // need to be performed in two consecutive steps.
+        if (entityGraph) {
+            final GremlinSourceGraph sourceGraph = (GremlinSourceGraph) source;
+            if (sourceGraph.getEdgeSet() != null && !sourceGraph.getEdgeSet().isEmpty() 
+                    && sourceGraph.getVertexSet() != null && !sourceGraph.getVertexSet().isEmpty()) {
+                for (final GremlinSource vertexSource : sourceGraph.getVertexSet()) {
+                    if (vertexSource.getId() == null) {
+                        throw new GremlinInvalidEntityIdFieldException("");
+                    }
+                }
+            }
         }
 
         final List<Result> results = insertInternal(object, source);
