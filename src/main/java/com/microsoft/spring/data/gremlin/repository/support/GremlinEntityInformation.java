@@ -77,7 +77,7 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
     @Override
     @Nullable
     public ID getId(T entity) {
-        final Field idField = this.getIdField();
+        final Field idField = this.idField;
         @SuppressWarnings("unchecked") final ID id = (ID) ReflectionUtils.getField(idField, entity);
 
         if (id == null && !(gremlinSource instanceof GremlinSourceGraph) 
