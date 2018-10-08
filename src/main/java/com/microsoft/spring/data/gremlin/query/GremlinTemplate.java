@@ -144,10 +144,10 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
                     + "that is marked as @GeneratedValue");
         }
         
-        // The current implementation doesn't support creating graphs that contain edges
-        // and vertices with null (generated) ids. In this case, vertex and edge creation 
+        // The current implementation doesn't support creating graphs that contain both edges
+        // and vertices that have null (generated) ids. In this case, vertex and edge creation 
         // need to be performed in two consecutive steps.
-        // TODO(ASAP) Add condition
+        // TODO(SOON) Add this verification in the GremlinSourceGraphWriter
 
         final List<Result> results = insertInternal(object, source);
 

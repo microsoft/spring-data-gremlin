@@ -185,7 +185,7 @@ public class GremlinUtils {
             throw new GremlinEntityInformationException("No getter method found for field " + field.getName());
         }
         if (!(Collection.class.isAssignableFrom(getterMethod.getReturnType()))) {
-            throw new GremlinEntityInformationException("THe current implementation only supports collections "
+            throw new GremlinEntityInformationException("The current implementation only supports collections "
                     + "of vertices in Graph objects");
         }
         final ParameterizedType returnType = (ParameterizedType) getterMethod.getGenericReturnType();
