@@ -34,7 +34,6 @@ public abstract class AbstractGremlinSource<T> implements GremlinSource<T> {
     private Field idField;
 
     @Getter
-    @Setter
     private Class<T> domainClass;
 
     @Getter
@@ -54,6 +53,11 @@ public abstract class AbstractGremlinSource<T> implements GremlinSource<T> {
     private GremlinResultReader resultReader;
 
     protected AbstractGremlinSource() {
+        this.properties = new HashMap<>();
+    }
+
+    protected AbstractGremlinSource(Class<T> domainClass) {
+        this.domainClass =  domainClass;
         this.properties = new HashMap<>();
     }
 

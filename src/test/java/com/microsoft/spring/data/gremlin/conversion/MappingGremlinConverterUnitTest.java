@@ -60,7 +60,7 @@ public class MappingGremlinConverterUnitTest {
     public void testMappingGremlinConverterVertexRead() {
         final Person person = new Person(TestConstants.VERTEX_PERSON_ID, TestConstants.VERTEX_PERSON_NAME);
         final GremlinEntityInformation<Person, String> info = new GremlinEntityInformation<>(Person.class);
-        final GremlinSource source = info.getGremlinSource();
+        final GremlinSource source = info.createGremlinSource();
 
         this.converter.write(person, source);
 
@@ -76,7 +76,7 @@ public class MappingGremlinConverterUnitTest {
         final Relationship relationship = new Relationship(TestConstants.EDGE_RELATIONSHIP_ID,
                 TestConstants.EDGE_RELATIONSHIP_NAME, TestConstants.EDGE_RELATIONSHIP_LOCATION, person, project);
         final GremlinEntityInformation<Relationship, String> info = new GremlinEntityInformation<>(Relationship.class);
-        final GremlinSource source = info.getGremlinSource();
+        final GremlinSource source = info.createGremlinSource();
 
         this.converter.write(relationship, source);
 

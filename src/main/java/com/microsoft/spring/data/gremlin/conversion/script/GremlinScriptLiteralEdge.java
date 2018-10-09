@@ -11,7 +11,6 @@ import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,11 +56,7 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
     }
 
     @Override
-    public List<String> generateDeleteAllScript(@Nullable GremlinSource source) {
-        if (!(source instanceof GremlinSourceEdge)) {
-            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
-        }
-
+    public List<String> generateDeleteAllScript() {
         return Collections.singletonList(Constants.GREMLIN_SCRIPT_EDGE_DROP_ALL);
     }
 

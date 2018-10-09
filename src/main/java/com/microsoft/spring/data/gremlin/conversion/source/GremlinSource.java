@@ -45,11 +45,6 @@ public interface GremlinSource<T> {
     void setProperty(String key, Object value);
 
     /**
-     * Set the Class Type of domain
-     */
-    void setDomainClass(Class<T> domainClass);
-
-    /**
      * Get the id of domain
      *
      * @return will never be null

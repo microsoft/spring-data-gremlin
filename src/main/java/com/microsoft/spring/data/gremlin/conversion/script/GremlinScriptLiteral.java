@@ -22,7 +22,7 @@ public interface GremlinScriptLiteral {
     /**
      * Generate the deleteAll query from source (Vertex, Edge or Graph).
      */
-    List<String> generateDeleteAllScript(GremlinSource source);
+    List<String> generateDeleteAllScript();
 
     /**
      * Generate the deleteAll By Domain Class query from source (Vertex, Edge or Graph).

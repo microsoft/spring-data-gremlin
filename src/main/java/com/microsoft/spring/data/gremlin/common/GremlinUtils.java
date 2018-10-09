@@ -6,13 +6,11 @@
 package com.microsoft.spring.data.gremlin.common;
 
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
-import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.tinkerpop.gremlin.structure.T;
 import org.apache.tinkerpop.shaded.jackson.databind.MapperFeature;
 import org.apache.tinkerpop.shaded.jackson.databind.ObjectMapper;
 import org.springframework.data.annotation.Id;
@@ -96,17 +94,7 @@ public class GremlinUtils {
     }
 
     public static <T> GremlinSource<T> toGremlinSource(@NonNull Class<T> domainClass) {
-        return new GremlinEntityInformation<>(domainClass).getGremlinSource();
-    }
-
-    public static <T> GremlinSource toGremlinSource(@NonNull T domain) {
-        @SuppressWarnings("unchecked") final GremlinEntityInformation information =
-                new GremlinEntityInformation(domain.getClass());
-        final GremlinSource source = information.getGremlinSource();
-
-        source.setId(information.getId(domain));
-
-        return source;
+        return new GremlinEntityInformation<>(domainClass).createGremlinSource();
     }
 
     public static List<List<String>> toParallelQueryList(@NonNull List<String> queries) {
