@@ -36,6 +36,8 @@ public class GremlinSourceGraph<T> extends AbstractGremlinSource<T> {
     public GremlinSourceGraph(Class<T> domainClass) {
         super(domainClass);
         initializeGremlinStrategy();
+        this.setGremlinSourceReader(new GremlinSourceGraphReader());
+        this.resultsReader = new GremlinResultsGraphReader();
     }
 
     public void addGremlinSource(GremlinSource source) {
