@@ -8,9 +8,11 @@ package com.microsoft.spring.data.gremlin.repository.support;
 import com.microsoft.spring.data.gremlin.annotation.Edge;
 import com.microsoft.spring.data.gremlin.annotation.Graph;
 import com.microsoft.spring.data.gremlin.annotation.Vertex;
-import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import lombok.Getter;
 import org.springframework.data.repository.core.support.AbstractEntityInformation;
@@ -20,51 +22,46 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 
-import static com.microsoft.spring.data.gremlin.common.GremlinEntityType.*;
-
 public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T, ID> {
 
     @Getter
     private final Field idField;
 
-    @Getter
-    private final GremlinSource gremlinSource;
-
     public GremlinEntityInformation(@NonNull Class<T> domainClass) {
         super(domainClass);
 
         this.idField = this.getIdField(domainClass);
-        this.gremlinSource = this.createGremlinSource(domainClass, this.idField);
     }
 
-    private GremlinSource createGremlinSource(@NonNull Class<T> domainClass, @NonNull Field idField) {
+    private GremlinSource<T> createGremlinSource(@NonNull Class<T> domainClass, @NonNull Field idField) {
         final String label;
         final String domainClassName = domainClass.getSimpleName();
-        final GremlinEntityType entityType;
         final Vertex vertex = domainClass.getAnnotation(Vertex.class);
         final Edge edge = domainClass.getAnnotation(Edge.class);
         final Graph graph = domainClass.getAnnotation(Graph.class);
+        final GremlinSource<T> source;
 
         if (vertex != null && edge == null && graph == null) {
-            entityType = VERTEX;
+            source = new GremlinSourceVertex<>(domainClass);
             label = vertex.label().isEmpty() ? domainClassName : vertex.label();
         } else if (edge != null && vertex == null && graph == null) {
-            entityType = EDGE;
+            source = new GremlinSourceEdge<>(domainClass);
             label = edge.label().isEmpty() ? domainClassName : edge.label();
         } else if (graph != null && vertex == null && edge == null) {
-            entityType = GRAPH;
+            source = new GremlinSourceGraph<>(domainClass);
             label = "";
         } else {
             throw new GremlinUnexpectedEntityTypeException("Unexpected gremlin entity type");
         }
 
-        final GremlinSource source = entityType.createGremlinSource();
-
         source.setLabel(label);
         source.setIdField(idField);
-        source.setDomainClass(domainClass);
 
         return source;
+    }
+
+    public GremlinSource<T> createGremlinSource() {
+        return createGremlinSource(super.getJavaType(), idField);
     }
 
     @Override

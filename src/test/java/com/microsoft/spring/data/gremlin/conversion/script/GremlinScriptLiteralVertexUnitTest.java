@@ -43,7 +43,7 @@ public class GremlinScriptLiteralVertexUnitTest {
 
         final Person person = new Person("123", "bill");
         @SuppressWarnings("unchecked") final GremlinEntityInformation info = new GremlinEntityInformation(Person.class);
-        gremlinSource = info.getGremlinSource();
+        this.gremlinSource = info.createGremlinSource();
         this.converter.write(person, gremlinSource);
     }
 
@@ -85,7 +85,7 @@ public class GremlinScriptLiteralVertexUnitTest {
 
     @Test
     public void testGenerateDeleteAllScript() {
-        final List<String> queryList = new GremlinScriptLiteralVertex().generateDeleteAllScript(gremlinSource);
+        final List<String> queryList = new GremlinScriptLiteralVertex().generateDeleteAllScript();
         assertEquals(queryList.get(0), "g.V().drop()");
     }
 

@@ -19,7 +19,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class AbstractGremlinSource implements GremlinSource {
+public abstract class AbstractGremlinSource<T> implements GremlinSource<T> {
 
     @Getter
     @Setter
@@ -34,8 +34,7 @@ public abstract class AbstractGremlinSource implements GremlinSource {
     private Field idField;
 
     @Getter
-    @Setter
-    private Class<?> domainClass;
+    private Class<T> domainClass;
 
     @Getter
     @Setter
@@ -54,6 +53,11 @@ public abstract class AbstractGremlinSource implements GremlinSource {
     private GremlinResultReader resultReader;
 
     protected AbstractGremlinSource() {
+        this.properties = new HashMap<>();
+    }
+
+    protected AbstractGremlinSource(Class<T> domainClass) {
+        this.domainClass =  domainClass;
         this.properties = new HashMap<>();
     }
 
@@ -90,7 +94,7 @@ public abstract class AbstractGremlinSource implements GremlinSource {
     }
 
     @Override
-    public <T> T doGremlinSourceRead(@NonNull Class<T> domainClass, @NonNull MappingGremlinConverter converter) {
+    public T doGremlinSourceRead(@NonNull Class<T> domainClass, @NonNull MappingGremlinConverter converter) {
         Assert.notNull(this.sourceReader, "the sourceReader must be set before do reading");
 
         return this.sourceReader.read(domainClass, converter, this);

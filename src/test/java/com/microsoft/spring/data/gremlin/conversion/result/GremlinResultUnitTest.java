@@ -31,11 +31,6 @@ public class GremlinResultUnitTest {
     }
 
     @Test(expected = GremlinUnexpectedSourceTypeException.class)
-    public void testVertexDeleteAllException() {
-        new GremlinScriptLiteralVertex().generateDeleteAllScript(new GremlinSourceEdge());
-    }
-
-    @Test(expected = GremlinUnexpectedSourceTypeException.class)
     public void testEdgeInsertException() {
         new GremlinScriptLiteralEdge().generateInsertScript(new GremlinSourceVertex());
     }
@@ -51,11 +46,6 @@ public class GremlinResultUnitTest {
     }
 
     @Test(expected = GremlinUnexpectedSourceTypeException.class)
-    public void testEdgeDeleteAllException() {
-        new GremlinScriptLiteralEdge().generateDeleteAllScript(new GremlinSourceVertex());
-    }
-
-    @Test(expected = GremlinUnexpectedSourceTypeException.class)
     public void testGraphInsertException() {
         new GremlinScriptLiteralGraph().generateInsertScript(new GremlinSourceVertex());
     }
@@ -68,10 +58,5 @@ public class GremlinResultUnitTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testGraphFindByIdException() {
         new GremlinScriptLiteralGraph().generateFindByIdScript(new GremlinSourceVertex());
-    }
-
-    @Test(expected = GremlinUnexpectedSourceTypeException.class)
-    public void testGraphDeleteAllException() {
-        new GremlinScriptLiteralGraph().generateDeleteAllScript(new GremlinSourceVertex());
     }
 }

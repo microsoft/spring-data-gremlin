@@ -8,27 +8,26 @@ package com.microsoft.spring.data.gremlin.conversion.source;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import lombok.Getter;
-import org.springframework.lang.NonNull;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GremlinSourceGraph extends AbstractGremlinSource {
+public class GremlinSourceGraph<T> extends AbstractGremlinSource<T> {
 
     @Getter
-    private List<GremlinSource> vertexSet;
+    private List<GremlinSource> vertexSet = new ArrayList<>();
 
     @Getter
-    private List<GremlinSource> edgeSet;
+    private List<GremlinSource> edgeSet = new ArrayList<>();
 
     public GremlinSourceGraph() {
         super();
-        this.setGremlinScriptStrategy(new GremlinScriptLiteralGraph());
-        this.setGremlinSourceWriter(new GremlinSourceGraphWriter());
+        initializeGremlinStrategy();
+    }
 
-        this.vertexSet = new ArrayList<>();
-        this.edgeSet = new ArrayList<>();
+    public GremlinSourceGraph(Class<T> domainClass) {
+        super(domainClass);
+        initializeGremlinStrategy();
     }
 
     public void addGremlinSource(GremlinSource source) {
@@ -39,6 +38,11 @@ public class GremlinSourceGraph extends AbstractGremlinSource {
         } else {
             throw new GremlinUnexpectedSourceTypeException("source type can only be Vertex or Edge");
         }
+    }
+
+    private void initializeGremlinStrategy() {
+        this.setGremlinScriptStrategy(new GremlinScriptLiteralGraph());
+        this.setGremlinSourceWriter(new GremlinSourceGraphWriter());
     }
 }
 
