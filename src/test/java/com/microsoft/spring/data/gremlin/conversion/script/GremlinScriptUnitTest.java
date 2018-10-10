@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.script;
 
+import com.microsoft.spring.data.gremlin.common.domain.Person;
 import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultEdgeReader;
 import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultVertexReader;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
@@ -83,14 +84,9 @@ public class GremlinScriptUnitTest {
         new GremlinScriptLiteralVertex().generateCountScript(new GremlinSourceEdge());
     }
 
-    @Test(expected = GremlinUnexpectedSourceTypeException.class)
-    public void testVertexDeleteAllScriptException() {
-        new GremlinScriptLiteralVertex().generateDeleteAllScript(new GremlinSourceEdge());
-    }
-
     @Test
     public void testVertexSourceSetProperty() {
-        final GremlinSource source = new GremlinSourceVertex();
+        final GremlinSource<Person> source = new GremlinSourceVertex<>(Person.class);
         final Map<String, Object> properties = source.getProperties();
         final String fakeName = "fake-name";
 

@@ -49,7 +49,7 @@ public class GremlinScriptLiteralEdgeUnitTest {
         );
         @SuppressWarnings("unchecked") final GremlinEntityInformation info =
                 new GremlinEntityInformation(Relationship.class);
-        gremlinSource = info.getGremlinSource();
+        this.gremlinSource = info.createGremlinSource();
         this.converter.write(relationship, gremlinSource);
     }
 
@@ -93,7 +93,7 @@ public class GremlinScriptLiteralEdgeUnitTest {
 
     @Test
     public void testGenerateDeleteAllScript() {
-        final List<String> queryList = new GremlinScriptLiteralEdge().generateDeleteAllScript(gremlinSource);
+        final List<String> queryList = new GremlinScriptLiteralEdge().generateDeleteAllScript();
         assertEquals(queryList.get(0), "g.E().drop()");
     }
 

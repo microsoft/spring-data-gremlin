@@ -15,26 +15,27 @@ import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeEx
 
 import lombok.Getter;
 
-public class GremlinSourceGraph extends AbstractGremlinSource {
+public class GremlinSourceGraph<T> extends AbstractGremlinSource<T> {
 
     @Getter
-    private List<GremlinSource> vertexSet;
+    private List<GremlinSource> vertexSet = new ArrayList<>();
 
     @Getter
-    private List<GremlinSource> edgeSet;
+    private List<GremlinSource> edgeSet = new ArrayList<>();
     
     @Getter
     private GremlinResultsReader resultsReader;
 
     public GremlinSourceGraph() {
         super();
-        this.setGremlinScriptStrategy(new GremlinScriptLiteralGraph());
-        this.setGremlinSourceWriter(new GremlinSourceGraphWriter());
+        initializeGremlinStrategy();
         this.setGremlinSourceReader(new GremlinSourceGraphReader());
         this.resultsReader = new GremlinResultsGraphReader();
-
-        this.vertexSet = new ArrayList<>();
-        this.edgeSet = new ArrayList<>();
+    }
+    
+    public GremlinSourceGraph(Class<T> domainClass) {
+        super(domainClass);
+        initializeGremlinStrategy();
     }
 
     public void addGremlinSource(GremlinSource source) {
@@ -45,6 +46,11 @@ public class GremlinSourceGraph extends AbstractGremlinSource {
         } else {
             throw new GremlinUnexpectedSourceTypeException("source type can only be Vertex or Edge");
         }
+    }
+
+    private void initializeGremlinStrategy() {
+        this.setGremlinScriptStrategy(new GremlinScriptLiteralGraph());
+        this.setGremlinSourceWriter(new GremlinSourceGraphWriter());
     }
 }
 

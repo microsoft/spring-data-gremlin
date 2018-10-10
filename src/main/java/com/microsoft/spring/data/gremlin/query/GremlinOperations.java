@@ -21,33 +21,33 @@ public interface GremlinOperations {
 
     void deleteAll(GremlinEntityType type);
 
-    <T> void deleteAll(Class<T> domainClass);
+    <T> void deleteAll(GremlinSource<T> source);
 
-    <T> boolean isEmptyGraph(T object);
+    <T> boolean isEmptyGraph(GremlinSource<T> source);
 
-    <T> boolean existsById(Object id, Class<T> domainClass);
+    <T> boolean existsById(Object id, GremlinSource<T> source);
 
-    <T> void deleteById(Object id, Class<T> domainClass);
+    <T> void deleteById(Object id, GremlinSource<T> source);
 
-    <T> T insert(T object);
+    <T> T insert(T object, GremlinSource<T> source);
 
-    <T> T findById(Object id, Class<T> domainClass);
+    <T> T findById(Object id, GremlinSource<T> source);
 
-    <T> T findVertexById(Object id, Class<T> domainClass);
+    <T> T findVertexById(Object id, GremlinSource<T> source);
 
-    <T> T findEdgeById(Object id, Class<T> domainClass);
+    <T> T findEdgeById(Object id, GremlinSource<T> source);
 
-    <T> T update(T object);
+    <T> T update(T object, GremlinSource<T> source);
 
-    <T> T save(T object);
+    <T> T save(T object, GremlinSource<T> source);
 
-    <T> List<T> findAll(Class<T> domainClass);
+    <T> List<T> findAll(GremlinSource<T> source);
 
     long vertexCount();
 
     long edgeCount();
 
-    <T> List<T> find(GremlinQuery query, Class<T> domainClass);
+    <T> List<T> find(GremlinQuery query, GremlinSource<T> source);
 
     MappingGremlinConverter getMappingConverter();
 }

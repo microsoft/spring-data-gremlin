@@ -108,7 +108,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     @Override
     public void deleteAll() {
         final GremlinScriptLiteral script = new GremlinScriptLiteralGraph();
-        final List<String> queryList = script.generateDeleteAllScript(new GremlinSourceGraph());
+        final List<String> queryList = script.generateDeleteAllScript();
 
         executeQuery(queryList);
     }
@@ -117,25 +117,22 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     public void deleteAll(GremlinEntityType type) {
         final GremlinSource source = type.createGremlinSource();
 
-        executeQuery(source.getGremlinScriptLiteral().generateDeleteAllScript(source));
+        executeQuery(source.getGremlinScriptLiteral().generateDeleteAllScript());
     }
 
     @Override
-    public <T> void deleteAll(@NonNull Class<T> domainClass) {
-        final GremlinSource source = GremlinUtils.toGremlinSource(domainClass);
-
+    public <T> void deleteAll(GremlinSource<T> source) {
         executeQuery(source.getGremlinScriptLiteral().generateDeleteAllByClassScript(source));
     }
 
-    private List<Result> insertInternal(@NonNull Object object, @NonNull GremlinSource source) {
+    private <T> List<Result> insertInternal(@NonNull T object, @NonNull GremlinSource<T> source) {
         this.mappingConverter.write(object, source);
 
         return executeQuery(source.getGremlinScriptLiteral().generateInsertScript(source));
     }
 
     @Override
-    public <T> T insert(@NonNull T object) {
-        final GremlinSource source = GremlinUtils.toGremlinSource(object);
+    public <T> T insert(@NonNull T object, GremlinSource<T> source) {
         final boolean entityGraph = source instanceof GremlinSourceGraph;
 
         if (!entityGraph && source.getIdField().isAnnotationPresent(GeneratedValue.class) 
@@ -153,7 +150,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
         if (!results.isEmpty()) {
             if (entityGraph) {
-                return recoverGraphDomain((GremlinSourceGraph) source, results);
+                return recoverGraphDomain((GremlinSourceGraph<T>) source, results);
             } else {
                 return recoverDomain(source, results.get(0));
             }
@@ -163,9 +160,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     @Override
-    public <T> T findVertexById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        final GremlinSource source = GremlinUtils.toGremlinSource(domainClass);
-
+    public <T> T findVertexById(@NonNull Object id, GremlinSource<T> source) {
         if (source instanceof GremlinSourceVertex) {
             source.setId(id);
             return this.findByIdInternal(source);
@@ -180,7 +175,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         } else if (field.getType().isPrimitive()) {
             throw new GremlinUnexpectedEntityTypeException("only String/Long/Integer type of Id Field is allowed");
         } else {
-            return this.findVertexById(vertexId, field.getType());
+            return this.findVertexById(vertexId, GremlinUtils.toGremlinSource(field.getType()));
         }
     }
 
@@ -218,17 +213,15 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     @Override
-    public <T> T findEdgeById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        final GremlinSource source = GremlinUtils.toGremlinSource(domainClass);
-
+    public <T> T findEdgeById(@NonNull Object id, @NonNull GremlinSource<T> source) {
         if (source instanceof GremlinSourceEdge) {
-            return this.findById(id, domainClass);
+            return this.findById(id, source);
         }
 
         throw new GremlinUnexpectedEntityTypeException("should be edge domain for findEdge");
     }
 
-    private <T> T findByIdInternal(@NonNull GremlinSource source) {
+    private <T> T findByIdInternal(@NonNull GremlinSource<T> source) {
         final List<String> queryList = source.getGremlinScriptLiteral().generateFindByIdScript(source);
         final List<Result> results = this.executeQuery(queryList);
 
@@ -242,9 +235,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     @Override
-    public <T> T findById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        final GremlinSource source = GremlinUtils.toGremlinSource(domainClass);
-
+    public <T> T findById(@NonNull Object id, @NonNull GremlinSource<T> source) {
         if (source instanceof GremlinSourceGraph) {
             throw new UnsupportedOperationException("Gremlin graph cannot be findById.");
         }
@@ -254,7 +245,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         return findByIdInternal(source);
     }
 
-    private <T> T updateInternal(@NonNull T object, @NonNull GremlinSource source) {
+    private <T> T updateInternal(@NonNull T object, @NonNull GremlinSource<T> source) {
         this.mappingConverter.write(object, source);
 
         final List<String> queryList = source.getGremlinScriptLiteral().generateUpdateScript(source);
@@ -265,10 +256,8 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     @Override
-    public <T> T update(@NonNull T object) {
-        final GremlinSource source = GremlinUtils.toGremlinSource(object);
-
-        if (!(source instanceof GremlinSourceGraph) && notExistsById(source.getId(), object.getClass())) {
+    public <T> T update(@NonNull T object, @NonNull GremlinSource<T> source) {
+        if (!(source instanceof GremlinSourceGraph) && notExistsById(source.getId(), source)) {
             throw new GremlinQueryException("cannot update the object doesn't exist");
         }
 
@@ -276,24 +265,21 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     @Override
-    public <T> T save(@NonNull T object) {
-        final GremlinSource source = GremlinUtils.toGremlinSource(object);
+    public <T> T save(@NonNull T object, @NonNull GremlinSource<T> source) {
         final Object id = source.getId();
         final boolean entityGraph = source instanceof GremlinSourceGraph;
 
-        if (entityGraph && this.isEmptyGraph(object)) {
-            return insert(object);
-        } else if (!entityGraph && (id == null || notExistsById(source.getId(), object.getClass()))) {
-            return insert(object);
+        if (entityGraph && this.isEmptyGraph(source)) {
+            return insert(object, source);
+        } else if (!entityGraph && (id == null || notExistsById(source.getId(), source))) {
+            return insert(object, source);
         } else {
             return updateInternal(object, source);
         }
     }
 
     @Override
-    public <T> List<T> findAll(@NonNull Class<T> domainClass) {
-        final GremlinSource source = GremlinUtils.toGremlinSource(domainClass);
-
+    public <T> List<T> findAll(@NonNull GremlinSource<T> source) {
         if (source instanceof GremlinSourceGraph) {
             throw new UnsupportedOperationException("Gremlin graph cannot be findAll.");
         }
@@ -309,9 +295,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     @Override
-    public <T> void deleteById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        final GremlinSource source = GremlinUtils.toGremlinSource(domainClass);
-
+    public <T> void deleteById(@NonNull Object id, @NonNull GremlinSource<T> source) {
         source.setId(id);
 
         final List<String> queryList = source.getGremlinScriptLiteral().generateDeleteByIdScript(source);
@@ -320,9 +304,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     @Override
-    public <T> boolean isEmptyGraph(@NonNull T object) {
-        final GremlinSource source = GremlinUtils.toGremlinSource(object.getClass());
-
+    public <T> boolean isEmptyGraph(@NonNull GremlinSource<T> source) {
         if (source instanceof GremlinSourceGraph) {
             final GremlinScriptLiteralGraph literalGraph = (GremlinScriptLiteralGraph) source.getGremlinScriptLiteral();
             final List<String> queryList = literalGraph.generateIsEmptyScript();
@@ -352,9 +334,9 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         return results.size();
     }
 
-    private <T> T recoverDomain(@NonNull GremlinSource source, @NonNull Result result) {
+    private <T> T recoverDomain(@NonNull GremlinSource<T> source, @NonNull Result result) {
         final T domain;
-        @SuppressWarnings("unchecked") final Class<T> domainClass = (Class<T>) source.getDomainClass();
+        final Class<T> domainClass = source.getDomainClass();
 
         source.doGremlinResultRead(result);
         domain = this.mappingConverter.read(domainClass, source);
@@ -366,7 +348,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         return domain;
     }
 
-    private <T> List<T> recoverDomainList(@NonNull GremlinSource source, @NonNull List<Result> results) {
+    private <T> List<T> recoverDomainList(@NonNull GremlinSource<T> source, @NonNull List<Result> results) {
         final List<T> domains = new ArrayList<>();
 
         results.forEach(r -> domains.add(recoverDomain(source, r)));
@@ -374,27 +356,26 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         return domains;
     }
 
-    private <T> T recoverGraphDomain(@NonNull GremlinSourceGraph source, @NonNull List<Result> results) {
+    private <T> T recoverGraphDomain(@NonNull GremlinSourceGraph<T> source, @NonNull List<Result> results) {
         final T domain;
-        @SuppressWarnings("unchecked") final Class<T> domainClass = (Class<T>) source.getDomainClass();
+        final Class<T> domainClass = source.getDomainClass();
 
         source.getResultsReader().read(results, source);
         domain = source.doGremlinSourceRead(domainClass, mappingConverter);
         return domain;
     }
 
-    private <T> boolean notExistsById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        return !existsById(id, domainClass);
+    private <T> boolean notExistsById(@NonNull Object id, @NonNull GremlinSource<T> source) {
+        return !existsById(id, source);
     }
 
     @Override
-    public <T> boolean existsById(@NonNull Object id, @NonNull Class<T> domainClass) {
-        return findById(id, domainClass) != null;
+    public <T> boolean existsById(@NonNull Object id, @NonNull GremlinSource<T> source) {
+        return findById(id, source) != null;
     }
 
     @Override
-    public <T> List<T> find(@NonNull GremlinQuery query, @NonNull Class<T> domainClass) {
-        final GremlinSource source = GremlinUtils.toGremlinSource(domainClass);
+    public <T> List<T> find(@NonNull GremlinQuery query, @NonNull GremlinSource<T> source) {
         final QueryScriptGenerator generator = new QueryFindScriptGenerator(source);
         final List<String> queryList = generator.generate(query);
         final List<Result> results = this.executeQuery(queryList);

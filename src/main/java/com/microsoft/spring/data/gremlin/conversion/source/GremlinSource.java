@@ -19,8 +19,10 @@ import java.util.Map;
  * For Vertex and Edge, they consist of id (String, Reserved), label (String, Reserved) and
  * a set of properties.
  * The property key should be String, and value can be one of String, number and boolean.
+ *
+ * @param <T> The type of domain.
  */
-public interface GremlinSource {
+public interface GremlinSource<T> {
 
     /**
      * Set the id of domain
@@ -41,11 +43,6 @@ public interface GremlinSource {
      * Set the property map of domain
      */
     void setProperty(String key, Object value);
-
-    /**
-     * Set the Class Type of domain
-     */
-    void setDomainClass(Class<?> domainClass);
 
     /**
      * Get the id of domain
@@ -76,7 +73,7 @@ public interface GremlinSource {
      * @return will never be null
      */
     @NonNull
-    Class<?> getDomainClass();
+    Class<T> getDomainClass();
 
     /**
      * Get the properties of domain
@@ -98,7 +95,7 @@ public interface GremlinSource {
     /**
      * do the real reading from GremlinSource to domain
      */
-    <T extends Object> T doGremlinSourceRead(Class<T> domainClass, MappingGremlinConverter converter);
+    T doGremlinSourceRead(Class<T> domainClass, MappingGremlinConverter converter);
 
     /**
      * return the GremlinScriptLiteral

@@ -20,11 +20,11 @@ import java.util.List;
 import static com.microsoft.spring.data.gremlin.common.Constants.*;
 import static com.microsoft.spring.data.gremlin.common.GremlinEntityType.VERTEX;
 
-
 @NoArgsConstructor
 public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral implements GremlinScriptLiteral {
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> generateInsertScript(@NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceVertex)) {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
@@ -44,11 +44,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
     }
 
     @Override
-    public List<String> generateDeleteAllScript(@NonNull GremlinSource source) {
-        if (!(source instanceof GremlinSourceVertex)) {
-            throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
-        }
-
+    public List<String> generateDeleteAllScript() {
         return Collections.singletonList(Constants.GREMLIN_SCRIPT_VERTEX_DROP_ALL);
     }
 
@@ -83,6 +79,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> generateUpdateScript(@NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceVertex)) {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");

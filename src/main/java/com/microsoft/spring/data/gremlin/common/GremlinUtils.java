@@ -126,18 +126,8 @@ public class GremlinUtils {
         }
     }
 
-    public static GremlinSource toGremlinSource(@NonNull Class<?> domainClass) {
-        return new GremlinEntityInformation<>(domainClass).getGremlinSource();
-    }
-
-    public static <T> GremlinSource toGremlinSource(@NonNull T domain) {
-        @SuppressWarnings("unchecked") final GremlinEntityInformation information =
-                new GremlinEntityInformation(domain.getClass());
-        final GremlinSource source = information.getGremlinSource();
-
-        source.setId(information.getId(domain));
-
-        return source;
+    public static <T> GremlinSource<T> toGremlinSource(@NonNull Class<T> domainClass) {
+        return new GremlinEntityInformation<>(domainClass).createGremlinSource();
     }
 
     public static List<List<String>> toParallelQueryList(@NonNull List<String> queries) {
@@ -189,10 +179,4 @@ public class GremlinUtils {
         final Type genericType = returnType.getActualTypeArguments()[0];
         return (Class<?>) genericType;
     }
-
-/*    private static String capitalizeFirstLetter(String str) {
-        final StringBuilder capitalizedString = new StringBuilder();
-        capitalizedString.append(str.substring(0, 1).toUpperCase(Locale.ROOT)).append(str.substring(1));
-        return capitalizedString.toString();
-    }*/
 }
