@@ -17,7 +17,6 @@ import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
-import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
@@ -88,17 +87,8 @@ public class MappingGremlinConverter
         final ConvertingPropertyAccessor accessor = this.getPropertyAccessor(domain);
         final GremlinPersistentEntity<?> persistentEntity = this.getPersistentEntity(domain.getClass());
         final PersistentProperty property = persistentEntity.getPersistentProperty(fieldName);
-        final boolean generatedValue = GremlinUtils.checkIfFieldBearsAnnotation(domain.getClass(), 
-                GeneratedValue.class, fieldName);
-        if (!generatedValue) {
-             Assert.notNull(property, "persistence property should not be null");
-        }
-
-        final Object value = accessor.getProperty(property);
-        if (!generatedValue) {
-             Assert.notNull(value, "PersistentProperty should not be null");
-        }
-        return value;
+        
+        return property != null ? accessor.getProperty(property) : null;
     }
 
     public Object getIdFieldValue(@NonNull Object domain) {

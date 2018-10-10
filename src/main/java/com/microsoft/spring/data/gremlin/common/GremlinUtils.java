@@ -9,14 +9,13 @@ import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_QUERY_B
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.tinkerpop.shaded.jackson.databind.MapperFeature;
@@ -41,7 +40,6 @@ import lombok.NoArgsConstructor;
 public class GremlinUtils {
 
     private static final ObjectMapper mapper = new ObjectMapper();
-    private static final String GETTER_PREFIX = "get";
 
     static {
         mapper.configure(MapperFeature.AUTO_DETECT_FIELDS, false);
@@ -91,7 +89,7 @@ public class GremlinUtils {
             throw new GremlinInvalidEntityIdFieldException("the type of @Id/id field should be String/Integer/Long");
         }
 
-        if (!generatedValueFields.isEmpty() && !generatedValueFields.get(0).equals(idField)) {
+        if (generatedValueFields.size() == 1 && !generatedValueFields.get(0).equals(idField)) {
             throw new GremlinIllegalConfigurationException("Only the id field can have the optional "
                     + "@GeneratedValue annotation!");
         }
@@ -161,41 +159,40 @@ public class GremlinUtils {
     }
     
     public static Class<?> determineGraphVertexType(@NonNull Class<?> graphType) {
-        for (final Field field : FieldUtils.getAllFields(graphType)) {
-            if (field.isAnnotationPresent(VertexSet.class)) {
-                return extractGenericTypeFromCollection(field, graphType);
-            }
-        }
-        return null;
+        final Field vertexSetField =  
+                Arrays.stream(FieldUtils.getAllFields(graphType))
+                      .filter(f -> f.isAnnotationPresent(VertexSet.class))
+                      .findFirst()
+                      .orElseThrow(() -> new GremlinEntityInformationException("No VertexSet found in class " 
+                              + graphType.getName()));
+        return extractGenericTypeFromCollection(vertexSetField, graphType);
     }
 
     public static Class<?> determineGraphEdgeType(@NonNull Class<?> graphType) {
-        for (final Field field : FieldUtils.getAllFields(graphType)) {
-            if (field.isAnnotationPresent(EdgeSet.class)) {
-                return extractGenericTypeFromCollection(field, graphType);
-            }
-        }
-        return null;
+        final Field edgeSetField =  
+                Arrays.stream(FieldUtils.getAllFields(graphType))
+                      .filter(f -> f.isAnnotationPresent(EdgeSet.class))
+                      .findFirst()
+                      .orElseThrow(() -> new GremlinEntityInformationException("No EdgeSet found in class " 
+                              + graphType.getName()));
+        return extractGenericTypeFromCollection(edgeSetField, graphType);
     }
 
     private static Class<?> extractGenericTypeFromCollection(Field field, Class<?> clazz) {
-        final String getterName = GETTER_PREFIX + capitalizeFirstLetter(field.getName());
-        final Method getterMethod = ReflectionUtils.findMethod(clazz, getterName);
-        if (getterMethod == null) {
-            throw new GremlinEntityInformationException("No getter method found for field " + field.getName());
-        }
-        if (!(Collection.class.isAssignableFrom(getterMethod.getReturnType()))) {
+        ReflectionUtils.makeAccessible(field);
+        if (!(Collection.class.isAssignableFrom(field.getType()))) {
             throw new GremlinEntityInformationException("The current implementation only supports collections "
                     + "of vertices in Graph objects");
         }
-        final ParameterizedType returnType = (ParameterizedType) getterMethod.getGenericReturnType();
+        
+        final ParameterizedType returnType = (ParameterizedType) field.getGenericType();
         final Type genericType = returnType.getActualTypeArguments()[0];
         return (Class<?>) genericType;
     }
 
-    private static String capitalizeFirstLetter(String str) {
+/*    private static String capitalizeFirstLetter(String str) {
         final StringBuilder capitalizedString = new StringBuilder();
         capitalizedString.append(str.substring(0, 1).toUpperCase(Locale.ROOT)).append(str.substring(1));
         return capitalizedString.toString();
-    }
+    }*/
 }

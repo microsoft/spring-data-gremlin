@@ -22,8 +22,8 @@ import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeEx
 
 public class GremlinResultsGraphReader extends AbstractGremlinResultReader implements GremlinResultsReader {
     
-    private GremlinResultVertexReader vertexResultReader;
-    private GremlinResultEdgeReader edgeResultReader;
+    private final GremlinResultVertexReader vertexResultReader;
+    private final GremlinResultEdgeReader edgeResultReader;
 
     public GremlinResultsGraphReader() {
         vertexResultReader = new GremlinResultVertexReader();
@@ -49,18 +49,17 @@ public class GremlinResultsGraphReader extends AbstractGremlinResultReader imple
             graphSource.getEdgeSet().clear();
         }
         
-        for (final Result result : results) {
-            processResult(result, graphSource);
-        }
+        results.stream().forEach(r ->  processResult(r, graphSource));
     }
     
-    private void processResult(Result result, GremlinSourceGraph graphSource) {
-        
+    private void processResult(Result result, GremlinSourceGraph graphSource) { 
         final Object obj = result.getObject();
         Assert.isInstanceOf(Map.class, obj, "should be an instance of Map");
         @SuppressWarnings("unchecked") final Map<String, Object> map = (Map<String, Object>) result.getObject();
+        
         Assert.isTrue(map.containsKey(Constants.PROPERTY_TYPE), "should contain a type property");
         final String type = (String) map.get(Constants.PROPERTY_TYPE);
+        
         GremlinSource resultSource;
         if (type.equals(Constants.RESULT_TYPE_VERTEX)) {
             resultSource = new GremlinSourceVertex();
