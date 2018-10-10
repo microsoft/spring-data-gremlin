@@ -97,15 +97,6 @@ public class GremlinUtils {
         return idField;
     }
 
-    public static <T, U extends Annotation> boolean checkIfFieldBearsAnnotation(@NonNull Class<T> domainClass, 
-            @NonNull Class<U> annotationClass, @NonNull String fieldName) {
-        final Field namedField = ReflectionUtils.findField(domainClass, fieldName);
-        if (namedField == null) {
-            return false;
-        }
-        return namedField.isAnnotationPresent(annotationClass);
-    }
-
     public static long timeToMilliSeconds(@NonNull Object time) {
         if (time instanceof Date) {
             return ((Date) time).getTime();
