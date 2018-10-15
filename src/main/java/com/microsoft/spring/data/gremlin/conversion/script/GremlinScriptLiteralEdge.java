@@ -11,6 +11,7 @@ import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,10 +114,14 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 
+        final String classname = source.getProperties().get(GREMLIN_PROPERTY_CLASSNAME).toString();
+        Assert.notNull(classname, "GremlinSource should contain predefined classname");
+
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,            // g
-                GREMLIN_PRIMITIVE_EDGE_ALL,         // E()
-                generateHasLabel(source.getLabel()) // has(label, 'label')
+                GREMLIN_PRIMITIVE_GRAPH,                           // g
+                GREMLIN_PRIMITIVE_EDGE_ALL,                        // E()
+                generateHasLabel(source.getLabel()),               // has(label, 'label')
+                generateHas(GREMLIN_PROPERTY_CLASSNAME, classname) // has(_classname, 'xxxxxx')
         );
 
         return completeScript(scriptList);

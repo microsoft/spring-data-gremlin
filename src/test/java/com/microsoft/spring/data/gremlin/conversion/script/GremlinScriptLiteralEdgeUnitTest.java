@@ -68,21 +68,32 @@ public class GremlinScriptLiteralEdgeUnitTest {
     @Test
     public void testGenerateFindAllScript() {
         final List<String> queryList = new GremlinScriptLiteralEdge().generateFindAllScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.E().has(label, 'label-relationship')");
+        assertEquals(queryList.get(0), "g.E().has(label, 'label-relationship')" +
+                ".has('_classname', 'com.microsoft.spring.data.gremlin.common.domain.Relationship')");
     }
 
     @Test
     public void testGenerateInsertScript() {
         final List<String> queryList = new GremlinScriptLiteralEdge().generateInsertScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.V('123').as('from').V('321').as('to')"
-                + ".addE('label-relationship').from('from').to('to')"
-                + ".property(id, '456').property('name', 'rel-name').property('location', 'china')");
+        assertEquals(queryList.get(0), "g.V('123').as('from').V('321').as('to')" +
+                ".addE('label-relationship').from('from').to('to')" +
+                ".property(id, '456')" +
+                ".property('person', '{\"id\":\"123\",\"name\":\"bill\"}')" +
+                ".property('name', 'rel-name')" +
+                ".property('project', '{\"id\":\"321\",\"name\":\"ms-project\",\"uri\":\"http\"}')" +
+                ".property('location', 'china')" +
+                ".property('_classname', 'com.microsoft.spring.data.gremlin.common.domain.Relationship')");
     }
 
     @Test
     public void testGenerateUpdateScript() {
         final List<String> queryList = new GremlinScriptLiteralEdge().generateUpdateScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.E('456').property('name', 'rel-name').property('location', 'china')");
+        assertEquals(queryList.get(0), "g.E('456')" +
+                ".property('person', '{\"id\":\"123\",\"name\":\"bill\"}')" +
+                ".property('name', 'rel-name')" +
+                ".property('project', '{\"id\":\"321\",\"name\":\"ms-project\",\"uri\":\"http\"}')" +
+                ".property('location', 'china')" +
+                ".property('_classname', 'com.microsoft.spring.data.gremlin.common.domain.Relationship')");
     }
 
     @Test
