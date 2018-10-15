@@ -74,40 +74,4 @@ public class MasterRepositoryIT {
         Assert.assertEquals(students.size(), 1);
         Assert.assertEquals(students.get(0), STUDENT);
     }
-
-//    @Autowired
-//    private TestVertexRepository testVertexRepository;
-//
-//    @Test
-//    public void testPredefinedProperty() {
-//        testVertexRepository.save(new TestVertex("id", "name"));
-//    }
-//
-//    @Vertex
-//    @Data
-//    private static class TestVertex {
-//
-//        private String id;
-//
-//        private String _classname;
-//    }
-//
-//    @Edge
-//    @Data
-//    private static class TestEdge {
-//
-//        private String id;
-//
-//        private String _classname;
-//
-//        @EdgeFrom
-//        private TestVertex from;
-//
-//        @EdgeTo
-//        private TestVertex to;
-//    }
-//
-//    private interface TestVertexRepository extends GremlinRepository<TestVertex, String> {
-//
-//    }
 }
