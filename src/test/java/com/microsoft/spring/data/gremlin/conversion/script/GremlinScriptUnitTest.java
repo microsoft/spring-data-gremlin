@@ -96,7 +96,7 @@ public class GremlinScriptUnitTest {
 
         source.setProperty(fakeName, null);
 
-        Assert.assertEquals(source.getProperties().size(), 2);
+        Assert.assertEquals(source.getProperties().size(), 3); // one predefined property _classname
         Assert.assertNull(source.getProperties().get(fakeName));
     }
 }

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Vertex(label = TestConstants.VERTEX_LABEL)
 @AllArgsConstructor
 @NoArgsConstructor
-public class Student {
+public class Master {
 
     private Long id;
 

@@ -19,6 +19,8 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_PROPERTY_CLASSNAME;
+
 public abstract class AbstractGremlinSource<T> implements GremlinSource<T> {
 
     @Getter
@@ -59,6 +61,8 @@ public abstract class AbstractGremlinSource<T> implements GremlinSource<T> {
     protected AbstractGremlinSource(Class<T> domainClass) {
         this.domainClass =  domainClass;
         this.properties = new HashMap<>();
+
+        setProperty(GREMLIN_PROPERTY_CLASSNAME, domainClass.getName());
     }
 
     @Override
