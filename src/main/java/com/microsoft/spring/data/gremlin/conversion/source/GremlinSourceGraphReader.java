@@ -51,22 +51,27 @@ public class GremlinSourceGraphReader extends AbstractGremlinSourceReader implem
                     && source.getId() != null) {
                 accessor.setProperty(property, super.getGremlinSourceId(graphSource));
             } else if (field.isAnnotationPresent(VertexSet.class) && vertexSources != null) {
-                final Class<?> vertexClass = GremlinUtils.determineGraphVertexType(type);
-                final List<Object> vertexObjects = buildDomainObjects(vertexSources, converter, vertexClass);
+                final List<Object> vertexObjects = buildDomainObjects(vertexSources, converter);
                 accessor.setProperty(property, vertexObjects);
             } else if (field.isAnnotationPresent(EdgeSet.class) && edgeSources != null) {
-                final Class<?> edgeClass = GremlinUtils.determineGraphEdgeType(type);
-                final List<Object> edgeObjects = buildDomainObjects(edgeSources, converter, edgeClass);
+                final List<Object> edgeObjects = buildDomainObjects(edgeSources, converter);
                 accessor.setProperty(property, edgeObjects);
             }
         }
         return domain;
     }
 
-    private List<Object> buildDomainObjects(List<GremlinSource> sources, MappingGremlinConverter converter, 
-            Class<?> domainClass) {
+    private List<Object> buildDomainObjects(List<GremlinSource> sources, MappingGremlinConverter converter) {
         final List<Object> domainObjects = new ArrayList<>();
+        Class<?> domainClass;
         for (final GremlinSource source : sources) {
+            try {
+                domainClass = Class.forName((String) source.getProperties().get(Constants.GREMLIN_PROPERTY_CLASSNAME)); 
+            }
+            catch (ClassNotFoundException e) {
+                throw new GremlinUnexpectedSourceTypeException("No Java class found for source property " 
+                        + Constants.GREMLIN_PROPERTY_CLASSNAME, e);
+            }
             source.setIdField(new GremlinEntityInformation<>(domainClass).getIdField());
             final Object domainObject = source.doGremlinSourceRead(domainClass, converter);
             domainObjects.add(domainObject);

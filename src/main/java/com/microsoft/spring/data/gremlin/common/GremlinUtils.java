@@ -138,36 +138,4 @@ public class GremlinUtils {
 
         return parallelQueries;
     }
-    
-    public static Class<?> determineGraphVertexType(@NonNull Class<?> graphType) {
-        final Field vertexSetField =  
-                Arrays.stream(FieldUtils.getAllFields(graphType))
-                      .filter(f -> f.isAnnotationPresent(VertexSet.class))
-                      .findFirst()
-                      .orElseThrow(() -> new GremlinEntityInformationException("No VertexSet found in class " 
-                              + graphType.getName()));
-        return extractGenericTypeFromCollection(vertexSetField, graphType);
-    }
-
-    public static Class<?> determineGraphEdgeType(@NonNull Class<?> graphType) {
-        final Field edgeSetField =  
-                Arrays.stream(FieldUtils.getAllFields(graphType))
-                      .filter(f -> f.isAnnotationPresent(EdgeSet.class))
-                      .findFirst()
-                      .orElseThrow(() -> new GremlinEntityInformationException("No EdgeSet found in class " 
-                              + graphType.getName()));
-        return extractGenericTypeFromCollection(edgeSetField, graphType);
-    }
-
-    private static Class<?> extractGenericTypeFromCollection(Field field, Class<?> clazz) {
-        ReflectionUtils.makeAccessible(field);
-        if (!(Collection.class.isAssignableFrom(field.getType()))) {
-            throw new GremlinEntityInformationException("The current implementation only supports collections "
-                    + "of vertices in Graph objects");
-        }
-        
-        final ParameterizedType returnType = (ParameterizedType) field.getGenericType();
-        final Type genericType = returnType.getActualTypeArguments()[0];
-        return (Class<?>) genericType;
-    }
 }
