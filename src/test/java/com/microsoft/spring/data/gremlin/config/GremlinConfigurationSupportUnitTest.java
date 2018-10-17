@@ -55,7 +55,7 @@ public class GremlinConfigurationSupportUnitTest {
                 Dependency.class, Library.class, Network.class, Person.class, Project.class,
                 Relationship.class, Roadmap.class, Service.class, SimpleDependency.class, InvalidDependency.class,
                 UserDomain.class, AdvancedUser.class, Student.class, Book.class, BookReference.class,
-                Neighbor.class)
+                Neighbor.class, Master.class)
         );
 
         Assert.assertNotNull(entities);

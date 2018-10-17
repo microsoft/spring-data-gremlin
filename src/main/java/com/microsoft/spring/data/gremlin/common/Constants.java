@@ -88,4 +88,6 @@ public class Constants {
             GREMLIN_PRIMITIVE_VERTEX_ALL,
             GREMLIN_PRIMITIVE_DROP
     );
+
+    public static final String GREMLIN_PROPERTY_CLASSNAME = "_classname";
 }

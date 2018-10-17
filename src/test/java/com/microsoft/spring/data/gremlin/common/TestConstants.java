@@ -59,4 +59,6 @@ public class TestConstants {
     public static final String EDGE_RELATIONSHIP_2_ID = "555555";
     public static final String EDGE_RELATIONSHIP_2_NAME = "create";
     public static final String EDGE_RELATIONSHIP_2_LOCATION = "shanghai";
+
+    public static final String VERTEX_LABEL = "label-vertex";
 }

@@ -62,19 +62,22 @@ public class GremlinScriptLiteralVertexUnitTest {
     @Test
     public void testGenerateFindAllScript() {
         final List<String> queryList = new GremlinScriptLiteralVertex().generateFindAllScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.V().has(label, 'label-person')");
+        assertEquals(queryList.get(0), "g.V().has(label, 'label-person')" +
+                ".has('_classname', 'com.microsoft.spring.data.gremlin.common.domain.Person')");
     }
 
     @Test
     public void testGenerateInsertScript() {
         final List<String> queryList = new GremlinScriptLiteralVertex().generateInsertScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.addV('label-person').property(id, '123').property('name', 'bill')");
+        assertEquals(queryList.get(0), "g.addV('label-person').property(id, '123').property('name', 'bill')" +
+                ".property('_classname', 'com.microsoft.spring.data.gremlin.common.domain.Person')");
     }
 
     @Test
     public void testGenerateUpdateScript() {
         final List<String> queryList = new GremlinScriptLiteralVertex().generateUpdateScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.V('123').property('name', 'bill')");
+        assertEquals(queryList.get(0), "g.V('123').property('name', 'bill')" +
+                ".property('_classname', 'com.microsoft.spring.data.gremlin.common.domain.Person')");
     }
 
     @Test
