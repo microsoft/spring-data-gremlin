@@ -65,8 +65,7 @@ public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
             } else if (field.getName().equals(GREMLIN_PROPERTY_CLASSNAME)) {
                 throw new GremlinEntityInformationException("Domain Cannot use pre-defined field name: "
                         + GREMLIN_PROPERTY_CLASSNAME);
-            }
-            else if (field.getAnnotation(EdgeFrom.class) != null) {
+            } else if (field.getAnnotation(EdgeFrom.class) != null) {
                 final Object vertexId = this.getIdValue(object, converter);
                 if (vertexId == null) {
                     throw new GremlinInvalidEntityIdFieldException("The vertex id for the from vertex cannot be null!");

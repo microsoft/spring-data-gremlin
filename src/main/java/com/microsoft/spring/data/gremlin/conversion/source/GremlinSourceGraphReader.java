@@ -67,8 +67,7 @@ public class GremlinSourceGraphReader extends AbstractGremlinSourceReader implem
         for (final GremlinSource source : sources) {
             try {
                 domainClass = Class.forName((String) source.getProperties().get(Constants.GREMLIN_PROPERTY_CLASSNAME)); 
-            }
-            catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException e) {
                 throw new GremlinUnexpectedSourceTypeException("No Java class found for source property " 
                         + Constants.GREMLIN_PROPERTY_CLASSNAME, e);
             }

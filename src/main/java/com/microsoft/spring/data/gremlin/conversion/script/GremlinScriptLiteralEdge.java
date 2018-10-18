@@ -50,7 +50,7 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         scriptList.add(generateAddEntityWithLabel(sourceEdge.getLabel(), EDGE));            // addE(label)
         scriptList.add(generateEdgeDirection(FROM_ALIAS, TO_ALIAS));                        // from('from').to('to')
         if (source.getId() != null) {
-              scriptList.add(generatePropertyWithRequiredId(source.getId()));                     // property(id, xxx)
+              scriptList.add(generatePropertyWithRequiredId(source.getId()));               // property(id, xxx)
         }
 
         scriptList.addAll(generateProperties(source.getProperties()));
@@ -120,8 +120,8 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         Assert.notNull(classname, "GremlinSource should contain predefined classname");
 
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,            // g
-                GREMLIN_PRIMITIVE_EDGE_ALL,         // E()
+                GREMLIN_PRIMITIVE_GRAPH,                           // g
+                GREMLIN_PRIMITIVE_EDGE_ALL,                        // E()
                 generateHasLabel(source.getLabel()),               // has(label, 'label')
                 generateHas(GREMLIN_PROPERTY_CLASSNAME, classname) // has(_classname, 'xxxxxx')
         );
