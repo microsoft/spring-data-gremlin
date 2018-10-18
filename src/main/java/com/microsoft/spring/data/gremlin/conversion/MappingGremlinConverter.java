@@ -5,10 +5,6 @@
  */
 package com.microsoft.spring.data.gremlin.conversion;
 
-import com.microsoft.spring.data.gremlin.common.GremlinUtils;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
-import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
-import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.convert.ConversionService;
@@ -20,6 +16,11 @@ import org.springframework.data.mapping.context.MappingContext;
 import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
+
+import com.microsoft.spring.data.gremlin.common.GremlinUtils;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
+import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentProperty;
 
 public class MappingGremlinConverter
         implements EntityConverter<GremlinPersistentEntity<?>, GremlinPersistentProperty, Object, GremlinSource>,
@@ -88,12 +89,8 @@ public class MappingGremlinConverter
         final ConvertingPropertyAccessor accessor = this.getPropertyAccessor(domain);
         final GremlinPersistentEntity<?> persistentEntity = this.getPersistentEntity(domain.getClass());
         final PersistentProperty property = persistentEntity.getPersistentProperty(fieldName);
-        Assert.notNull(property, "persistence property should not be null");
-
-        final Object value = accessor.getProperty(property);
-        Assert.notNull(value, "PersistentProperty should not be null");
-
-        return value;
+        
+        return property != null ? accessor.getProperty(property) : null;
     }
 
     public Object getIdFieldValue(@NonNull Object domain) {

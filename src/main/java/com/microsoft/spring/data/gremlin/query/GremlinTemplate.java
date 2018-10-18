@@ -5,8 +5,30 @@
  */
 package com.microsoft.spring.data.gremlin.query;
 
+import static java.util.stream.Collectors.toList;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.tinkerpop.gremlin.driver.Client;
+import org.apache.tinkerpop.gremlin.driver.Result;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.mapping.PersistentProperty;
+import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
+import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
+
 import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
 import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
+import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.GremlinFactory;
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
@@ -20,33 +42,13 @@ import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
+import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.query.query.GremlinQuery;
 import com.microsoft.spring.data.gremlin.query.query.QueryFindScriptGenerator;
 import com.microsoft.spring.data.gremlin.query.query.QueryScriptGenerator;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.tinkerpop.gremlin.driver.Client;
-import org.apache.tinkerpop.gremlin.driver.Result;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.data.mapping.PersistentProperty;
-import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
-import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
-
 
 public class GremlinTemplate implements GremlinOperations, ApplicationContextAware {
 
@@ -100,8 +102,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
                     } catch (InterruptedException | ExecutionException e) {
                         throw new GremlinQueryException("unable to complete query from gremlin", e);
                     }
-                })
-                .collect(toList());
+                }).collect(toList());
     }
 
     @Override
@@ -124,17 +125,38 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         executeQuery(source.getGremlinScriptLiteral().generateDeleteAllByClassScript(source));
     }
 
-    private <T> T insertInternal(@NonNull T object, @NonNull GremlinSource<T> source) {
+    private <T> List<Result> insertInternal(@NonNull T object, @NonNull GremlinSource<T> source) {
         this.mappingConverter.write(object, source);
 
-        executeQuery(source.getGremlinScriptLiteral().generateInsertScript(source));
-
-        return object;
+        return executeQuery(source.getGremlinScriptLiteral().generateInsertScript(source));
     }
 
     @Override
     public <T> T insert(@NonNull T object, GremlinSource<T> source) {
-        return insertInternal(object, source);
+        final boolean entityGraph = source instanceof GremlinSourceGraph;
+
+        if (!entityGraph && source.getIdField().isAnnotationPresent(GeneratedValue.class) 
+                && source.getId() != null) {
+            throw new GremlinInvalidEntityIdFieldException("The entity meant to be created has a non-null id "
+                    + "that is marked as @GeneratedValue");
+        }
+        
+        // The current implementation doesn't support creating graphs that contain both edges
+        // and vertices that have null (generated) ids. In this case, vertex and edge creation 
+        // need to be performed in two consecutive steps.
+        // TODO(SOON) Add this verification in the GremlinSourceGraphWriter
+
+        final List<Result> results = insertInternal(object, source);
+
+        if (!results.isEmpty()) {
+            if (entityGraph) {
+                return recoverGraphDomain((GremlinSourceGraph<T>) source, results);
+            } else {
+                return recoverDomain(source, results.get(0));
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -159,7 +181,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @NonNull
     private Field getEdgeAnnotatedField(@NonNull Class<?> domainClass,
-                                        @NonNull Class<? extends Annotation> annotationClass) {
+            @NonNull Class<? extends Annotation> annotationClass) {
         final List<Field> fields = FieldUtils.getFieldsListWithAnnotation(domainClass, annotationClass);
 
         if (fields.size() != 1) {
@@ -244,10 +266,13 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T save(@NonNull T object, @NonNull GremlinSource<T> source) {
-        if (source instanceof GremlinSourceGraph && isEmptyGraph(source)) {
-            return insertInternal(object, source);
-        } else if (!(source instanceof GremlinSourceGraph) && notExistsById(source.getId(), source)) {
-            return insertInternal(object, source);
+        final Object id = source.getId();
+        final boolean entityGraph = source instanceof GremlinSourceGraph;
+
+        if (entityGraph && this.isEmptyGraph(source)) {
+            return insert(object, source);
+        } else if (!entityGraph && (id == null || notExistsById(source.getId(), source))) {
+            return insert(object, source);
         } else {
             return updateInternal(object, source);
         }
@@ -329,6 +354,15 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         results.forEach(r -> domains.add(recoverDomain(source, r)));
 
         return domains;
+    }
+
+    private <T> T recoverGraphDomain(@NonNull GremlinSourceGraph<T> source, @NonNull List<Result> results) {
+        final T domain;
+        final Class<T> domainClass = source.getDomainClass();
+
+        source.getResultsReader().read(results, source);
+        domain = source.doGremlinSourceRead(domainClass, mappingConverter);
+        return domain;
     }
 
     private <T> boolean notExistsById(@NonNull Object id, @NonNull GremlinSource<T> source) {

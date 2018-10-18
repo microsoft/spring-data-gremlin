@@ -5,7 +5,15 @@
  */
 package com.microsoft.spring.data.gremlin.repository.support;
 
+import java.lang.reflect.Field;
+
+import org.springframework.data.repository.core.support.AbstractEntityInformation;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
+import org.springframework.util.ReflectionUtils;
+
 import com.microsoft.spring.data.gremlin.annotation.Edge;
+import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
 import com.microsoft.spring.data.gremlin.annotation.Graph;
 import com.microsoft.spring.data.gremlin.annotation.Vertex;
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
@@ -13,14 +21,10 @@ import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
+import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
-import lombok.Getter;
-import org.springframework.data.repository.core.support.AbstractEntityInformation;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Field;
+import lombok.Getter;
 
 public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T, ID> {
 
@@ -67,8 +71,13 @@ public class GremlinEntityInformation<T, ID> extends AbstractEntityInformation<T
     @Override
     @Nullable
     public ID getId(T entity) {
-        @SuppressWarnings("unchecked") final ID id = (ID) ReflectionUtils.getField(this.idField, entity);
+        final Field idField = this.idField;
+        @SuppressWarnings("unchecked") final ID id = (ID) ReflectionUtils.getField(idField, entity);
 
+        if (id == null && !(super.getJavaType().isAnnotationPresent(Graph.class))
+                && !idField.isAnnotationPresent(GeneratedValue.class)) {
+            throw new GremlinInvalidEntityIdFieldException("A non-generated id field cannot be null!");
+        }
         return id;
     }
 
