@@ -41,9 +41,7 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
 
         source.setId(this.information.getId(domain));
 
-        this.operations.save(domain, source);
-
-        return domain;
+        return (S) this.operations.save(domain, source);
     }
 
     @Override

@@ -5,15 +5,10 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
-import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
-import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
-import com.microsoft.spring.data.gremlin.common.Constants;
-import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
-import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
-import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
-import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
-import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
-import lombok.NoArgsConstructor;
+import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_PROPERTY_CLASSNAME;
+
+import java.lang.reflect.Field;
+
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mapping.PersistentProperty;
@@ -21,9 +16,17 @@ import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
-import java.lang.reflect.Field;
+import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
+import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
+import com.microsoft.spring.data.gremlin.common.Constants;
+import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
+import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
+import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
+import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 
-import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_PROPERTY_CLASSNAME;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
@@ -40,7 +43,7 @@ public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
 
     @Override
     public void write(@NonNull Object domain, @NonNull MappingGremlinConverter converter,
-                      @NonNull GremlinSource source) {
+                      @NonNull GremlinSource source) throws GremlinInvalidEntityIdFieldException {
         if (!(source instanceof GremlinSourceEdge)) {
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
@@ -63,11 +66,18 @@ public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
                 throw new GremlinEntityInformationException("Domain Cannot use pre-defined field name: "
                         + GREMLIN_PROPERTY_CLASSNAME);
             } else if (field.getAnnotation(EdgeFrom.class) != null) {
-                sourceEdge.setVertexIdFrom(this.getIdValue(object, converter));
+                final Object vertexId = this.getIdValue(object, converter);
+                if (vertexId == null) {
+                    throw new GremlinInvalidEntityIdFieldException("The vertex id for the from vertex cannot be null!");
+                }
+                sourceEdge.setVertexIdFrom(vertexId);
             } else if (field.getAnnotation(EdgeTo.class) != null) {
-                sourceEdge.setVertexIdTo(this.getIdValue(object, converter));
-            }
-
+                final Object vertexId = this.getIdValue(object, converter);
+                if (vertexId == null) {
+                    throw new GremlinInvalidEntityIdFieldException("The vertex id for the to vertex cannot be null!");
+                }
+                sourceEdge.setVertexIdTo(vertexId);
+            } 
             source.setProperty(field.getName(), accessor.getProperty(property));
         }
     }

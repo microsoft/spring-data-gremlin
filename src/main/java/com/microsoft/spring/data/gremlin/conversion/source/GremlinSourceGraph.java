@@ -5,12 +5,15 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
-import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
-import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
-import lombok.Getter;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultsGraphReader;
+import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultsReader;
+import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteralGraph;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
+
+import lombok.Getter;
 
 public class GremlinSourceGraph<T> extends AbstractGremlinSource<T> {
 
@@ -19,15 +22,22 @@ public class GremlinSourceGraph<T> extends AbstractGremlinSource<T> {
 
     @Getter
     private List<GremlinSource> edgeSet = new ArrayList<>();
+    
+    @Getter
+    private GremlinResultsReader resultsReader;
 
     public GremlinSourceGraph() {
         super();
         initializeGremlinStrategy();
+        this.setGremlinSourceReader(new GremlinSourceGraphReader());
+        this.resultsReader = new GremlinResultsGraphReader();
     }
-
+    
     public GremlinSourceGraph(Class<T> domainClass) {
         super(domainClass);
         initializeGremlinStrategy();
+        this.setGremlinSourceReader(new GremlinSourceGraphReader());
+        this.resultsReader = new GremlinResultsGraphReader();
     }
 
     public void addGremlinSource(GremlinSource source) {
