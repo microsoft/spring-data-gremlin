@@ -12,6 +12,7 @@ import lombok.NonNull;
 import org.apache.tinkerpop.shaded.jackson.databind.JavaType;
 import org.apache.tinkerpop.shaded.jackson.databind.type.TypeFactory;
 import org.springframework.data.mapping.PersistentProperty;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
@@ -20,11 +21,13 @@ import java.util.Date;
 
 public abstract class AbstractGremlinSourceReader {
 
-    protected Object readProperty(@NonNull PersistentProperty property, @NonNull Object value) {
+    protected Object readProperty(@NonNull PersistentProperty property, @Nullable Object value) {
         final Class<?> type = property.getTypeInformation().getType();
         final JavaType javaType = TypeFactory.defaultInstance().constructType(property.getType());
 
-        if (type == int.class || type == Integer.class
+        if (value == null) {
+            return null;
+        } else if (type == int.class || type == Integer.class
                 || type == Boolean.class || type == boolean.class
                 || type == String.class) {
             return value;

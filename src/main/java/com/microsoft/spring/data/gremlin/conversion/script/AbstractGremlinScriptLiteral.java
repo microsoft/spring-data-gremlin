@@ -11,6 +11,7 @@ import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldEx
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import lombok.NonNull;
 import org.apache.tinkerpop.shaded.jackson.core.JsonProcessingException;
+import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -112,7 +113,8 @@ public abstract class AbstractGremlinScriptLiteral {
     protected static List<String> generateProperties(@NonNull final Map<String, Object> properties) {
         final List<String> scripts = new ArrayList<>();
 
-        properties.forEach((name, value) -> scripts.add(generateProperty(name, value)));
+        properties.entrySet().stream().filter(e -> e.getValue() != null)
+                .forEach(e -> scripts.add(generateProperty(e.getKey(), e.getValue())));
 
         return scripts;
     }
