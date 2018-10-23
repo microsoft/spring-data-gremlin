@@ -24,6 +24,8 @@ public class GremlinConfig {
 
     private String password;
 
+    private boolean sslEnabled;
+
     private boolean telemetryAllowed;
 
     public static GremlinConfigBuilder builder(String endpoint, String username, String password) {
@@ -32,6 +34,7 @@ public class GremlinConfig {
                 .username(username)
                 .password(password)
                 .port(Constants.DEFAULT_ENDPOINT_PORT)
+                .sslEnabled(true)
                 .telemetryAllowed(true);
     }
 }
