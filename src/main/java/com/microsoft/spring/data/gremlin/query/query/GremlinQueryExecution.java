@@ -5,10 +5,10 @@
  */
 package com.microsoft.spring.data.gremlin.query.query;
 
-        import com.microsoft.spring.data.gremlin.common.GremlinUtils;
-        import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
-        import com.microsoft.spring.data.gremlin.query.GremlinOperations;
-        import org.springframework.lang.NonNull;
+import com.microsoft.spring.data.gremlin.common.GremlinUtils;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.query.GremlinOperations;
+import org.springframework.lang.NonNull;
 
 public interface GremlinQueryExecution {
     Object execute(GremlinQuery query, Class<?> type);

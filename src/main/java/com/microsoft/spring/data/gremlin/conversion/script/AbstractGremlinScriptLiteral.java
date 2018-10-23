@@ -11,7 +11,6 @@ import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldEx
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import lombok.NonNull;
 import org.apache.tinkerpop.shaded.jackson.core.JsonProcessingException;
-import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import java.util.*;
