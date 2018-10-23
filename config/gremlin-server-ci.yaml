@@ -15,5 +15,5 @@ scriptEngines: {
 
 serializers:
   - { className: org.apache.tinkerpop.gremlin.driver.ser.GraphSONMessageSerializerV1d0, config: { serializeResultToString: true }}
-ssl: { enabled: false}
+ssl: { enabled: false }
 
