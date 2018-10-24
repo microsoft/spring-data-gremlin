@@ -5,18 +5,13 @@
  */
 package com.microsoft.spring.data.gremlin.common;
 
-import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_QUERY_BARRIER;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
+import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
+import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
+import com.microsoft.spring.data.gremlin.exception.GremlinIllegalConfigurationException;
+import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
+import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.tinkerpop.shaded.jackson.databind.MapperFeature;
 import org.apache.tinkerpop.shaded.jackson.databind.ObjectMapper;
@@ -24,17 +19,12 @@ import org.springframework.data.annotation.Id;
 import org.springframework.lang.NonNull;
 import org.springframework.util.ReflectionUtils;
 
-import com.microsoft.spring.data.gremlin.annotation.EdgeSet;
-import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
-import com.microsoft.spring.data.gremlin.annotation.VertexSet;
-import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
-import com.microsoft.spring.data.gremlin.exception.GremlinEntityInformationException;
-import com.microsoft.spring.data.gremlin.exception.GremlinIllegalConfigurationException;
-import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
-import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_QUERY_BARRIER;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GremlinUtils {
@@ -66,7 +56,7 @@ public class GremlinUtils {
     public static <T> Field getIdField(@NonNull Class<T> domainClass) {
         final Field idField;
         final List<Field> idFields = FieldUtils.getFieldsListWithAnnotation(domainClass, Id.class);
-        final List<Field> generatedValueFields = 
+        final List<Field> generatedValueFields =
                 FieldUtils.getFieldsListWithAnnotation(domainClass, GeneratedValue.class);
 
         if (generatedValueFields.size() > 1) {

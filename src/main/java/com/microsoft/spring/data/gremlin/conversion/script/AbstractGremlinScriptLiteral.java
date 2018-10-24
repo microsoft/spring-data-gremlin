@@ -112,7 +112,8 @@ public abstract class AbstractGremlinScriptLiteral {
     protected static List<String> generateProperties(@NonNull final Map<String, Object> properties) {
         final List<String> scripts = new ArrayList<>();
 
-        properties.forEach((name, value) -> scripts.add(generateProperty(name, value)));
+        properties.entrySet().stream().filter(e -> e.getValue() != null)
+                .forEach(e -> scripts.add(generateProperty(e.getKey(), e.getValue())));
 
         return scripts;
     }

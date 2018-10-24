@@ -196,4 +196,27 @@ public class BookRepositoryIT {
 
         Assert.assertTrue(found.isEmpty());
     }
+
+    @Test
+    public void testFindAllIncomplete() {
+        final Book book = new Book(ID_0, null, 2.34);
+        final Book bookNullName = new Book(ID_1, "null", 243.34);
+
+        repository.save(book);
+        repository.save(bookNullName);
+
+        final Optional<Book> optional = repository.findById(book.getSerialNumber());
+
+        Assert.assertTrue(optional.isPresent());
+        Assert.assertEquals(optional.get(), book);
+
+        final Optional<Book> optionalNullName = repository.findById(bookNullName.getSerialNumber());
+
+        Assert.assertTrue(optionalNullName.isPresent());
+        Assert.assertEquals(optionalNullName.get(), bookNullName);
+
+        final List<Book> books = Lists.newArrayList(repository.findAll());
+
+        assertDomainListEquals(books, Arrays.asList(book, bookNullName));
+    }
 }
