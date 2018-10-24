@@ -574,6 +574,7 @@ public class GremlinTemplateIT {
         @Bean
         public GremlinConfig getGremlinConfig() {
             return GremlinConfig.builder(properties.getEndpoint(), properties.getUsername(), properties.getPassword())
+                    .sslEnabled(properties.isSslEnabled())
                     .port(properties.getPort())
                     .build();
         }
