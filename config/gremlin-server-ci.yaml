@@ -1,5 +1,5 @@
 host: localhost
-port: 8889
+port: 9889
 gremlinPool: 8
 threadPoolWorker: 8
 scriptEvaluationTimeout: 30000
@@ -15,4 +15,5 @@ scriptEngines: {
 
 serializers:
   - { className: org.apache.tinkerpop.gremlin.driver.ser.GraphSONMessageSerializerV1d0, config: { serializeResultToString: true }}
-ssl: { enabled: true}
+ssl: { enabled: false }
+
