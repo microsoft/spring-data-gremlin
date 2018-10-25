@@ -24,6 +24,8 @@ public class GremlinProperties {
     private String username;
 
     private String password;
+    
+    private boolean sslEnabled;
 
     private boolean telemetryAllowed = true;
 }
