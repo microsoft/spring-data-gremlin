@@ -5,13 +5,6 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.result;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.tinkerpop.gremlin.driver.Result;
-import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
-
 import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
@@ -19,9 +12,18 @@ import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
+import org.apache.tinkerpop.gremlin.driver.Result;
+import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
+
+import java.util.List;
+import java.util.Map;
+
+import static com.microsoft.spring.data.gremlin.common.Constants.RESULT_TYPE_EDGE;
+import static com.microsoft.spring.data.gremlin.common.Constants.RESULT_TYPE_VERTEX;
 
 public class GremlinResultsGraphReader extends AbstractGremlinResultReader implements GremlinResultsReader {
-    
+
     private final GremlinResultVertexReader vertexResultReader;
     private final GremlinResultEdgeReader edgeResultReader;
 
@@ -35,42 +37,38 @@ public class GremlinResultsGraphReader extends AbstractGremlinResultReader imple
         if (!(source instanceof GremlinSourceGraph)) {
             throw new GremlinUnexpectedSourceTypeException("Should be instance of GremlinSourceGraph");
         }
+
         final GremlinSourceGraph graphSource = (GremlinSourceGraph) source;
-        
-        if (results.isEmpty()) {
-            return;
-        }
-        
-        // Need to clear out the edge and vertex sets on the source before processing the results
-        if (graphSource.getVertexSet() != null) {
-            graphSource.getVertexSet().clear();
-        }
-        if (graphSource.getEdgeSet() != null) {
-            graphSource.getEdgeSet().clear();
-        }
-        
-        results.stream().forEach(r ->  processResult(r, graphSource));
+
+        graphSource.getVertexSet().clear();
+        graphSource.getEdgeSet().clear();
+
+        results.stream().map(this::processResult).forEach(graphSource::addGremlinSource);
     }
-    
-    private void processResult(Result result, GremlinSourceGraph graphSource) { 
+
+    private GremlinSource processResult(Result result) {
+        final GremlinSource source;
         final Object obj = result.getObject();
+
         Assert.isInstanceOf(Map.class, obj, "should be an instance of Map");
         @SuppressWarnings("unchecked") final Map<String, Object> map = (Map<String, Object>) result.getObject();
-        
+
         Assert.isTrue(map.containsKey(Constants.PROPERTY_TYPE), "should contain a type property");
         final String type = (String) map.get(Constants.PROPERTY_TYPE);
-        
-        GremlinSource resultSource;
-        if (type.equals(Constants.RESULT_TYPE_VERTEX)) {
-            resultSource = new GremlinSourceVertex();
-            vertexResultReader.read(result, resultSource);
-        } else if (type.equals(Constants.RESULT_TYPE_EDGE)) {
-            resultSource = new GremlinSourceEdge();
-            edgeResultReader.read(result, resultSource);
-        } else {
-            throw new GremlinUnexpectedEntityTypeException("Unexpected result type: " + type);
+
+        switch (type) {
+            case RESULT_TYPE_VERTEX:
+                source = new GremlinSourceVertex();
+                vertexResultReader.read(result, source);
+                break;
+            case RESULT_TYPE_EDGE:
+                source = new GremlinSourceEdge();
+                edgeResultReader.read(result, source);
+                break;
+            default:
+                throw new GremlinUnexpectedEntityTypeException("Unexpected result type: " + type);
         }
-        
-        graphSource.addGremlinSource(resultSource);
+
+        return source;
     }
 }
