@@ -5,7 +5,6 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.script;
 
-import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
@@ -36,7 +35,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
         scriptList.add(GREMLIN_PRIMITIVE_GRAPH);                               // g
         scriptList.add(generateAddEntityWithLabel(source.getLabel(), VERTEX)); // addV('label')
         if (source.getId() != null) {
-             scriptList.add(generatePropertyWithRequiredId(source.getId()));   // property(id, xxx)
+            scriptList.add(generatePropertyWithRequiredId(source.getId()));    // property(id, xxx)
         }
 
         scriptList.addAll(generateProperties(source.getProperties()));
@@ -46,7 +45,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
 
     @Override
     public List<String> generateDeleteAllScript() {
-        return Collections.singletonList(Constants.GREMLIN_SCRIPT_VERTEX_DROP_ALL);
+        return Collections.singletonList(GREMLIN_SCRIPT_VERTEX_DROP_ALL);
     }
 
     @Override
@@ -136,7 +135,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
         }
 
-        return Collections.singletonList(Constants.GREMLIN_SCRIPT_VERTEX_ALL);
+        return Collections.singletonList(GREMLIN_SCRIPT_VERTEX_ALL);
     }
 }
 

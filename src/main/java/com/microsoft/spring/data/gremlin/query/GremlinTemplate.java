@@ -89,7 +89,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     private List<Result> executeQuery(@NonNull List<String> queries) {
         final List<List<String>> parallelQueries = GremlinUtils.toParallelQueryList(queries);
 
-        return parallelQueries.stream().flatMap(q -> executeQueryParallel(q).stream()).collect(Collectors.toList());
+        return parallelQueries.stream().flatMap(q -> executeQueryParallel(q).stream()).collect(toList());
     }
 
     @NonNull
@@ -102,7 +102,8 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
                     } catch (InterruptedException | ExecutionException e) {
                         throw new GremlinQueryException("unable to complete query from gremlin", e);
                     }
-                }).collect(toList());
+                })
+                .collect(toList());
     }
 
     @Override

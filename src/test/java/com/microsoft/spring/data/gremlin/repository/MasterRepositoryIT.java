@@ -6,17 +6,11 @@
 package com.microsoft.spring.data.gremlin.repository;
 
 import com.google.common.collect.Lists;
-import com.microsoft.spring.data.gremlin.annotation.Edge;
-import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
-import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
-import com.microsoft.spring.data.gremlin.annotation.Vertex;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.common.domain.Master;
 import com.microsoft.spring.data.gremlin.common.domain.Student;
 import com.microsoft.spring.data.gremlin.common.repository.MasterRepository;
 import com.microsoft.spring.data.gremlin.common.repository.StudentRepository;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
