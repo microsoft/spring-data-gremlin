@@ -5,7 +5,6 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.script;
 
-import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
@@ -49,9 +48,8 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         scriptList.add(generateAsWithAlias(TO_ALIAS));                                      // to('to')
         scriptList.add(generateAddEntityWithLabel(sourceEdge.getLabel(), EDGE));            // addE(label)
         scriptList.add(generateEdgeDirection(FROM_ALIAS, TO_ALIAS));                        // from('from').to('to')
-        if (source.getId() != null) {
-            scriptList.add(generatePropertyWithRequiredId(source.getId()));                 // property(id, xxx)
-        }
+
+        source.getId().ifPresent(id -> scriptList.add(generatePropertyWithRequiredId(id))); // property(id, xxx)
 
         scriptList.addAll(generateProperties(source.getProperties()));
 
@@ -85,9 +83,11 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 
+        Assert.isTrue(source.getId().isPresent(), "GremlinSource should contains id.");
+
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,                           // g
-                generateEntityWithRequiredId(source.getId(), EDGE) // E(id)
+                GREMLIN_PRIMITIVE_GRAPH,                                 // g
+                generateEntityWithRequiredId(source.getId().get(), EDGE) // E(id)
         );
 
         return completeScript(scriptList);
@@ -102,8 +102,10 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
 
         final List<String> scriptList = new ArrayList<>();
 
-        scriptList.add(GREMLIN_PRIMITIVE_GRAPH);                            // g
-        scriptList.add(generateEntityWithRequiredId(source.getId(), EDGE)); // E(id)
+        Assert.isTrue(source.getId().isPresent(), "GremlinSource should contains id.");
+
+        scriptList.add(GREMLIN_PRIMITIVE_GRAPH);                                  // g
+        scriptList.add(generateEntityWithRequiredId(source.getId().get(), EDGE)); // E(id)
 
         scriptList.addAll(generateProperties(source.getProperties()));
 
@@ -116,14 +118,14 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 
-        final String classname = source.getProperties().get(GREMLIN_PROPERTY_CLASSNAME).toString();
-        Assert.notNull(classname, "GremlinSource should contain predefined classname");
+        final String className = source.getProperties().get(GREMLIN_PROPERTY_CLASSNAME).toString();
+        Assert.notNull(className, "GremlinSource should contain predefined className");
 
         final List<String> scriptList = Arrays.asList(
                 GREMLIN_PRIMITIVE_GRAPH,                           // g
                 GREMLIN_PRIMITIVE_EDGE_ALL,                        // E()
                 generateHasLabel(source.getLabel()),               // has(label, 'label')
-                generateHas(GREMLIN_PROPERTY_CLASSNAME, classname) // has(_classname, 'xxxxxx')
+                generateHas(GREMLIN_PROPERTY_CLASSNAME, className) // has(_classname, 'xxxxxx')
         );
 
         return completeScript(scriptList);
@@ -135,10 +137,12 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 
+        Assert.isTrue(source.getId().isPresent(), "GremlinSource should contains id.");
+
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,                            // g
-                generateEntityWithRequiredId(source.getId(), EDGE), // E(id)
-                GREMLIN_PRIMITIVE_DROP                              // drop()
+                GREMLIN_PRIMITIVE_GRAPH,                                  // g
+                generateEntityWithRequiredId(source.getId().get(), EDGE), // E(id)
+                GREMLIN_PRIMITIVE_DROP                                    // drop()
         );
 
         return completeScript(scriptList);

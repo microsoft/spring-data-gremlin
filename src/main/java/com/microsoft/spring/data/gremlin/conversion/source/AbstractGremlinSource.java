@@ -18,12 +18,12 @@ import org.springframework.util.Assert;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_PROPERTY_CLASSNAME;
 
 public abstract class AbstractGremlinSource<T> implements GremlinSource<T> {
 
-    @Getter
     @Setter
     private Object id;
 
@@ -63,6 +63,11 @@ public abstract class AbstractGremlinSource<T> implements GremlinSource<T> {
         this.properties = new HashMap<>();
 
         setProperty(GREMLIN_PROPERTY_CLASSNAME, domainClass.getName());
+    }
+
+    @Override
+    public Optional<Object> getId() {
+        return Optional.ofNullable(this.id);
     }
 
     @Override

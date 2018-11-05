@@ -13,6 +13,7 @@ import org.apache.tinkerpop.gremlin.driver.Result;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Provider interface to obtain and store information from domain class.
@@ -47,10 +48,9 @@ public interface GremlinSource<T> {
     /**
      * Get the id of domain
      *
-     * @return will never be null
+     * @return the Optional of id
      */
-    @NonNull
-    Object getId();
+    Optional<Object> getId();
 
     /**
      * Get the id Field of domain

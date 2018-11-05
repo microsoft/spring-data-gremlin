@@ -5,17 +5,6 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mapping.PersistentProperty;
-import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
-import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
-
 import com.microsoft.spring.data.gremlin.annotation.EdgeSet;
 import com.microsoft.spring.data.gremlin.annotation.VertexSet;
 import com.microsoft.spring.data.gremlin.common.Constants;
@@ -24,8 +13,17 @@ import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
-
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mapping.PersistentProperty;
+import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
+import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 public class GremlinSourceGraphReader extends AbstractGremlinSourceReader implements GremlinSourceReader {
@@ -47,8 +45,8 @@ public class GremlinSourceGraphReader extends AbstractGremlinSourceReader implem
             final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
             Assert.notNull(property, "persistence property should not be null");
 
-            if ((field.getName().equals(Constants.PROPERTY_ID) || field.getAnnotation(Id.class) != null) 
-                    && source.getId() != null) {
+            if ((field.getName().equals(Constants.PROPERTY_ID) || field.getAnnotation(Id.class) != null)
+                    && source.getId().isPresent()) {
                 accessor.setProperty(property, super.getGremlinSourceId(graphSource));
             } else if (field.isAnnotationPresent(VertexSet.class) && vertexSources != null) {
                 final List<Object> vertexObjects = buildDomainObjects(vertexSources, converter);
