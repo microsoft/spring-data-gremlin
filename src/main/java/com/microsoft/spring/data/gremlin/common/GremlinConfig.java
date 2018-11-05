@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.tinkerpop.gremlin.driver.ser.SerTokens;
+import org.apache.tinkerpop.gremlin.driver.ser.Serializers;
 
 @Getter
 @Setter
@@ -28,6 +30,8 @@ public class GremlinConfig {
 
     private boolean telemetryAllowed;
 
+    private String serializer;
+
     public static GremlinConfigBuilder builder(String endpoint, String username, String password) {
         return defaultBuilder()
                 .endpoint(endpoint)
@@ -35,6 +39,7 @@ public class GremlinConfig {
                 .password(password)
                 .port(Constants.DEFAULT_ENDPOINT_PORT)
                 .sslEnabled(true)
+                .serializer(Serializers.GRAPHSON.toString())
                 .telemetryAllowed(true);
     }
 }
