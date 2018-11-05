@@ -50,7 +50,7 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
         scriptList.add(generateAddEntityWithLabel(sourceEdge.getLabel(), EDGE));            // addE(label)
         scriptList.add(generateEdgeDirection(FROM_ALIAS, TO_ALIAS));                        // from('from').to('to')
         if (source.getId() != null) {
-              scriptList.add(generatePropertyWithRequiredId(source.getId()));               // property(id, xxx)
+            scriptList.add(generatePropertyWithRequiredId(source.getId()));                 // property(id, xxx)
         }
 
         scriptList.addAll(generateProperties(source.getProperties()));
@@ -60,7 +60,7 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
 
     @Override
     public List<String> generateDeleteAllScript() {
-        return Collections.singletonList(Constants.GREMLIN_SCRIPT_EDGE_DROP_ALL);
+        return Collections.singletonList(GREMLIN_SCRIPT_EDGE_DROP_ALL);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceEdge");
         }
 
-        return Collections.singletonList(Constants.GREMLIN_SCRIPT_EDGE_ALL);
+        return Collections.singletonList(GREMLIN_SCRIPT_EDGE_ALL);
     }
 }
 
