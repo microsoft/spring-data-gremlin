@@ -64,7 +64,8 @@ public class MappingGremlinConverterUnitTest {
 
         this.converter.write(person, source);
 
-        Assert.assertEquals(source.getId(), person.getId());
+        Assert.assertTrue(source.getId().isPresent());
+        Assert.assertEquals(source.getId().get(), person.getId());
         Assert.assertEquals(source.getProperties().get(TestConstants.PROPERTY_NAME), person.getName());
     }
 
@@ -80,7 +81,8 @@ public class MappingGremlinConverterUnitTest {
 
         this.converter.write(relationship, source);
 
-        Assert.assertEquals(source.getId(), relationship.getId());
+        Assert.assertTrue(source.getId().isPresent());
+        Assert.assertEquals(source.getId().get(), relationship.getId());
         Assert.assertEquals(source.getProperties().get(TestConstants.PROPERTY_NAME), relationship.getName());
     }
 }

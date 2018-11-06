@@ -5,27 +5,6 @@
  */
 package com.microsoft.spring.data.gremlin.query;
 
-import static java.util.stream.Collectors.toList;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.tinkerpop.gremlin.driver.Client;
-import org.apache.tinkerpop.gremlin.driver.Result;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.data.mapping.PersistentProperty;
-import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
-import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
-
 import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
 import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
 import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
@@ -49,6 +28,26 @@ import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.query.query.GremlinQuery;
 import com.microsoft.spring.data.gremlin.query.query.QueryFindScriptGenerator;
 import com.microsoft.spring.data.gremlin.query.query.QueryScriptGenerator;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.tinkerpop.gremlin.driver.Client;
+import org.apache.tinkerpop.gremlin.driver.Result;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.mapping.PersistentProperty;
+import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
+import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+
+import static java.util.stream.Collectors.toList;
 
 public class GremlinTemplate implements GremlinOperations, ApplicationContextAware {
 
@@ -136,8 +135,8 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     public <T> T insert(@NonNull T object, GremlinSource<T> source) {
         final boolean entityGraph = source instanceof GremlinSourceGraph;
 
-        if (!entityGraph && source.getIdField().isAnnotationPresent(GeneratedValue.class) 
-                && source.getId() != null) {
+        if (!entityGraph && source.getIdField().isAnnotationPresent(GeneratedValue.class)
+                && source.getId().isPresent()) {
             throw new GremlinInvalidEntityIdFieldException("The entity meant to be created has a non-null id "
                     + "that is marked as @GeneratedValue");
         }
@@ -258,7 +257,10 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T update(@NonNull T object, @NonNull GremlinSource<T> source) {
-        if (!(source instanceof GremlinSourceGraph) && notExistsById(source.getId(), source)) {
+        final Optional<Object> optional = source.getId();
+
+        if (!(source instanceof GremlinSourceGraph)
+                && (!optional.isPresent() || notExistsById(optional.get(), source))) {
             throw new GremlinQueryException("cannot update the object doesn't exist");
         }
 
@@ -267,12 +269,12 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T save(@NonNull T object, @NonNull GremlinSource<T> source) {
-        final Object id = source.getId();
+        final Optional<Object> optional = source.getId();
         final boolean entityGraph = source instanceof GremlinSourceGraph;
 
         if (entityGraph && this.isEmptyGraph(source)) {
             return insert(object, source);
-        } else if (!entityGraph && (id == null || notExistsById(source.getId(), source))) {
+        } else if (!entityGraph && (!optional.isPresent() || notExistsById(optional.get(), source))) {
             return insert(object, source);
         } else {
             return updateInternal(object, source);
