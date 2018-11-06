@@ -26,21 +26,6 @@ import java.util.Optional;
 public interface GremlinSource<T> {
 
     /**
-     * Set the id of domain
-     */
-    void setId(Object id);
-
-    /**
-     * Set the id of domain
-     */
-    void setIdField(Field id);
-
-    /**
-     * Set the label of domain
-     */
-    void setLabel(String label);
-
-    /**
      * Set the property map of domain
      */
     void setProperty(String key, Object value);
@@ -53,11 +38,21 @@ public interface GremlinSource<T> {
     Optional<Object> getId();
 
     /**
+     * Set the id of domain
+     */
+    void setId(Object id);
+
+    /**
      * Get the id Field of domain
      *
      * @return will never be null
      */
     Field getIdField();
+
+    /**
+     * Set the id of domain
+     */
+    void setIdField(Field id);
 
     /**
      * Get the label of domain
@@ -66,6 +61,11 @@ public interface GremlinSource<T> {
      */
     @NonNull
     String getLabel();
+
+    /**
+     * Set the label of domain
+     */
+    void setLabel(String label);
 
     /**
      * Get the Class type of domain

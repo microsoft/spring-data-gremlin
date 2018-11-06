@@ -28,34 +28,35 @@ public class GremlinSourceEdgeReader extends AbstractGremlinSourceReader impleme
 
     @Override
     public <T extends Object> T read(@NonNull Class<T> domainClass, @NonNull MappingGremlinConverter converter,
-                                     @NonNull GremlinSource source) {
-       if (!(source instanceof GremlinSourceEdge)) {
-           throw new GremlinUnexpectedSourceTypeException("should be instance of GremlinSourceEdge");
-       }
+                                     @NonNull GremlinSource<T> source) {
+        if (!(source instanceof GremlinSourceEdge)) {
+            throw new GremlinUnexpectedSourceTypeException("should be instance of GremlinSourceEdge");
+        }
 
-       final T domain = GremlinUtils.createInstance(domainClass);
-       final ConvertingPropertyAccessor accessor = converter.getPropertyAccessor(domain);
-       final GremlinPersistentEntity persistentEntity = converter.getPersistentEntity(domainClass);
+        final T domain = GremlinUtils.createInstance(domainClass);
+        final ConvertingPropertyAccessor accessor = converter.getPropertyAccessor(domain);
+        final GremlinPersistentEntity persistentEntity = converter.getPersistentEntity(domainClass);
 
-       for (final Field field : FieldUtils.getAllFields(domainClass)) {
-           final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
-           Assert.notNull(property, "persistence property should not be null");
+        for (final Field field : FieldUtils.getAllFields(domainClass)) {
+            final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
+            Assert.notNull(property, "persistence property should not be null");
 
-           if (field.getName().equals(PROPERTY_ID) || field.getAnnotation(Id.class) != null) {
-               accessor.setProperty(property, super.getGremlinSourceId(source));
-               continue;
-           } else if (field.getAnnotation(EdgeFrom.class) != null || field.getAnnotation(EdgeTo.class) != null) {
-               // We cannot do that here as the gremlin will not tell more information about vertex except Id. After the
-               // query of Edge end, we can get the Id of vertex from/to. And then we will do extra 2 query to obtain
-               // the 2 vertex and complete the edge.
-               // That work will be wrapped in GremlinTemplate insert, and skip the property here.
-               continue;
-           }
+            if (field.getName().equals(PROPERTY_ID) || field.getAnnotation(Id.class) != null) {
+                accessor.setProperty(property, super.getGremlinSourceId(source));
+                continue;
+            } else if (field.getAnnotation(EdgeFrom.class) != null || field.getAnnotation(EdgeTo.class) != null) {
+                // We cannot do that here as the gremlin will not tell more information about vertex except Id. After
+                // the query of Edge end, we can get the Id of vertex from/to. And then we will do extra 2 query to
+                // obtain the 2 vertex and complete the edge.
+                //
+                // That work will be wrapped in GremlinTemplate insert, and skip the property here.
+                continue;
+            }
 
-           final Object value = super.readProperty(property, source.getProperties().get(field.getName()));
-           accessor.setProperty(property, value);
-       }
+            final Object value = super.readProperty(property, source.getProperties().get(field.getName()));
+            accessor.setProperty(property, value);
+        }
 
-       return domain;
+        return domain;
     }
 }
