@@ -25,6 +25,7 @@ public class TestRepositoryConfiguration extends AbstractGremlinConfiguration {
                 .port(testProps.getPort())
                 .telemetryAllowed(testProps.isTelemetryAllowed())
                 .sslEnabled(testProps.isSslEnabled())
+                .serializer(testProps.getSerializer())
                 .build();
     }
 }

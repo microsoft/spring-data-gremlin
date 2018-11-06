@@ -40,7 +40,7 @@ public class GremlinFactory {
 
         try {
             cluster = Cluster.build(this.gremlinConfig.getEndpoint())
-                    .serializer(Serializers.DEFAULT_RESULT_SERIALIZER)
+                    .serializer(Serializers.valueOf(this.gremlinConfig.getSerializer()).simpleInstance())
                     .credentials(this.gremlinConfig.getUsername(), this.gremlinConfig.getPassword())
                     .enableSsl(this.gremlinConfig.isSslEnabled())
                     .port(this.gremlinConfig.getPort())
