@@ -5,27 +5,6 @@
  */
 package com.microsoft.spring.data.gremlin.query;
 
-import static java.util.stream.Collectors.toList;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.tinkerpop.gremlin.driver.Client;
-import org.apache.tinkerpop.gremlin.driver.Result;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.data.mapping.PersistentProperty;
-import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
-import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
-
 import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
 import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
 import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
@@ -49,6 +28,24 @@ import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
 import com.microsoft.spring.data.gremlin.query.query.GremlinQuery;
 import com.microsoft.spring.data.gremlin.query.query.QueryFindScriptGenerator;
 import com.microsoft.spring.data.gremlin.query.query.QueryScriptGenerator;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.tinkerpop.gremlin.driver.Client;
+import org.apache.tinkerpop.gremlin.driver.Result;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.mapping.PersistentProperty;
+import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
+import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import static java.util.stream.Collectors.toList;
 
 public class GremlinTemplate implements GremlinOperations, ApplicationContextAware {
 
@@ -136,12 +133,12 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     public <T> T insert(@NonNull T object, GremlinSource<T> source) {
         final boolean entityGraph = source instanceof GremlinSourceGraph;
 
-        if (!entityGraph && source.getIdField().isAnnotationPresent(GeneratedValue.class) 
+        if (!entityGraph && source.getIdField().isAnnotationPresent(GeneratedValue.class)
                 && source.getId() != null) {
             throw new GremlinInvalidEntityIdFieldException("The entity meant to be created has a non-null id "
                     + "that is marked as @GeneratedValue");
         }
-        
+
         // The current implementation doesn't support creating graphs that contain both edges
         // and vertices that have null (generated) ids. In this case, vertex and edge creation 
         // need to be performed in two consecutive steps.
@@ -153,7 +150,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
             if (entityGraph) {
                 return recoverGraphDomain((GremlinSourceGraph<T>) source, results);
             } else {
-                return recoverDomain(source, results.get(0));
+                return recoverDomain(source, results);
             }
         }
 
@@ -182,7 +179,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @NonNull
     private Field getEdgeAnnotatedField(@NonNull Class<?> domainClass,
-            @NonNull Class<? extends Annotation> annotationClass) {
+                                        @NonNull Class<? extends Annotation> annotationClass) {
         final List<Field> fields = FieldUtils.getFieldsListWithAnnotation(domainClass, annotationClass);
 
         if (fields.size() != 1) {
@@ -230,9 +227,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
             return null;
         }
 
-        Assert.isTrue(results.size() == 1, "should be only one domain with given id");
-
-        return recoverDomain(source, results.get(0));
+        return recoverDomain(source, results);
     }
 
     @Override
@@ -335,11 +330,11 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         return results.size();
     }
 
-    private <T> T recoverDomain(@NonNull GremlinSource<T> source, @NonNull Result result) {
+    private <T> T recoverDomain(@NonNull GremlinSource<T> source, @NonNull List<Result> results) {
         final T domain;
         final Class<T> domainClass = source.getDomainClass();
 
-        source.doGremlinResultRead(result);
+        source.doGremlinResultRead(results);
         domain = this.mappingConverter.read(domainClass, source);
 
         if (source instanceof GremlinSourceEdge) {
@@ -350,11 +345,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     }
 
     private <T> List<T> recoverDomainList(@NonNull GremlinSource<T> source, @NonNull List<Result> results) {
-        final List<T> domains = new ArrayList<>();
-
-        results.forEach(r -> domains.add(recoverDomain(source, r)));
-
-        return domains;
+        return results.stream().map(r -> recoverDomain(source, Collections.singletonList(r))).collect(toList());
     }
 
     private <T> T recoverGraphDomain(@NonNull GremlinSourceGraph<T> source, @NonNull List<Result> results) {

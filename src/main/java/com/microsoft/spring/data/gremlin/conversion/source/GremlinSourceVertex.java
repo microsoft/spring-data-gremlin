@@ -26,5 +26,4 @@ public class GremlinSourceVertex<T> extends AbstractGremlinSource<T> {
         this.setGremlinSourceReader(new GremlinSourceVertexReader());
         this.setGremlinSourceWriter(new GremlinSourceVertexWriter());
     }
-
 }
