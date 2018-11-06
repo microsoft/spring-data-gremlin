@@ -1,5 +1,5 @@
 host: localhost
-port: 9889
+port: 8889
 gremlinPool: 8
 threadPoolWorker: 8
 scriptEvaluationTimeout: 30000
