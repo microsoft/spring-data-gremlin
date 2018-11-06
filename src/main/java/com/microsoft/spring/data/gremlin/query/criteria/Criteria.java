@@ -67,7 +67,7 @@ public class Criteria {
         criteria.subCriteria.add(left);
         criteria.subCriteria.add(right);
 
-        Assert.isTrue(criteria.getSubCriteria().size() == 2, "Binary should contains 2 subCriteria");
+        Assert.isTrue(criteria.getSubCriteria().size() == 2, "Binary should contain 2 subCriteria");
 
         return criteria;
     }

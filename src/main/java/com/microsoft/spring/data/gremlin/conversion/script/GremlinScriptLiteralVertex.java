@@ -69,7 +69,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
         }
 
-        Assert.isTrue(source.getId().isPresent(), "GremlinSource should contains id.");
+        Assert.isTrue(source.getId().isPresent(), "GremlinSource should contain id.");
 
         final List<String> scriptList = Arrays.asList(
                 GREMLIN_PRIMITIVE_GRAPH,                                   // g
@@ -88,7 +88,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
 
         final List<String> scriptList = new ArrayList<>();
 
-        Assert.isTrue(source.getId().isPresent(), "GremlinSource should contains id.");
+        Assert.isTrue(source.getId().isPresent(), "GremlinSource should contain id.");
 
         scriptList.add(GREMLIN_PRIMITIVE_GRAPH);                                    // g
         scriptList.add(generateEntityWithRequiredId(source.getId().get(), VERTEX)); // V(id)
@@ -123,7 +123,7 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
             throw new GremlinUnexpectedSourceTypeException("should be the instance of GremlinSourceVertex");
         }
 
-        Assert.isTrue(source.getId().isPresent(), "GremlinSource should contains id.");
+        Assert.isTrue(source.getId().isPresent(), "GremlinSource should contain id.");
 
         final List<String> scriptList = Arrays.asList(
                 GREMLIN_PRIMITIVE_GRAPH,                                    // g

@@ -50,7 +50,7 @@ public abstract class AbstractGremlinSourceReader {
     protected Object getGremlinSourceId(@NonNull GremlinSource source) {
         final Field idField = source.getIdField();
 
-        Assert.isTrue(source.getId().isPresent(), "GremlinSource should contains id.");
+        Assert.isTrue(source.getId().isPresent(), "GremlinSource should contain id.");
 
         final Object id = source.getId().get();
 
