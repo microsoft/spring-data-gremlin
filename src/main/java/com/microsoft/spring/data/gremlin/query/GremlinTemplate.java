@@ -43,6 +43,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static java.util.stream.Collectors.toList;
@@ -134,7 +135,7 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
         final boolean entityGraph = source instanceof GremlinSourceGraph;
 
         if (!entityGraph && source.getIdField().isAnnotationPresent(GeneratedValue.class)
-                && source.getId() != null) {
+                && source.getId().isPresent()) {
             throw new GremlinInvalidEntityIdFieldException("The entity meant to be created has a non-null id "
                     + "that is marked as @GeneratedValue");
         }
@@ -253,7 +254,10 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T update(@NonNull T object, @NonNull GremlinSource<T> source) {
-        if (!(source instanceof GremlinSourceGraph) && notExistsById(source.getId(), source)) {
+        final Optional<Object> optional = source.getId();
+
+        if (!(source instanceof GremlinSourceGraph)
+                && (!optional.isPresent() || notExistsById(optional.get(), source))) {
             throw new GremlinQueryException("cannot update the object doesn't exist");
         }
 
@@ -262,12 +266,12 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
 
     @Override
     public <T> T save(@NonNull T object, @NonNull GremlinSource<T> source) {
-        final Object id = source.getId();
+        final Optional<Object> optional = source.getId();
         final boolean entityGraph = source instanceof GremlinSourceGraph;
 
         if (entityGraph && this.isEmptyGraph(source)) {
             return insert(object, source);
-        } else if (!entityGraph && (id == null || notExistsById(source.getId(), source))) {
+        } else if (!entityGraph && (!optional.isPresent() || notExistsById(optional.get(), source))) {
             return insert(object, source);
         } else {
             return updateInternal(object, source);
