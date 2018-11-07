@@ -6,7 +6,7 @@
 package com.microsoft.spring.data.gremlin.conversion.source;
 
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
-import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultReader;
+import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultsReader;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,6 +17,7 @@ import org.springframework.util.Assert;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -52,14 +53,14 @@ public abstract class AbstractGremlinSource<T> implements GremlinSource<T> {
     private GremlinSourceReader sourceReader;
 
     @Setter(AccessLevel.PRIVATE)
-    private GremlinResultReader resultReader;
+    private GremlinResultsReader resultReader;
 
     protected AbstractGremlinSource() {
         this.properties = new HashMap<>();
     }
 
     protected AbstractGremlinSource(Class<T> domainClass) {
-        this.domainClass =  domainClass;
+        this.domainClass = domainClass;
         this.properties = new HashMap<>();
 
         setProperty(GREMLIN_PROPERTY_CLASSNAME, domainClass.getName());
@@ -86,7 +87,7 @@ public abstract class AbstractGremlinSource<T> implements GremlinSource<T> {
     }
 
     @Override
-    public void setGremlinResultReader(@NonNull GremlinResultReader reader) {
+    public void setGremlinResultReader(@NonNull GremlinResultsReader reader) {
         this.setResultReader(reader);
     }
 
@@ -110,10 +111,10 @@ public abstract class AbstractGremlinSource<T> implements GremlinSource<T> {
     }
 
     @Override
-    public void doGremlinResultRead(@NonNull Result result) {
+    public void doGremlinResultRead(@NonNull List<Result> results) {
         Assert.notNull(this.resultReader, "the resultReader must be set before do reading");
 
-        this.resultReader.read(result, this);
+        this.resultReader.read(results, this);
     }
 
     private boolean hasProperty(String key) {

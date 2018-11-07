@@ -21,6 +21,7 @@ import java.util.Map;
 
 import static com.microsoft.spring.data.gremlin.common.Constants.RESULT_TYPE_EDGE;
 import static com.microsoft.spring.data.gremlin.common.Constants.RESULT_TYPE_VERTEX;
+import static java.util.Collections.singletonList;
 
 public class GremlinResultsGraphReader extends AbstractGremlinResultReader implements GremlinResultsReader {
 
@@ -59,11 +60,11 @@ public class GremlinResultsGraphReader extends AbstractGremlinResultReader imple
         switch (type) {
             case RESULT_TYPE_VERTEX:
                 source = new GremlinSourceVertex();
-                vertexResultReader.read(result, source);
+                vertexResultReader.read(singletonList(result), source);
                 break;
             case RESULT_TYPE_EDGE:
                 source = new GremlinSourceEdge();
-                edgeResultReader.read(result, source);
+                edgeResultReader.read(singletonList(result), source);
                 break;
             default:
                 throw new GremlinUnexpectedEntityTypeException("Unexpected result type: " + type);
