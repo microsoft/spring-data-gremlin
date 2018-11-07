@@ -6,12 +6,13 @@
 package com.microsoft.spring.data.gremlin.conversion.source;
 
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
-import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultReader;
+import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultsReader;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
 import lombok.NonNull;
 import org.apache.tinkerpop.gremlin.driver.Result;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -90,7 +91,7 @@ public interface GremlinSource<T> {
     /**
      * do the real reading from Result to GremlinSource
      */
-    void doGremlinResultRead(Result result);
+    void doGremlinResultRead(List<Result> results);
 
     /**
      * do the real reading from GremlinSource to domain
@@ -115,7 +116,7 @@ public interface GremlinSource<T> {
     /**
      * Set the ResultReader for reading data from Gremlin Result to GremlinSource
      */
-    void setGremlinResultReader(GremlinResultReader reader);
+    void setGremlinResultReader(GremlinResultsReader reader);
 
     /**
      * Set the SourceReader for reading data from GremlinSource to domain

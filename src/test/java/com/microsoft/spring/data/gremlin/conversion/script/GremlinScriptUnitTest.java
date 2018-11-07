@@ -20,16 +20,18 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Collections.singletonList;
+
 public class GremlinScriptUnitTest {
 
     @Test(expected = GremlinUnexpectedSourceTypeException.class)
     public void testVertexWriteException() {
-        new GremlinResultVertexReader().read(new Result(new Object()), new GremlinSourceEdge());
+        new GremlinResultVertexReader().read(singletonList(new Result(new Object())), new GremlinSourceEdge());
     }
 
     @Test(expected = GremlinUnexpectedSourceTypeException.class)
     public void testEdgeReadException() {
-        new GremlinResultEdgeReader().read(new Result(new Object()), new GremlinSourceVertex());
+        new GremlinResultEdgeReader().read(singletonList(new Result(new Object())), new GremlinSourceVertex());
     }
 
     @Test(expected = GremlinUnexpectedEntityTypeException.class)
