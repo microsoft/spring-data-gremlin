@@ -25,7 +25,7 @@ public class GremlinSourceVertexReader extends AbstractGremlinSourceReader imple
 
     @Override
     public <T extends Object> T read(@NonNull Class<T> domainClass, @NonNull MappingGremlinConverter converter,
-                                     @NonNull GremlinSource source) {
+                                     @NonNull GremlinSource<T> source) {
         if (!(source instanceof GremlinSourceVertex)) {
             throw new GremlinUnexpectedSourceTypeException("should be instance of GremlinSourceVertex");
         }
