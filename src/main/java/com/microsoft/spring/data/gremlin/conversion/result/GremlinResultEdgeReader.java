@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.result;
 
+import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
@@ -50,6 +51,7 @@ public class GremlinResultEdgeReader extends AbstractGremlinResultReader impleme
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void read(@NonNull List<Result> results, @NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceEdge)) {
             throw new GremlinUnexpectedSourceTypeException("Should be instance of GremlinSourceEdge");
@@ -58,13 +60,16 @@ public class GremlinResultEdgeReader extends AbstractGremlinResultReader impleme
         validate(results, source);
 
         final GremlinSourceEdge sourceEdge = (GremlinSourceEdge) source;
-        @SuppressWarnings("unchecked") final Map<String, Object> map = (Map<String, Object>) results.get(0).getObject();
+        final Map<String, Object> map = (Map<String, Object>) results.get(0).getObject();
 
+        this.readProperties(source, (Map) map.get(PROPERTY_PROPERTIES));
+
+        final String className = source.getProperties().get(GREMLIN_PROPERTY_CLASSNAME).toString();
+
+        sourceEdge.setIdField(GremlinUtils.getIdField(GremlinUtils.toEntityClass(className)));
         sourceEdge.setId(map.get(PROPERTY_ID));
         sourceEdge.setLabel(map.get(PROPERTY_LABEL).toString());
         sourceEdge.setVertexIdFrom(map.get(PROPERTY_OUTV));
         sourceEdge.setVertexIdTo(map.get(PROPERTY_INV));
-
-        this.readProperties(source, (Map) map.get(PROPERTY_PROPERTIES));
     }
 }

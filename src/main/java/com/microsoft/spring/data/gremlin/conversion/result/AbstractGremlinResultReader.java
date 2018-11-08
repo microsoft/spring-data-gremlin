@@ -16,11 +16,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @NoArgsConstructor
+// TODO: seems only for Vertex.
 public abstract class AbstractGremlinResultReader {
 
     /**
      * properties's organization is a little complicated.
-     *
+     * <p>
      * properties is LinkedHashMap<K, V>
      * K is String
      * V is ArrayList<T>
@@ -38,8 +39,7 @@ public abstract class AbstractGremlinResultReader {
     }
 
     protected void readResultProperties(@NonNull Map<String, Object> properties, @NonNull GremlinSource source) {
-        Assert.isTrue(source.getProperties().isEmpty(), "should be empty GremlinSource");
-
+        source.getProperties().clear();
         properties.forEach((key, value) -> source.setProperty(key, this.readProperty(value)));
     }
 }

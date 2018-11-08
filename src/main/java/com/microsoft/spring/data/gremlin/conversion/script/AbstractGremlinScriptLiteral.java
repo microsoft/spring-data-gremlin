@@ -5,6 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.script;
 
+import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
@@ -13,6 +14,7 @@ import lombok.NonNull;
 import org.apache.tinkerpop.shaded.jackson.core.JsonProcessingException;
 import org.springframework.util.Assert;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 import static com.microsoft.spring.data.gremlin.common.Constants.*;
@@ -67,8 +69,30 @@ public abstract class AbstractGremlinScriptLiteral {
         return String.format("has(label, '%s')", label);
     }
 
-    public static String generateHasId(@NonNull String label) {
-        return String.format("has(id, '%s')", label);
+    public static String generateHasId(@NonNull Object id) {
+        if (id instanceof String) {
+            return String.format("hasId('%s')", id);
+        } else if (id instanceof Integer) {
+            return String.format("hasId(%d)", (Integer) id);
+        } else if (id instanceof Long) {
+            return String.format("hasId(%d)", (Long) id);
+        } else {
+            throw new GremlinInvalidEntityIdFieldException("the type of @Id/id field should be String/Integer/Long");
+        }
+    }
+
+    public static String generateHasId(@NonNull Object id, @NonNull Field idFiled) {
+        if (!idFiled.isAnnotationPresent(GeneratedValue.class)) {
+            return generateHasId(id);
+        } else if (id instanceof String) {
+            return String.format("hasId('%s')", id);
+        } else if (id instanceof Integer) {
+            return String.format("hasId(%dL)", (Integer) id);
+        } else if (id instanceof Long) {
+            return String.format("hasId(%dL)", (Long) id);
+        } else {
+            throw new GremlinInvalidEntityIdFieldException("the type of @Id/id field should be String/Integer/Long");
+        }
     }
 
     private static String generateProperty(@NonNull String name, @NonNull String value) {

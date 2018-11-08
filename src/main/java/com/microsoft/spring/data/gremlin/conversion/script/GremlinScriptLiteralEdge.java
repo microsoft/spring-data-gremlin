@@ -87,7 +87,8 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
 
         final List<String> scriptList = Arrays.asList(
                 GREMLIN_PRIMITIVE_GRAPH,                                 // g
-                generateEntityWithRequiredId(source.getId().get(), EDGE) // E(id)
+                GREMLIN_PRIMITIVE_EDGE_ALL,                              // E()
+                generateHasId(source.getId().get(), source.getIdField()) // hasId(xxx)
         );
 
         return completeScript(scriptList);
@@ -141,7 +142,8 @@ public class GremlinScriptLiteralEdge extends AbstractGremlinScriptLiteral imple
 
         final List<String> scriptList = Arrays.asList(
                 GREMLIN_PRIMITIVE_GRAPH,                                  // g
-                generateEntityWithRequiredId(source.getId().get(), EDGE), // E(id)
+                GREMLIN_PRIMITIVE_EDGE_ALL,                               // E()
+                generateHasId(source.getId().get(), source.getIdField()), // hasId(xxx)
                 GREMLIN_PRIMITIVE_DROP                                    // drop()
         );
 

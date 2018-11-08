@@ -36,6 +36,7 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <S extends T> S save(@NonNull S domain) {
         final GremlinSource<T> source = this.information.createGremlinSource();
 
@@ -46,9 +47,7 @@ public class SimpleGremlinRepository<T, ID extends Serializable> implements Grem
 
     @Override
     public <S extends T> Iterable<S> saveAll(@NonNull Iterable<S> domains) {
-        domains.forEach(this::save);
-
-        return domains;
+        return StreamSupport.stream(domains.spliterator(), true).map(this::save).collect(toList());
     }
 
     @Override
