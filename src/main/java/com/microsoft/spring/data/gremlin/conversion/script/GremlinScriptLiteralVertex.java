@@ -72,8 +72,9 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
         Assert.isTrue(source.getId().isPresent(), "GremlinSource should contain id.");
 
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,                                   // g
-                generateEntityWithRequiredId(source.getId().get(), VERTEX) // V(id)
+                GREMLIN_PRIMITIVE_GRAPH,                                 // g
+                GREMLIN_PRIMITIVE_VERTEX_ALL,                            // V()
+                generateHasId(source.getId().get(), source.getIdField()) // hasId(xxx)
         );
 
         return completeScript(scriptList);
@@ -92,7 +93,6 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
 
         scriptList.add(GREMLIN_PRIMITIVE_GRAPH);                                    // g
         scriptList.add(generateEntityWithRequiredId(source.getId().get(), VERTEX)); // V(id)
-
         scriptList.addAll(generateProperties(source.getProperties()));
 
         return completeScript(scriptList);
@@ -126,9 +126,10 @@ public class GremlinScriptLiteralVertex extends AbstractGremlinScriptLiteral imp
         Assert.isTrue(source.getId().isPresent(), "GremlinSource should contain id.");
 
         final List<String> scriptList = Arrays.asList(
-                GREMLIN_PRIMITIVE_GRAPH,                                    // g
-                generateEntityWithRequiredId(source.getId().get(), VERTEX), // V(id)
-                GREMLIN_PRIMITIVE_DROP                                      // drop()
+                GREMLIN_PRIMITIVE_GRAPH,                                  // g
+                GREMLIN_PRIMITIVE_VERTEX_ALL,                             // E()
+                generateHasId(source.getId().get(), source.getIdField()), // hasId(xxx)
+                GREMLIN_PRIMITIVE_DROP                                    // drop()
         );
 
         return completeScript(scriptList);

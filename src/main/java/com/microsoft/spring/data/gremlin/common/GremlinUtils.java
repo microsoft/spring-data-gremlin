@@ -9,6 +9,7 @@ import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.exception.GremlinIllegalConfigurationException;
 import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
+import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -127,5 +128,13 @@ public class GremlinUtils {
         parallelQueries.add(parallelQuery);
 
         return parallelQueries;
+    }
+
+    public static Class<?> toEntityClass(@NonNull String className) {
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new GremlinUnexpectedSourceTypeException("failed to retrieve class: " + className, e);
+        }
     }
 }

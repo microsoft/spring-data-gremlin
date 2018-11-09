@@ -42,7 +42,7 @@ public class QueryFindScriptGenerator implements QueryScriptGenerator {
         final String subject = getCriteriaSubject(criteria);
 
         if (subject.equals(PROPERTY_ID)) {
-            return String.format(GREMLIN_PRIMITIVE_WHERE, generateHasId(criteria.getSubValues().get(0).toString()));
+            return String.format(GREMLIN_PRIMITIVE_WHERE, generateHasId(criteria.getSubValues().get(0)));
         } else {
             return String.format(GREMLIN_PRIMITIVE_WHERE, generateHas(subject, criteria.getSubValues().get(0)));
         }

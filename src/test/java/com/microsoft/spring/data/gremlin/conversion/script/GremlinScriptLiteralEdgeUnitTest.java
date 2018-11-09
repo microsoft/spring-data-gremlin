@@ -62,7 +62,7 @@ public class GremlinScriptLiteralEdgeUnitTest {
     @Test
     public void testGenerateFindByIdScript() {
         final List<String> queryList = new GremlinScriptLiteralEdge().generateFindByIdScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.E('456')");
+        assertEquals(queryList.get(0), "g.E().hasId('456')");
     }
 
     @Test
@@ -99,7 +99,7 @@ public class GremlinScriptLiteralEdgeUnitTest {
     @Test
     public void testGenerateDeleteByIdScript() {
         final List<String> queryList = new GremlinScriptLiteralEdge().generateDeleteByIdScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.E('456').drop()");
+        assertEquals(queryList.get(0), "g.E().hasId('456').drop()");
     }
 
     @Test

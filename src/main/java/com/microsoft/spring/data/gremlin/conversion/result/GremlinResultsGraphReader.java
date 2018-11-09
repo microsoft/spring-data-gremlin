@@ -5,7 +5,6 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.result;
 
-import com.microsoft.spring.data.gremlin.common.Constants;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceGraph;
@@ -19,8 +18,7 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.Map;
 
-import static com.microsoft.spring.data.gremlin.common.Constants.RESULT_TYPE_EDGE;
-import static com.microsoft.spring.data.gremlin.common.Constants.RESULT_TYPE_VERTEX;
+import static com.microsoft.spring.data.gremlin.common.Constants.*;
 import static java.util.Collections.singletonList;
 
 public class GremlinResultsGraphReader extends AbstractGremlinResultReader implements GremlinResultsReader {
@@ -54,8 +52,8 @@ public class GremlinResultsGraphReader extends AbstractGremlinResultReader imple
         Assert.isInstanceOf(Map.class, obj, "should be an instance of Map");
         @SuppressWarnings("unchecked") final Map<String, Object> map = (Map<String, Object>) result.getObject();
 
-        Assert.isTrue(map.containsKey(Constants.PROPERTY_TYPE), "should contain a type property");
-        final String type = (String) map.get(Constants.PROPERTY_TYPE);
+        Assert.isTrue(map.containsKey(PROPERTY_TYPE), "should contain a type property");
+        final String type = (String) map.get(PROPERTY_TYPE);
 
         switch (type) {
             case RESULT_TYPE_VERTEX:

@@ -5,9 +5,11 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
+import com.microsoft.spring.data.gremlin.annotation.GeneratedValue;
 import com.microsoft.spring.data.gremlin.conversion.MappingGremlinConverter;
 import com.microsoft.spring.data.gremlin.conversion.result.GremlinResultsReader;
 import com.microsoft.spring.data.gremlin.conversion.script.GremlinScriptLiteral;
+import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -69,6 +71,31 @@ public abstract class AbstractGremlinSource<T> implements GremlinSource<T> {
     @Override
     public Optional<Object> getId() {
         return Optional.ofNullable(this.id);
+    }
+
+    /**
+     * The type of Id keep the consistency with the result from gremlin server, for generate query correctly. So if the
+     * id is ${@link GeneratedValue}, which may have different type against entity id field.
+     *
+     * @param id the given id from query.
+     */
+    @Override
+    public void setId(Object id) {
+        final Field idField = getIdField();
+
+        if (idField == null) {
+            throw new GremlinInvalidEntityIdFieldException("Id Field of GremlinSource cannot be null");
+        }
+
+        if (idField.isAnnotationPresent(GeneratedValue.class) && id instanceof String) {
+            try {
+                this.id = Long.valueOf((String) id); // Gremlin server default id type is Long.
+            } catch (NumberFormatException ignore) {
+                this.id = id;
+            }
+        } else {
+            this.id = id;
+        }
     }
 
     @Override

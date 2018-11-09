@@ -56,7 +56,7 @@ public class GremlinScriptLiteralVertexUnitTest {
     @Test
     public void testGenerateFindByIdScript() {
         final List<String> queryList = new GremlinScriptLiteralVertex().generateFindByIdScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.V('123')");
+        assertEquals(queryList.get(0), "g.V().hasId('123')");
     }
 
     @Test
@@ -83,7 +83,7 @@ public class GremlinScriptLiteralVertexUnitTest {
     @Test
     public void testGenerateDeleteByIdScript() {
         final List<String> queryList = new GremlinScriptLiteralVertex().generateDeleteByIdScript(gremlinSource);
-        assertEquals(queryList.get(0), "g.V('123').drop()");
+        assertEquals(queryList.get(0), "g.V().hasId('123').drop()");
     }
 
     @Test

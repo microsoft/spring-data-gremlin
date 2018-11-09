@@ -5,7 +5,7 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.result;
 
-import com.microsoft.spring.data.gremlin.common.Constants;
+import com.microsoft.spring.data.gremlin.common.GremlinUtils;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceVertex;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
@@ -16,6 +16,8 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.microsoft.spring.data.gremlin.common.Constants.*;
 
 @NoArgsConstructor
 public class GremlinResultVertexReader extends AbstractGremlinResultReader implements GremlinResultsReader {
@@ -31,13 +33,13 @@ public class GremlinResultVertexReader extends AbstractGremlinResultReader imple
 
         @SuppressWarnings("unchecked") final Map<String, Object> map = (Map<String, Object>) result.getObject();
 
-        Assert.isTrue(map.containsKey(Constants.PROPERTY_ID), "should contain id property");
-        Assert.isTrue(map.containsKey(Constants.PROPERTY_LABEL), "should contain label property");
-        Assert.isTrue(map.containsKey(Constants.PROPERTY_TYPE), "should contain type property");
-        Assert.isTrue(map.containsKey(Constants.PROPERTY_PROPERTIES), "should contain properties property");
-        Assert.isTrue(map.get(Constants.PROPERTY_TYPE).equals(Constants.RESULT_TYPE_VERTEX), "must be vertex type");
+        Assert.isTrue(map.containsKey(PROPERTY_ID), "should contain id property");
+        Assert.isTrue(map.containsKey(PROPERTY_LABEL), "should contain label property");
+        Assert.isTrue(map.containsKey(PROPERTY_TYPE), "should contain type property");
+        Assert.isTrue(map.containsKey(PROPERTY_PROPERTIES), "should contain properties property");
+        Assert.isTrue(map.get(PROPERTY_TYPE).equals(RESULT_TYPE_VERTEX), "must be vertex type");
 
-        Assert.isInstanceOf(Map.class, map.get(Constants.PROPERTY_PROPERTIES), "should be one instance of Map");
+        Assert.isInstanceOf(Map.class, map.get(PROPERTY_PROPERTIES), "should be one instance of Map");
     }
 
     @Override
@@ -50,13 +52,14 @@ public class GremlinResultVertexReader extends AbstractGremlinResultReader imple
         validate(results, source);
 
         final Map<String, Object> map = (Map<String, Object>) results.get(0).getObject();
+        final Map<String, Object> properties = (Map<String, Object>) map.get(PROPERTY_PROPERTIES);
 
-        source.setId(map.get(Constants.PROPERTY_ID));
-        source.setLabel(map.get(Constants.PROPERTY_LABEL).toString());
-
-        final Map<String, Object> properties = (Map<String, Object>) map.get(Constants.PROPERTY_PROPERTIES);
-
-        source.getProperties().clear();
         super.readResultProperties(properties, source);
+
+        final String className = source.getProperties().get(GREMLIN_PROPERTY_CLASSNAME).toString();
+
+        source.setIdField(GremlinUtils.getIdField(GremlinUtils.toEntityClass(className)));
+        source.setId(map.get(PROPERTY_ID));
+        source.setLabel(map.get(PROPERTY_LABEL).toString());
     }
 }
