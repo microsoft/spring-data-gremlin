@@ -5,17 +5,6 @@
  */
 package com.microsoft.spring.data.gremlin.conversion.source;
 
-import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_PROPERTY_CLASSNAME;
-
-import java.lang.reflect.Field;
-
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mapping.PersistentProperty;
-import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
-import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
-
 import com.microsoft.spring.data.gremlin.annotation.EdgeFrom;
 import com.microsoft.spring.data.gremlin.annotation.EdgeTo;
 import com.microsoft.spring.data.gremlin.common.Constants;
@@ -25,8 +14,17 @@ import com.microsoft.spring.data.gremlin.exception.GremlinInvalidEntityIdFieldEx
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinPersistentEntity;
-
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mapping.PersistentProperty;
+import org.springframework.data.mapping.model.ConvertingPropertyAccessor;
+import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
+
+import java.lang.reflect.Field;
+
+import static com.microsoft.spring.data.gremlin.common.Constants.GREMLIN_PROPERTY_CLASSNAME;
 
 @NoArgsConstructor
 public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
@@ -77,7 +75,7 @@ public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
                     throw new GremlinInvalidEntityIdFieldException("The vertex id for the to vertex cannot be null!");
                 }
                 sourceEdge.setVertexIdTo(vertexId);
-            } 
+            }
             source.setProperty(field.getName(), accessor.getProperty(property));
         }
     }

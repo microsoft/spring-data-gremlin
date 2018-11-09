@@ -21,7 +21,7 @@ public abstract class AbstractGremlinResultReader {
 
     /**
      * properties's organization is a little complicated.
-     *
+     * <p>
      * properties is LinkedHashMap<K, V>
      * K is String
      * V is ArrayList<T>
