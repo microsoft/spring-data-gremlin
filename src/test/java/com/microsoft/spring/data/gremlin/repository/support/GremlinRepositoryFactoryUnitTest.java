@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.repository.core.EntityInformation;
-import org.springframework.data.repository.query.ExtensionAwareEvaluationContextProvider;
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -52,8 +51,8 @@ public class GremlinRepositoryFactoryUnitTest {
 
     @Test
     public void testGetQueryLookupStrategy() {
-        final Optional<QueryLookupStrategy> strategyOptional = this.factory.getQueryLookupStrategy(
-                QueryLookupStrategy.Key.CREATE, new ExtensionAwareEvaluationContextProvider());
+        final Optional<QueryLookupStrategy> strategyOptional = this.factory.
+                getQueryLookupStrategy(QueryLookupStrategy.Key.CREATE, null);
 
         Assert.assertTrue(strategyOptional.isPresent());
     }
