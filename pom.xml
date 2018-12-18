@@ -41,7 +41,7 @@
 
         <spring.springframework.version>5.1.0.RELEASE</spring.springframework.version>
         <spring.data.version>2.1.0.RELEASE</spring.data.version>
-        <spring.boot.test.version>2.1.0.RELEASE</spring.boot.test.version>
+        <spring.boot.test.version>2.0.4.RELEASE</spring.boot.test.version>
 
         <org.apache.tinkerpop.gremlin.driver.version>3.2.4</org.apache.tinkerpop.gremlin.driver.version>
         <apache.commons.lang3.version>3.7</apache.commons.lang3.version>
@@ -145,6 +145,7 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
+                <filtering>true</filtering>
                 <includes>
                     <include>ApplicationInsights.xml</include>
                 </includes>
@@ -304,6 +305,18 @@
                 <skip.integration.tests>false</skip.integration.tests>
             </properties>
         </profile>
-    </profiles>
 
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>release</name>
+                </property>
+            </activation>
+            <properties>
+                <ai.instrumentKey>${telemetry.instrumentationKey}</ai.instrumentKey>
+            </properties>
+        </profile>
+
+    </profiles>
 </project>
