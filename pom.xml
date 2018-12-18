@@ -145,6 +145,7 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
+                <filtering>true</filtering>
                 <includes>
                     <include>ApplicationInsights.xml</include>
                 </includes>
@@ -304,6 +305,18 @@
                 <skip.integration.tests>false</skip.integration.tests>
             </properties>
         </profile>
-    </profiles>
 
+        <profile>
+            <id>release</id>
+            <activation>
+                <property>
+                    <name>release</name>
+                </property>
+            </activation>
+            <properties>
+                <ai.instrumentKey>${telemetry.instrumentationKey}</ai.instrumentKey>
+            </properties>
+        </profile>
+
+    </profiles>
 </project>
