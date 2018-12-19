@@ -39,8 +39,8 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring.springframework.version>5.0.1.RELEASE</spring.springframework.version>
-        <spring.data.version>2.0.7.RELEASE</spring.data.version>
+        <spring.springframework.version>5.1.0.RELEASE</spring.springframework.version>
+        <spring.data.version>2.1.0.RELEASE</spring.data.version>
         <spring.boot.test.version>2.0.4.RELEASE</spring.boot.test.version>
 
         <org.apache.tinkerpop.gremlin.driver.version>3.2.4</org.apache.tinkerpop.gremlin.driver.version>
