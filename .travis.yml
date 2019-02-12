@@ -3,11 +3,13 @@ jdk:
   - oraclejdk8
 
 before_script:
-  - wget http://www-us.apache.org/dist/tinkerpop/3.3.4/apache-tinkerpop-gremlin-server-3.3.4-bin.zip
-  - unzip apache-tinkerpop-gremlin-server-3.3.4-bin.zip > /dev/null
-  - cp -v config/gremlin-server-ci.yaml apache-tinkerpop-gremlin-server-3.3.4/conf/
-  - cp -v config/gremlin-server-ci.properties apache-tinkerpop-gremlin-server-3.3.4/conf/
-  - apache-tinkerpop-gremlin-server-3.3.4/bin/gremlin-server.sh conf/gremlin-server-ci.yaml &
+  # - wget http://www-us.apache.org/dist/tinkerpop/3.3.4/apache-tinkerpop-gremlin-server-3.3.4-bin.zip
+  # - unzip apache-tinkerpop-gremlin-server-3.3.4-bin.zip > /dev/null
+  # - cp -v config/gremlin-server-ci.yaml apache-tinkerpop-gremlin-server-3.3.4/conf/
+  # - cp -v config/gremlin-server-ci.properties apache-tinkerpop-gremlin-server-3.3.4/conf/
+  # - apache-tinkerpop-gremlin-server-3.3.4/bin/
+  - tar -zvxf package/apache-tinkerpop-gremlin-server-minimal-3.3.4.tar.gz
+  - apache-tinkerpop-gremlin-server-minimal-3.3.4/bin/gremlin-server.sh conf/gremlin-server-ci.yaml &
   - sleep 10
 
 script:
