@@ -6,8 +6,6 @@
 package com.microsoft.spring.data.gremlin.common;
 
 import com.microsoft.spring.data.gremlin.exception.GremlinIllegalConfigurationException;
-import com.microsoft.spring.data.gremlin.telemetry.EmptyTracker;
-import com.microsoft.spring.data.gremlin.telemetry.TelemetryTracker;
 import lombok.NoArgsConstructor;
 import org.apache.tinkerpop.gremlin.driver.Client;
 import org.junit.Assert;
@@ -48,11 +46,6 @@ public class GremlinFactoryUnitTest {
     @Configuration
     @NoArgsConstructor
     static class TestConfiguration {
-
-        @Bean
-        public TelemetryTracker getTelemetryTracker() {
-            return new EmptyTracker();
-        }
 
         @Bean
         public GremlinFactory getGremlinFactory() {

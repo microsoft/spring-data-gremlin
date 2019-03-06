@@ -3,16 +3,25 @@
  * Licensed under the MIT License. See LICENSE in the project root for
  * license information.
  */
-
-package com.microsoft.spring.data.gremlin.common;
+/*
+ * Disclaimer:
+ *      This class is copied from https://github.com/Microsoft/azure-tools-for-java/ with minor modification (fixing
+ *      static analysis error).
+ *      Location in the repo: /Utils/azuretools-core/src/com/microsoft/azuretools/azurecommons/util/MacAddress.java
+ */
+package com.microsoft.spring.data.gremlin.telemetry;
 
 import lombok.AccessLevel;
 import lombok.Cleanup;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.NonNull;
+import lombok.NonNull;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -23,7 +32,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class GetHashMac {
+public class MacAddress {
+
+    private static final String UNKNOWN_MAC_ADDRESS = "Unknown-Mac-Address";
     private static final String MAC_REGEX = "([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}";
     private static final String MAC_REGEX_ZERO = "([0]{2}[:-]){5}[0]{2}";
     private static final String HASHED_MAC_REGEX = "[0-9a-f]{64}";
@@ -58,7 +69,7 @@ public class GetHashMac {
                 macBuilder.append(tmp);
             }
         } catch (IOException e) {
-            return null;
+            return "";
         }
 
         return macBuilder.toString();
@@ -72,7 +83,7 @@ public class GetHashMac {
 
     private static String hash(@NonNull String mac) {
         if (mac.isEmpty()) {
-            return null;
+            return "";
         }
 
         final StringBuilder builder = new StringBuilder();
@@ -88,7 +99,7 @@ public class GetHashMac {
                 builder.append(getHexDigest(digest));
             }
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException ex) {
-            return null;
+            return "";
         }
 
         Assert.isTrue(isValidHashMacFormat(builder.toString()), "Invalid format for HashMac");
@@ -99,15 +110,15 @@ public class GetHashMac {
     public static String getHashMac() {
         final String rawMac = getRawMac();
 
-        if (rawMac == null || rawMac.isEmpty()) {
-            return null;
+        if (rawMac.isEmpty()) {
+            return UNKNOWN_MAC_ADDRESS;
         }
 
         final Pattern pattern = Pattern.compile(MAC_REGEX);
         final Pattern patternZero = Pattern.compile(MAC_REGEX_ZERO);
         final Matcher matcher = pattern.matcher(rawMac);
 
-        String mac = null;
+        String mac = "";
 
         while (matcher.find()) {
             mac = matcher.group(0);
@@ -117,9 +128,13 @@ public class GetHashMac {
             }
         }
 
-        Assert.notNull(mac, "cannot find any string from matcher:" + MAC_REGEX);
+        final String hashMac = hash(mac);
 
-        return hash(mac);
+        if (StringUtils.hasText(hashMac)) {
+            return hashMac;
+        }
+
+        return UNKNOWN_MAC_ADDRESS;
     }
 }
 

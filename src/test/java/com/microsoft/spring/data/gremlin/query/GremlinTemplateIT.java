@@ -14,8 +14,6 @@ import com.microsoft.spring.data.gremlin.exception.GremlinQueryException;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedEntityTypeException;
 import com.microsoft.spring.data.gremlin.mapping.GremlinMappingContext;
 import com.microsoft.spring.data.gremlin.repository.support.GremlinEntityInformation;
-import com.microsoft.spring.data.gremlin.telemetry.EmptyTracker;
-import com.microsoft.spring.data.gremlin.telemetry.TelemetryTracker;
 import lombok.NoArgsConstructor;
 import org.junit.After;
 import org.junit.Assert;
@@ -560,11 +558,6 @@ public class GremlinTemplateIT {
 
         @Autowired
         private TestGremlinProperties properties;
-
-        @Bean
-        public TelemetryTracker getTelemetryTracker() {
-            return new EmptyTracker();
-        }
 
         @Bean
         public GremlinFactory getGremlinFactory() {
