@@ -28,8 +28,6 @@ public class TelemetrySender {
 
     private static final String PROPERTY_SERVICE_NAME = "serviceName";
 
-    private static final String UNKNOWN_MAC = "unknown-mac-address";
-
     private static final String PROJECT_INFO = "spring-data-gremlin/" + PropertyLoader.getProjectVersion();
 
     private static final String TELEMETRY_TARGET_URL = "https://dc.services.visualstudio.com/v2/track";
