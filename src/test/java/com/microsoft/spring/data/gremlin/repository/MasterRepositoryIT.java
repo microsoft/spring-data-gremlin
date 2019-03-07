@@ -5,12 +5,12 @@
  */
 package com.microsoft.spring.data.gremlin.repository;
 
-import com.google.common.collect.Lists;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.common.domain.Master;
 import com.microsoft.spring.data.gremlin.common.domain.Student;
 import com.microsoft.spring.data.gremlin.common.repository.MasterRepository;
 import com.microsoft.spring.data.gremlin.common.repository.StudentRepository;
+import org.assertj.core.util.Lists;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

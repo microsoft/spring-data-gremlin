@@ -47,7 +47,7 @@
         <apache.commons.lang3.version>3.7</apache.commons.lang3.version>
         <org.projectlombok.version>1.16.18</org.projectlombok.version>
         <mockito.core.version>2.8.9</mockito.core.version>
-        <azure.applicationinsights.version>2.0.1</azure.applicationinsights.version>
+        <fasterxml.jackson.version>2.9.5</fasterxml.jackson.version>
 
         <skip.integration.tests>true</skip.integration.tests>
     </properties>
@@ -75,6 +75,12 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- Spring web -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
         </dependency>
 
         <!-- Spring Tx -->
@@ -131,13 +137,14 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${org.projectlombok.version}</version>
+            <scope>provided</scope>
         </dependency>
 
-        <!-- Application Insights -->
+        <!-- Jackson databind -->
         <dependency>
-            <groupId>com.microsoft.azure</groupId>
-            <artifactId>applicationinsights-core</artifactId>
-            <version>${azure.applicationinsights.version}</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${fasterxml.jackson.version}</version>
         </dependency>
     </dependencies>
 
@@ -147,7 +154,8 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
-                    <include>ApplicationInsights.xml</include>
+                    <include>META-INF/project.properties</include>
+                    <include>telemetry.config</include>
                 </includes>
             </resource>
         </resources>
@@ -313,9 +321,6 @@
                     <name>release</name>
                 </property>
             </activation>
-            <properties>
-                <ai.instrumentKey>${telemetry.instrumentationKey}</ai.instrumentKey>
-            </properties>
         </profile>
 
     </profiles>
