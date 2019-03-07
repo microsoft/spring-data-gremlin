@@ -5,12 +5,12 @@
  */
 package com.microsoft.spring.data.gremlin.repository;
 
-import com.google.common.collect.Lists;
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.common.domain.Book;
 import com.microsoft.spring.data.gremlin.common.repository.BookRepository;
 import lombok.NonNull;
+import org.assertj.core.util.Lists;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

@@ -5,7 +5,6 @@
  */
 package com.microsoft.spring.data.gremlin.repository;
 
-import com.google.common.collect.Lists;
 import com.microsoft.spring.data.gremlin.common.GremlinEntityType;
 import com.microsoft.spring.data.gremlin.common.TestConstants;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
@@ -15,6 +14,7 @@ import com.microsoft.spring.data.gremlin.common.domain.Relationship;
 import com.microsoft.spring.data.gremlin.common.repository.PersonRepository;
 import com.microsoft.spring.data.gremlin.common.repository.ProjectRepository;
 import com.microsoft.spring.data.gremlin.common.repository.RelationshipRepository;
+import org.assertj.core.util.Lists;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
