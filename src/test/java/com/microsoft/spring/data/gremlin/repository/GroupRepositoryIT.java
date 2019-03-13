@@ -5,17 +5,15 @@
  */
 package com.microsoft.spring.data.gremlin.repository;
 
-import com.google.common.collect.Lists;
 import com.microsoft.spring.data.gremlin.common.TestRepositoryConfiguration;
 import com.microsoft.spring.data.gremlin.common.TestUtils;
 import com.microsoft.spring.data.gremlin.common.domain.Group;
 import com.microsoft.spring.data.gremlin.common.domain.GroupOwner;
-import com.microsoft.spring.data.gremlin.common.domain.Orange;
 import com.microsoft.spring.data.gremlin.common.domain.Student;
 import com.microsoft.spring.data.gremlin.common.repository.GroupOwnerRepository;
 import com.microsoft.spring.data.gremlin.common.repository.GroupRepository;
 import com.microsoft.spring.data.gremlin.common.repository.StudentRepository;
-import com.microsoft.spring.data.gremlin.telemetry.TelemetryTracker;
+import org.assertj.core.util.Lists;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
