@@ -54,7 +54,9 @@ public class GremlinSourceEdgeWriter implements GremlinSourceWriter {
 
         for (final Field field : FieldUtils.getAllFields(domain.getClass())) {
             final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
-            Assert.notNull(property, "persistence property should not be null");
+            if (property == null) {
+                continue;
+            }
 
             final Object object = accessor.getProperty(property);
 
