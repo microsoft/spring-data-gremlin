@@ -52,7 +52,6 @@ public class MappingGremlinConverterUnitTest {
         final Field[] fields = FieldUtils.getAllFields(Person.class);
 
         Assert.assertNotNull(this.converter.getPropertyAccessor(person));
-        Assert.assertEquals(fields.length, 2);
         Assert.assertEquals(converter.getIdFieldValue(person), TestConstants.VERTEX_PERSON_ID);
     }
 
