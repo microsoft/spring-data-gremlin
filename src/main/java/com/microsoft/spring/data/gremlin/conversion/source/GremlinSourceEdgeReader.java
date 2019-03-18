@@ -39,8 +39,9 @@ public class GremlinSourceEdgeReader extends AbstractGremlinSourceReader impleme
 
         for (final Field field : FieldUtils.getAllFields(domainClass)) {
             final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
-            Assert.notNull(property, "persistence property should not be null");
-
+            if (property == null) {
+                continue;
+            }
             if (field.getName().equals(PROPERTY_ID) || field.getAnnotation(Id.class) != null) {
                 accessor.setProperty(property, super.getGremlinSourceId(source));
                 continue;

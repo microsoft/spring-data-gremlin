@@ -44,7 +44,9 @@ public class GremlinSourceGraphReader extends AbstractGremlinSourceReader implem
 
         for (final Field field : FieldUtils.getAllFields(type)) {
             final PersistentProperty property = persistentEntity.getPersistentProperty(field.getName());
-            Assert.notNull(property, "persistence property should not be null");
+            if (property == null) {
+                continue;
+            }
 
             if ((field.getName().equals(PROPERTY_ID) || field.getAnnotation(Id.class) != null)) {
                 accessor.setProperty(property, super.getGremlinSourceId(graphSource));
