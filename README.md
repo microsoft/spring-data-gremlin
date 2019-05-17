@@ -72,7 +72,7 @@ If you are using Maven, add the following dependency.
 <dependency>
     <groupId>com.microsoft.spring.data.gremlin</groupId>
     <artifactId>spring-data-gremlin</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.2</version>
 </dependency>
 ```
 
