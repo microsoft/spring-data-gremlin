@@ -1,6 +1,6 @@
 language: java
 jdk:
-  - oraclejdk8
+  - openjdk8
 
 before_script:
   # - wget http://www-us.apache.org/dist/tinkerpop/3.3.4/apache-tinkerpop-gremlin-server-3.3.4-bin.zip
