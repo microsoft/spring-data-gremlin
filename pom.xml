@@ -6,7 +6,7 @@
 
     <groupId>com.microsoft.spring.data.gremlin</groupId>
     <artifactId>spring-data-gremlin</artifactId>
-    <version>2.1.2</version>
+    <version>2.1.7</version>
 
     <name>Spring Data Gremlin</name>
     <description>Gremlin support for Spring Data</description>
@@ -40,7 +40,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <spring.springframework.version>5.1.0.RELEASE</spring.springframework.version>
-        <spring.data.version>2.1.0.RELEASE</spring.data.version>
+        <spring.data.version>2.1.10.RELEASE</spring.data.version>
         <spring.boot.test.version>2.0.4.RELEASE</spring.boot.test.version>
 
         <org.apache.tinkerpop.gremlin.driver.version>3.2.4</org.apache.tinkerpop.gremlin.driver.version>
