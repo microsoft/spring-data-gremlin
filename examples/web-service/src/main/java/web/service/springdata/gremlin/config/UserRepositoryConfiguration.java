@@ -26,7 +26,7 @@ import com.microsoft.spring.data.gremlin.repository.config.EnableGremlinReposito
 
 
 @Configuration
-@EnableGremlinRepositories(basePackages = "example.springdata.gremlin.repository")
+@EnableGremlinRepositories(basePackages = "web.service.springdata.gremlin.repository")
 @EnableConfigurationProperties(GremlinProperties.class)
 @PropertySource("classpath:application.yml")
 public class UserRepositoryConfiguration extends AbstractGremlinConfiguration {
