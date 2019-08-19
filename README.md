@@ -1,7 +1,6 @@
 [![MIT License](http://img.shields.io/badge/license-MIT-green.svg) ](https://github.com/Microsoft/spring-data-gremlin/blob/master/LICENSE)
 [![Build Status](https://travis-ci.org/Microsoft/spring-data-gremlin.svg?branch=master)](https://travis-ci.org/Microsoft/spring-data-gremlin)
 [![codecov](https://codecov.io/gh/Microsoft/spring-data-gremlin/branch/master/graph/badge.svg)](https://codecov.io/gh/Microsoft/spring-data-gremlin) 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6186678890024d8cb61acd3118b980d1)](https://www.codacy.com/app/Incarnation-p-lee/spring-data-gremlin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Microsoft/spring-data-gremlin&amp;utm_campaign=Badge_Grade)
 
 # Spring Data Gremlin 
 
@@ -77,7 +76,7 @@ If you are using Maven, add the following dependency.
 <dependency>
     <groupId>com.microsoft.spring.data.gremlin</groupId>
     <artifactId>spring-data-gremlin</artifactId>
-    <version>2.1.2</version>
+    <version>2.1.7</version>
 </dependency>
 ```
 
