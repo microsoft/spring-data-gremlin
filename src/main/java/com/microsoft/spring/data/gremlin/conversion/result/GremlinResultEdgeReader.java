@@ -35,19 +35,23 @@ public class GremlinResultEdgeReader extends AbstractGremlinResultReader impleme
         Assert.notNull(results, "Results should not be null.");
         Assert.notNull(source, "GremlinSource should not be null.");
         Assert.isTrue(results.size() == 1, "Edge should contain only one result.");
+    }
 
-        final Result result = results.get(0);
-
+    private Map<String, Object> getEdgeProperties (@org.springframework.lang.NonNull Result result) {
         Assert.isInstanceOf(Map.class, result.getObject(), "should be one instance of Map");
 
-        @SuppressWarnings("unchecked") final Map<String, Object> map = (Map<String, Object>) result.getObject();
+        Map<String, Object> map = (Map<String, Object>) result.getObject();
+
+        map = getProperties(map);
 
         Assert.isTrue(map.containsKey(PROPERTY_ID), "should contain id property");
         Assert.isTrue(map.containsKey(PROPERTY_LABEL), "should contain label property");
-        Assert.isTrue(map.containsKey(PROPERTY_TYPE), "should contain type property");
+//        Assert.isTrue(map.containsKey(PROPERTY_TYPE), "should contain type property");
         Assert.isTrue(map.containsKey(PROPERTY_INV), "should contain inV property");
         Assert.isTrue(map.containsKey(PROPERTY_OUTV), "should contain outV property");
-        Assert.isTrue(map.get(PROPERTY_TYPE).equals(RESULT_TYPE_EDGE), "must be vertex type");
+//        Assert.isTrue(map.get(PROPERTY_TYPE).equals(RESULT_TYPE_EDGE), "must be vertex type");
+
+        return map;
     }
 
     @Override
@@ -60,16 +64,16 @@ public class GremlinResultEdgeReader extends AbstractGremlinResultReader impleme
         validate(results, source);
 
         final GremlinSourceEdge sourceEdge = (GremlinSourceEdge) source;
-        final Map<String, Object> map = (Map<String, Object>) results.get(0).getObject();
+        final Map<String, Object> map = getEdgeProperties(results.get(0));
 
         this.readProperties(source, (Map) map.get(PROPERTY_PROPERTIES));
 
         final String className = source.getProperties().get(GREMLIN_PROPERTY_CLASSNAME).toString();
 
         sourceEdge.setIdField(GremlinUtils.getIdField(GremlinUtils.toEntityClass(className)));
-        sourceEdge.setId(map.get(PROPERTY_ID));
-        sourceEdge.setLabel(map.get(PROPERTY_LABEL).toString());
-        sourceEdge.setVertexIdFrom(map.get(PROPERTY_OUTV));
-        sourceEdge.setVertexIdTo(map.get(PROPERTY_INV));
+        sourceEdge.setId(getPropertyValue(map, PROPERTY_ID));
+        sourceEdge.setLabel(getPropertyValue(map, PROPERTY_LABEL).toString());
+        sourceEdge.setVertexIdFrom(getPropertyValue(map, PROPERTY_OUTV));
+        sourceEdge.setVertexIdTo(getPropertyValue(map, PROPERTY_INV));
     }
 }

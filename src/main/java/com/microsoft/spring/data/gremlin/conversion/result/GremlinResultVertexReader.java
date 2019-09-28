@@ -14,7 +14,6 @@ import org.apache.tinkerpop.gremlin.driver.Result;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,16 +45,6 @@ public class GremlinResultVertexReader extends AbstractGremlinResultReader imple
         return map;
     }
 
-    private Object getVertexProperty (@NonNull Map<String, Object> map, @NonNull String propertyKey) {
-        Object value = map.get(propertyKey);
-
-        while ((value instanceof LinkedHashMap) && ((LinkedHashMap) value).containsKey(PROPERTY_VALUE_WITH_AT)) {
-            value = ((LinkedHashMap) value).get(PROPERTY_VALUE_WITH_AT);
-        }
-
-        return value;
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public void read(@NonNull List<Result> results, @NonNull GremlinSource source) {
@@ -73,7 +62,7 @@ public class GremlinResultVertexReader extends AbstractGremlinResultReader imple
         final String className = source.getProperties().get(GREMLIN_PROPERTY_CLASSNAME).toString();
 
         source.setIdField(GremlinUtils.getIdField(GremlinUtils.toEntityClass(className)));
-        source.setId(getVertexProperty(map, PROPERTY_ID));
-        source.setLabel(getVertexProperty(map, PROPERTY_LABEL).toString());
+        source.setId(getPropertyValue(map, PROPERTY_ID));
+        source.setLabel(getPropertyValue(map, PROPERTY_LABEL).toString());
     }
 }

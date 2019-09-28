@@ -40,6 +40,16 @@ public abstract class AbstractGremlinResultReader {
         return map;
     }
 
+    protected Object getPropertyValue (@NonNull Map<String, Object> map, @NonNull String propertyKey) {
+        Object value = map.get(propertyKey);
+
+        while ((value instanceof LinkedHashMap) && ((LinkedHashMap) value).containsKey(PROPERTY_VALUE_WITH_AT)) {
+            value = ((LinkedHashMap) value).get(PROPERTY_VALUE_WITH_AT);
+        }
+
+        return value;
+    }
+
     /**
      * properties's organization is a little complicated.
      * <p>
