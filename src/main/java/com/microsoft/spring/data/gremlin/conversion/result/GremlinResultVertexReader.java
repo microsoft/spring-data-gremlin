@@ -14,11 +14,9 @@ import org.apache.tinkerpop.gremlin.driver.Result;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.microsoft.spring.data.gremlin.common.Constants.*;
 
@@ -36,14 +34,7 @@ public class GremlinResultVertexReader extends AbstractGremlinResultReader imple
 
         Map<String, Object> map = (Map<String, Object>) result.getObject();
 
-        while ( (map instanceof LinkedHashMap) && map.containsKey(PROPERTY_VALUE_WITH_AT) ) {
-            final Object value = map.get(PROPERTY_VALUE_WITH_AT);
-            if (value instanceof ArrayList && ((ArrayList) value).size() > 0) {
-                map = (Map<String, Object>) ((ArrayList) value).get(0);
-            } else {
-                map = (Map<String, Object>) value;
-            }
-        }
+        map = getProperties(map);
 
         Assert.isTrue(map.containsKey(PROPERTY_ID), "should contain id property");
         Assert.isTrue(map.containsKey(PROPERTY_LABEL), "should contain label property");
@@ -53,6 +44,16 @@ public class GremlinResultVertexReader extends AbstractGremlinResultReader imple
         Assert.isInstanceOf(Map.class, map.get(PROPERTY_PROPERTIES), "should be one instance of Map");
 
         return map;
+    }
+
+    private Object getVertexProperty (@NonNull Map<String, Object> map, @NonNull String propertyKey) {
+        Object value = map.get(propertyKey);
+
+        while ((value instanceof LinkedHashMap) && ((LinkedHashMap) value).containsKey(PROPERTY_VALUE_WITH_AT)) {
+            value = ((LinkedHashMap) value).get(PROPERTY_VALUE_WITH_AT);
+        }
+
+        return value;
     }
 
     @Override
@@ -72,7 +73,7 @@ public class GremlinResultVertexReader extends AbstractGremlinResultReader imple
         final String className = source.getProperties().get(GREMLIN_PROPERTY_CLASSNAME).toString();
 
         source.setIdField(GremlinUtils.getIdField(GremlinUtils.toEntityClass(className)));
-        source.setId(map.get(PROPERTY_ID));
-        source.setLabel(map.get(PROPERTY_LABEL).toString());
+        source.setId(getVertexProperty(map, PROPERTY_ID));
+        source.setLabel(getVertexProperty(map, PROPERTY_LABEL).toString());
     }
 }
