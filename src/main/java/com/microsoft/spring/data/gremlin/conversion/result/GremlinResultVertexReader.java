@@ -14,6 +14,8 @@ import org.apache.tinkerpop.gremlin.driver.Result;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,14 +33,22 @@ public class GremlinResultVertexReader extends AbstractGremlinResultReader imple
 
         Assert.isInstanceOf(Map.class, result.getObject(), "should be one instance of Map");
 
-        @SuppressWarnings("unchecked") final Map<String, Object> map = (Map<String, Object>) result.getObject();
+        Map<String, Object> map = (Map<String, Object>) result.getObject();
+
+        while (map.containsKey(PROPERTY_VALUE_WITH_AT) && !(map instanceof LinkedHashMap)) {
+            final Object value = map.get(PROPERTY_VALUE_WITH_AT);
+            if (value instanceof ArrayList && ((ArrayList) value).size() > 0) {
+                map = (Map<String, Object>) ((ArrayList) value).get(0);
+            } else {
+                map = (Map<String, Object>) value;
+            }
+        }
 
         Assert.isTrue(map.containsKey(PROPERTY_ID), "should contain id property");
         Assert.isTrue(map.containsKey(PROPERTY_LABEL), "should contain label property");
-        Assert.isTrue(map.containsKey(PROPERTY_TYPE), "should contain type property");
+//        Assert.isTrue(map.containsKey(PROPERTY_TYPE), "should contain type property");
         Assert.isTrue(map.containsKey(PROPERTY_PROPERTIES), "should contain properties property");
-        Assert.isTrue(map.get(PROPERTY_TYPE).equals(RESULT_TYPE_VERTEX), "must be vertex type");
-
+//        Assert.isTrue(map.get(PROPERTY_TYPE).equals(RESULT_TYPE_VERTEX), "must be vertex type");
         Assert.isInstanceOf(Map.class, map.get(PROPERTY_PROPERTIES), "should be one instance of Map");
     }
 
