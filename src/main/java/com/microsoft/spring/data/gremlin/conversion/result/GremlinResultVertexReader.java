@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.microsoft.spring.data.gremlin.common.Constants.*;
 
@@ -28,14 +29,14 @@ public class GremlinResultVertexReader extends AbstractGremlinResultReader imple
         Assert.notNull(results, "Results should not be null.");
         Assert.notNull(source, "GremlinSource should not be null.");
         Assert.isTrue(results.size() == 1, "Vertex should contain only one result.");
+    }
 
-        final Result result = results.get(0);
-
+    private Map<String, Object> getVertexProperties (@NonNull Result result) {
         Assert.isInstanceOf(Map.class, result.getObject(), "should be one instance of Map");
 
         Map<String, Object> map = (Map<String, Object>) result.getObject();
 
-        while (map.containsKey(PROPERTY_VALUE_WITH_AT) && !(map instanceof LinkedHashMap)) {
+        while ( (map instanceof LinkedHashMap) && map.containsKey(PROPERTY_VALUE_WITH_AT) ) {
             final Object value = map.get(PROPERTY_VALUE_WITH_AT);
             if (value instanceof ArrayList && ((ArrayList) value).size() > 0) {
                 map = (Map<String, Object>) ((ArrayList) value).get(0);
@@ -50,6 +51,8 @@ public class GremlinResultVertexReader extends AbstractGremlinResultReader imple
         Assert.isTrue(map.containsKey(PROPERTY_PROPERTIES), "should contain properties property");
 //        Assert.isTrue(map.get(PROPERTY_TYPE).equals(RESULT_TYPE_VERTEX), "must be vertex type");
         Assert.isInstanceOf(Map.class, map.get(PROPERTY_PROPERTIES), "should be one instance of Map");
+
+        return map;
     }
 
     @Override
@@ -61,7 +64,7 @@ public class GremlinResultVertexReader extends AbstractGremlinResultReader imple
 
         validate(results, source);
 
-        final Map<String, Object> map = (Map<String, Object>) results.get(0).getObject();
+        final Map<String, Object> map = getVertexProperties(results.get(0));
         final Map<String, Object> properties = (Map<String, Object>) map.get(PROPERTY_PROPERTIES);
 
         super.readResultProperties(properties, source);
