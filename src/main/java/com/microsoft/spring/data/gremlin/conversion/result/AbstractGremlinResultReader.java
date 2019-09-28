@@ -19,7 +19,6 @@ import static com.microsoft.spring.data.gremlin.common.Constants.*;
 import static com.microsoft.spring.data.gremlin.common.Constants.PROPERTY_VALUE_WITH_AT;
 
 @NoArgsConstructor
-// TODO: seems only for Vertex.
 public abstract class AbstractGremlinResultReader {
 
     /**
@@ -74,15 +73,5 @@ public abstract class AbstractGremlinResultReader {
     protected void readResultProperties(@NonNull Map<String, Object> properties, @NonNull GremlinSource source) {
         source.getProperties().clear();
         properties.forEach((key, value) -> source.setProperty(key, this.readProperty(value)));
-    }
-
-    protected void readIdentifier(@NonNull Map<String, Object> dataMap, @NonNull GremlinSource source) {
-        Assert.isTrue(
-                source.getLabel().equals(dataMap.get(PROPERTY_LABEL)),
-                "mapping an invalid object data: " + dataMap.get(PROPERTY_LABEL));
-
-        if (source.getId() == null && dataMap.containsKey(PROPERTY_ID)) {
-            source.setId(dataMap.get(PROPERTY_ID));
-        }
     }
 }
