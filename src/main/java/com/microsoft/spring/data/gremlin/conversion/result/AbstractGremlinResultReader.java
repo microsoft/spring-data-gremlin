@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,16 +26,17 @@ public abstract class AbstractGremlinResultReader {
      * @return Map of list properties
      */
     protected Map<String, Object> getProperties (@NonNull Map<String, Object> map) {
-        while ((map instanceof LinkedHashMap) && map.containsKey(PROPERTY_VALUE_WITH_AT)) {
-            final Object value = map.get(PROPERTY_VALUE_WITH_AT);
+        Map<String, Object> propertyMap = map;
+        while ((propertyMap instanceof LinkedHashMap) && propertyMap.containsKey(PROPERTY_VALUE_WITH_AT)) {
+            final Object value = propertyMap.get(PROPERTY_VALUE_WITH_AT);
             if (value instanceof ArrayList && ((ArrayList) value).size() > 0) {
-                map = (Map<String, Object>) ((ArrayList) value).get(0);
+                propertyMap = (Map<String, Object>) ((ArrayList) value).get(0);
             } else {
-                map = (Map<String, Object>) value;
+                propertyMap = (Map<String, Object>) value;
             }
         }
 
-        return map;
+        return propertyMap;
     }
 
     protected Object getPropertyValue (@NonNull Map<String, Object> map, @NonNull String propertyKey) {

@@ -29,7 +29,7 @@ public class GremlinResultEdgeReader extends AbstractGremlinResultReader impleme
         Assert.isTrue(results.size() == 1, "Edge should contain only one result.");
     }
 
-    private Map<String, Object> getEdgeProperties (@org.springframework.lang.NonNull Result result) {
+    private Map<String, Object> getEdgeProperties (@NonNull Result result) {
         Assert.isInstanceOf(Map.class, result.getObject(), "should be one instance of Map");
 
         Map<String, Object> map = (Map<String, Object>) result.getObject();
