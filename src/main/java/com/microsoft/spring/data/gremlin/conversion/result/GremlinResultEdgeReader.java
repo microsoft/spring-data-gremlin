@@ -10,11 +10,11 @@ import com.microsoft.spring.data.gremlin.conversion.source.GremlinSource;
 import com.microsoft.spring.data.gremlin.conversion.source.GremlinSourceEdge;
 import com.microsoft.spring.data.gremlin.exception.GremlinUnexpectedSourceTypeException;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.apache.tinkerpop.gremlin.driver.Result;
-import org.springframework.lang.Nullable;
+import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,14 +22,6 @@ import static com.microsoft.spring.data.gremlin.common.Constants.*;
 
 @NoArgsConstructor
 public class GremlinResultEdgeReader extends AbstractGremlinResultReader implements GremlinResultsReader {
-
-    private void readProperties(@NonNull GremlinSource source, @Nullable Map map) {
-        if (map != null) {
-            @SuppressWarnings("unchecked") final Map<String, Object> properties = (Map<String, Object>) map;
-
-            properties.forEach(source::setProperty);
-        }
-    }
 
     private void validate(List<Result> results, GremlinSource source) {
         Assert.notNull(results, "Results should not be null.");
@@ -55,6 +47,17 @@ public class GremlinResultEdgeReader extends AbstractGremlinResultReader impleme
     }
 
     @Override
+    protected Object getPropertyValue (@NonNull Map<String, Object> map, @NonNull String propertyKey) {
+        Object value = super.getPropertyValue(map, propertyKey);
+
+        if (value instanceof LinkedHashMap && ((LinkedHashMap) value).containsKey(PROPERTY_RELATION_ID)) {
+            value = ((LinkedHashMap) value).get(PROPERTY_RELATION_ID);
+        }
+
+        return value;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public void read(@NonNull List<Result> results, @NonNull GremlinSource source) {
         if (!(source instanceof GremlinSourceEdge)) {
@@ -66,7 +69,7 @@ public class GremlinResultEdgeReader extends AbstractGremlinResultReader impleme
         final GremlinSourceEdge sourceEdge = (GremlinSourceEdge) source;
         final Map<String, Object> map = getEdgeProperties(results.get(0));
 
-        this.readProperties(source, (Map) map.get(PROPERTY_PROPERTIES));
+        super.readResultProperties((Map) map.get(PROPERTY_PROPERTIES), source);
 
         final String className = source.getProperties().get(GREMLIN_PROPERTY_CLASSNAME).toString();
 

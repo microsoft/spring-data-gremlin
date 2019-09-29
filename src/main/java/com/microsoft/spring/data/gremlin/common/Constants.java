@@ -19,6 +19,7 @@ public class Constants {
     public static final String PROPERTY_PROPERTIES = "properties";
     public static final String PROPERTY_INV = "inV";
     public static final String PROPERTY_OUTV = "outV";
+    public static final String PROPERTY_RELATION_ID = "relationId";
 
     public static final String RESULT_TYPE_VERTEX = "vertex";
     public static final String RESULT_TYPE_EDGE = "edge";

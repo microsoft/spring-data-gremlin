@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -57,14 +58,16 @@ public abstract class AbstractGremlinResultReader {
      * T is LinkedHashMap<String, String>
      */
     private Object readProperty(@NonNull Object value) {
-        Assert.isInstanceOf(ArrayList.class, value, "should be instance of ArrayList");
+        if (value instanceof ArrayList) {
+            @SuppressWarnings("unchecked") final ArrayList<LinkedHashMap<String, Object>> mapList
+                    = (ArrayList<LinkedHashMap<String, Object>>) value;
 
-        @SuppressWarnings("unchecked") final ArrayList<LinkedHashMap<String, Object>> mapList
-                = (ArrayList<LinkedHashMap<String, Object>>) value;
+            Assert.isTrue(mapList.size() == 1, "should be only 1 element in ArrayList");
 
-        Assert.isTrue(mapList.size() == 1, "should be only 1 element in ArrayList");
+            value = mapList.get(0);
+        }
 
-        final Map<String, Object> renovatedMap = getProperties(mapList.get(0));
+        final Map<String, Object> renovatedMap = getProperties((Map<String, Object>) value);
 
         return renovatedMap.get(Constants.PROPERTY_VALUE);
     }
