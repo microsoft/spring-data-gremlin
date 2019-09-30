@@ -11,17 +11,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.data.annotation.Persistent;
-import org.springframework.data.mapping.context.MappingContext;
-import org.springframework.data.mapping.context.MappingContextIsNewStrategyFactory;
-import org.springframework.data.mapping.context.PersistentEntities;
-import org.springframework.data.support.CachingIsNewStrategyFactory;
-import org.springframework.data.support.IsNewStrategyFactory;
 import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class GremlinConfigurationSupport {
 
@@ -71,13 +69,5 @@ public abstract class GremlinConfigurationSupport {
         return context;
     }
 
-    @Bean
-    public IsNewStrategyFactory isNewStrategyFactory() throws ClassNotFoundException {
-        final PersistentEntities entities;
-
-        entities = new PersistentEntities(Arrays.<MappingContext<?, ?>>asList(gremlinMappingContext()));
-
-        return new CachingIsNewStrategyFactory(new MappingContextIsNewStrategyFactory(entities));
-    }
 }
 
