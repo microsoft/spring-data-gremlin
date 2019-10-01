@@ -44,7 +44,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -395,6 +394,17 @@ public class GremlinTemplate implements GremlinOperations, ApplicationContextAwa
     public <T> List<T> find(@NonNull GremlinQuery query, @NonNull GremlinSource<T> source) {
         final QueryScriptGenerator generator = new QueryFindScriptGenerator(source);
         final List<String> queryList = generator.generate(query);
+        final List<Result> results = this.executeQuery(queryList);
+
+        if (results.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return this.recoverDomainList(source, results);
+    }
+
+    @Override
+    public <T> List<T> findByQuery(@NonNull List<String> queryList, @NonNull GremlinSource<T> source) {
         final List<Result> results = this.executeQuery(queryList);
 
         if (results.isEmpty()) {
