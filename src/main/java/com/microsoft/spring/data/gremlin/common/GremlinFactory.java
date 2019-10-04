@@ -25,6 +25,11 @@ public class GremlinFactory {
         if (port <= 0 || port > 65535) {
             gremlinConfig.setPort(Constants.DEFAULT_ENDPOINT_PORT);
         }
+        
+        final int maxContentLength = gremlinConfig.getMaxContentLength();
+        if (maxContentLength <= 0) {
+            gremlinConfig.setMaxContentLength(Constants.DEFAULT_MAX_CONTENT_LENGTH);
+        }
 
         this.gremlinConfig = gremlinConfig;
     }
@@ -37,6 +42,7 @@ public class GremlinFactory {
                     .serializer(Serializers.valueOf(this.gremlinConfig.getSerializer()).simpleInstance())
                     .credentials(this.gremlinConfig.getUsername(), this.gremlinConfig.getPassword())
                     .enableSsl(this.gremlinConfig.isSslEnabled())
+                    .maxContentLength(this.gremlinConfig.getMaxContentLength())
                     .port(this.gremlinConfig.getPort())
                     .create();
         } catch (IllegalArgumentException e) {
