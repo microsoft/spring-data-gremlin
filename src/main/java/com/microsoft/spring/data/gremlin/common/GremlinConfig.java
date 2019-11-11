@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.tinkerpop.gremlin.driver.ser.SerTokens;
 import org.apache.tinkerpop.gremlin.driver.ser.Serializers;
 
 @Getter
@@ -31,6 +30,9 @@ public class GremlinConfig {
     private boolean telemetryAllowed;
 
     private String serializer;
+    
+    private int maxContentLength;
+    
 
     public static GremlinConfigBuilder builder(String endpoint, String username, String password) {
         return defaultBuilder()

@@ -27,3 +27,10 @@ target/*
 *.iml
 
 **/target
+
+#Eclipse generated files
+.classpath
+.project
+.settings/
+/.apt_generated/
+/.apt_generated_tests/
