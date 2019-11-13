@@ -6,10 +6,12 @@
 package com.microsoft.spring.data.gremlin.query.query;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.tinkerpop.gremlin.driver.Client;
+import org.apache.tinkerpop.gremlin.driver.Result;
 import org.apache.tinkerpop.gremlin.driver.ResultSet;
 import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.Parameters;
@@ -44,10 +46,9 @@ public class GraphRepositoryGremlinQuery extends AbstractGremlinQuery {
 
     @Override
     public Object execute(@NonNull Object[] parameters) {
-        final GremlinParameterAccessor accessor = new GremlinParametersParameterAccessor(this.method, parameters);
         final String query = method.getQuery();
         final Map<String, Object> params = this.resolveParams(this.method.getParameters(), parameters);
-
+        final GremlinParameterAccessor accessor = new GremlinParametersParameterAccessor(this.method, parameters);
         final ResultProcessor processor = method.getResultProcessor().withDynamicProjection(accessor);
         final Class<?> methodReturnType = processor.getReturnedType().getDomainType();
         final ResultSet rs = this.gremlinClient.submit(query, params);
@@ -55,11 +56,18 @@ public class GraphRepositoryGremlinQuery extends AbstractGremlinQuery {
         if (ResultSet.class.equals(methodReturnType)) {
             return rs;
         }
-        
+
         final GremlinSource<?> source = GremlinUtils.toGremlinSource(methodReturnType);
         if (GremlinTemplate.class.equals(this.operations.getClass())) {
             try {
-                return ((GremlinTemplate) this.operations).recoverDomainList(source, rs.all().get());
+                final List<Result> gremlinResults = rs.all().get();
+                final List<?> results = ((GremlinTemplate) this.operations).recoverDomainList(source, gremlinResults);
+
+                if (results != null && results.size() == 1) {
+                    // return pojo instead of list
+                    return results.get(0);
+                }
+                return results;
             } catch (InterruptedException e) {
                 throw new IllegalStateException(e);
             } catch (ExecutionException e) {
@@ -78,16 +86,15 @@ public class GraphRepositoryGremlinQuery extends AbstractGremlinQuery {
         for (final Parameter parameter : methodParameters) {
             final int parameterIndex = parameter.getIndex();
             final Object parameterValue = parameters[parameterIndex];
-
-            //Convenience! Client can simply pass Map<String, Object> params, 
-            //we automatically resolve them to individual parameters.
-            //this is to allow the pass through for GremlinClient
+            // Convenience! Client can simply pass Map<String, Object> params,
+            // we automatically resolve them to individual parameters.
+            // this is to allow the pass through for GremlinClient
             if (parameterValue instanceof Map) {
                 resolvedParameters.putAll((Map) parameterValue);
             }
             parameter.getName().ifPresent(parameterName -> resolvedParameters.put(parameterName, parameterValue));
-        }
 
+        }
         return resolvedParameters;
     }
 
