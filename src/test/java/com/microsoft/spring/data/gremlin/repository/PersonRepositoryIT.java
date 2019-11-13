@@ -16,6 +16,7 @@ import org.assertj.core.util.Lists;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -230,6 +231,18 @@ public class PersonRepositoryIT {
 
         this.repository.deleteAll();
         Assert.assertFalse(this.repository.findAll().iterator().hasNext());
+    }
+    
+    @Ignore
+    @Test
+    public void testQueryAnnotation() {
+        final Person result = this.repository.save(this.person);
+        Assert.assertNotNull(result);
+        final Person foundPerson = this.repository.findPersonById(this.person.getId());
+
+        Assert.assertNotNull(foundPerson);
+        Assert.assertEquals(foundPerson.getId(), this.person.getId());
+        Assert.assertEquals(foundPerson.getName(), this.person.getName());
     }
 }
 
