@@ -92,4 +92,7 @@ public class Constants {
     );
 
     public static final String GREMLIN_PROPERTY_CLASSNAME = "_classname";
+    
+    public static final int DEFAULT_MAX_CONTENT_LENGTH = 65536;
+
 }
