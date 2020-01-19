@@ -67,7 +67,7 @@ public class GraphRepositoryGremlinQuery extends AbstractGremlinQuery {
                     return null;
                 }
                 
-                if (results != null && results.size() == 1) {
+                if (results.size() == 1) {
                     // return pojo instead of list
                     return results.get(0);
                 }
