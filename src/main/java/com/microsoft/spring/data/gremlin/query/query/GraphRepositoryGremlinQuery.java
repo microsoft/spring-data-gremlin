@@ -62,7 +62,11 @@ public class GraphRepositoryGremlinQuery extends AbstractGremlinQuery {
             try {
                 final List<Result> gremlinResults = rs.all().get();
                 final List<?> results = ((GremlinTemplate) this.operations).recoverDomainList(source, gremlinResults);
-
+                if (results == null || results.isEmpty()) {
+                    //return null for not found results
+                    return null;
+                }
+                
                 if (results != null && results.size() == 1) {
                     // return pojo instead of list
                     return results.get(0);
@@ -79,7 +83,7 @@ public class GraphRepositoryGremlinQuery extends AbstractGremlinQuery {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    Map<String, Object> resolveParams(Parameters<?, ?> methodParameters, Object[] parameters) {
+    protected Map<String, Object> resolveParams(Parameters<?, ?> methodParameters, Object[] parameters) {
 
         final Map<String, Object> resolvedParameters = new HashMap<>();
 
