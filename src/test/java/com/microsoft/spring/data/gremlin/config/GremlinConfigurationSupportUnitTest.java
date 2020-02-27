@@ -43,11 +43,6 @@ public class GremlinConfigurationSupportUnitTest {
     }
 
     @Test
-    public void testIsNewStrategyFactory() throws ClassNotFoundException {
-        Assert.assertNotNull(this.config.isNewStrategyFactory());
-    }
-
-    @Test
     @SneakyThrows
     public void testScanEntity() {
         final Set<Class<?>> entities = this.config.scanEntities(TEST_DOMAIN_PACKAGE_NAME);

@@ -25,3 +25,12 @@ hs_err_pid*
 target/*
 *.patch
 *.iml
+
+**/target
+
+#Eclipse generated files
+.classpath
+.project
+.settings/
+/.apt_generated/
+/.apt_generated_tests/
