@@ -5,3 +5,4 @@ gremlin:
   password: your-password
   sslEnabled: false
   telemetryAllowed: true
+  maxContentLength: 1000
