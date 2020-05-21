@@ -8,13 +8,15 @@
 
 This project works with *any Gremlin-compatible* data store, and also with [Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction). Cosmos is a globally-distributed database service that allows developers to work with data using a variety of standard APIs, such as Graph, MongoDB, and SQL. Spring Data Gremlin provides a delightful experience to interact with Azure Cosmos DB Graph API. 
 
-## Spring data version support
-This repository supports both Spring Data 2.0.x and 2.1.x. Below packages are available with latest release version.
-We recommend users to leverage latest version for bug fix and new features.
+## Spring Data Version Support
+Version mapping between spring boot and spring-data-gremlin: 
 
-Name | Version for Spring Boot 2.1.x | Version for Spring Boot 2.0.x
-:---:|:---:|:---:|
-spring-data-gremlin | [![Maven Central][Branch Master Badge]][Branch Master Link] | [![Maven Central][Branch 2.0.x Badge]][Branch 2.0.x Link]
+Spring boot version | spring-data-gremlin version
+:---:|:---:|
+![version](https://img.shields.io/badge/version-2.3.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.microsoft.spring.data.gremlin/spring-data-gremlin/2.3.svg)](https://search.maven.org/search?q=g:com.microsoft.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.3.*)
+![version](https://img.shields.io/badge/version-2.2.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.microsoft.spring.data.gremlin/spring-data-gremlin/2.2.svg)](https://search.maven.org/search?q=g:com.microsoft.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.2.*)
+![version](https://img.shields.io/badge/version-2.1.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.microsoft.spring.data.gremlin/spring-data-gremlin/2.1.svg)](https://search.maven.org/search?q=g:com.microsoft.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.1.*)
+![version](https://img.shields.io/badge/version-2.0.x-blue) | [![Maven Central](https://img.shields.io/maven-central/v/com.microsoft.spring.data.gremlin/spring-data-gremlin/2.0.svg)](https://search.maven.org/search?q=g:com.microsoft.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.0.*)
 
 ## TOC
 
@@ -212,10 +214,3 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 
 This project collects usage data and sends it to Microsoft to help improve our products and services. Read our [privacy](https://privacy.microsoft.com/en-us/privacystatement) statement to learn more.
 
-
-<!-- URL List -->
-[Branch Master Badge]:https://img.shields.io/maven-central/v/com.microsoft.spring.data.gremlin/spring-data-gremlin/2.1.svg
-[Branch 2.0.x Badge]:https://img.shields.io/maven-central/v/com.microsoft.spring.data.gremlin/spring-data-gremlin/2.0.svg
-
-[Branch Master Link]:https://search.maven.org/search?q=g:com.microsoft.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.1.*
-[Branch 2.0.x Link]:https://search.maven.org/search?q=g:com.microsoft.spring.data.gremlin%20AND%20a:spring-data-gremlin%20AND%20v:2.0.*
