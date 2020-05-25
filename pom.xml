@@ -47,7 +47,7 @@
         <apache.commons.lang3.version>3.7</apache.commons.lang3.version>
         <org.projectlombok.version>1.16.18</org.projectlombok.version>
         <mockito.core.version>2.8.9</mockito.core.version>
-        <fasterxml.jackson.version>2.9.10.1</fasterxml.jackson.version>
+        <fasterxml.jackson.version>2.9.10.4</fasterxml.jackson.version>
 
         <skip.integration.tests>true</skip.integration.tests>
     </properties>
