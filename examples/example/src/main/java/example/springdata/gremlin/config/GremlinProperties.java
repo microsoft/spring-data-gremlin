@@ -32,4 +32,6 @@ public class GremlinProperties {
     private boolean telemetryAllowed = true;
     
     private String serializer = Serializers.GRAPHSON.toString();
+
+    private int maxContentLength;
 }
