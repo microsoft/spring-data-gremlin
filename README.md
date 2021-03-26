@@ -2,6 +2,12 @@
 [![Build Status](https://travis-ci.org/Microsoft/spring-data-gremlin.svg?branch=master)](https://travis-ci.org/Microsoft/spring-data-gremlin)
 [![codecov](https://codecov.io/gh/Microsoft/spring-data-gremlin/branch/master/graph/badge.svg)](https://codecov.io/gh/Microsoft/spring-data-gremlin) 
 
+:exclamation::exclamation::exclamation:
+
+We are in the process of **deprecating** Spring Data Gremlin. We recommend using [azure-spring-boot-starter-cosmos](azure-sdk-for-java/sdk/spring/azure-spring-boot-starter-cosmos) or [Spring Data Azure Cosmos DB v3 for SQL API](https://docs.microsoft.com/en-us/azure/cosmos-db/sql-api-sdk-java-spring-v3) instead.
+
+
+
 # Spring Data Gremlin 
 
 **Spring Data Gremlin** provides initial Spring Data support for those databases using Gremlin query language. With annotation oriented programming model, it simplified the mapping to the database entity. It also provides supports for basic and custom query. 
