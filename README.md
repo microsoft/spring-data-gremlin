@@ -4,7 +4,7 @@
 
 :exclamation::exclamation::exclamation:
 
-We have **deprecated** Spring Data Gremlin. We recommend that you use the TinkerPop driver to [query Cosmos DB with Gremlin API](https://docs.microsoft.com/en-us/azure/cosmos-db/create-graph-gremlin-console) or use [azure-spring-boot-starter-cosmos](https://github.com/Azure/azure-sdk-for-java/tree/master/sdk/spring/azure-spring-boot-starter-cosmos) to query Cosmos DB with Spring Data SQL API. If you would like us to continue supporting Spring Data Gremlin, please tell us how you are using Spring Data Gremlin for Cosmos DB and how important it is to you, by voting on this [issue](https://github.com/Azure/azure-sdk-for-java/issues/2477) with the thumbs up emoji.  
+We have **deprecated** Spring Data Gremlin. We recommend that you use the TinkerPop driver to [query Cosmos DB with Gremlin API](https://docs.microsoft.com/en-us/azure/cosmos-db/create-graph-gremlin-console) or use [azure-spring-boot-starter-cosmos](https://github.com/Azure/azure-sdk-for-java/tree/master/sdk/spring/azure-spring-boot-starter-cosmos) to query Cosmos DB with Spring Data SQL API. If you would like us to continue supporting Spring Data Gremlin, please tell us how you are using Spring Data Gremlin for Cosmos DB and how important it is to you, by voting on this [issue](https://github.com/Azure/azure-sdk-for-java/issues/24773) with the thumbs up emoji.  
 
 
 
